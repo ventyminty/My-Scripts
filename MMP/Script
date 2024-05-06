@@ -1,0 +1,170 @@
+
+local Config = {
+    React = {
+        Enabled = false,
+        Avgskillprobablity = 5,
+        Saveforce = 75
+    },
+    Reach = {
+        Enabled = false,
+        Studs = 3
+    },
+}
+
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local Window = OrionLib:MakeWindow({Name = "skatemain's vip interface", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest", IntroEnabled = true, IntroText = "skatemain"})
+
+OrionLib:MakeNotification({
+	Name = "Welcome!",
+	Content = "Thank you for purchasing my script, if there is any problem let me know @skatemain",
+	Image = "rbxassetid://4483345998",
+	Time = 7
+})
+
+local Tab = Window:MakeTab({
+	Name = "Home",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+	Name = "Home"
+})
+
+Tab:AddParagraph("Read!","")
+Tab:AddParagraph("Hi","Hello, kinda rupees! XD XD! Use fps booster if you have bad pc :(")
+Tab:AddParagraph("Discord!","This script made by @skatemain\nhttps://discord.com/invite/6bwqVkQNtw")
+
+Tab:AddButton({
+	Name = "Remove Ball Textures",
+	Callback = function()
+      	deleteballtextures()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "FPS BOOSTER!",
+	Callback = function()
+      	fpsbooster()
+  	end    
+})
+
+
+local Tab = Window:MakeTab({
+	Name = "Combat",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+
+
+local Section = Tab:AddSection({
+	Name = "Reach"
+})
+
+Tab:AddButton({
+	Name = "Appearing Normal",
+	Callback = function()
+    game.Players.LocalPlayer.Character["Left Leg"].Massless = true
+   LeftLeg = Instance.new("Part", game.Players.LocalPlayer.Character)
+LeftLeg.Name = "Left Leg"
+LeftLeg.CanCollide = false
+LeftLeg.Color = game.Players.LocalPlayer.Character["Left Leg"].Color
+LeftLeg.Size = Vector3.new(1, 2, 1)
+LeftLeg.Locked = true
+LeftLeg.Position = game.Players.LocalPlayer.Character["Left Leg"].Position
+
+local Attachment = Instance.new("Attachment", LeftLeg)
+Attachment.Name = "LeftFootAttachment"
+Attachment.Position = Vector3.new(0, -1, 0)
+
+local MotorHip = Instance.new("Motor6D", game.Players.LocalPlayer.Character.Torso)
+MotorHip.Name = "Fake Left Hip"
+MotorHip.C0 = CFrame.new(-1, -1, 0, 0, 0, -1, 0, 1, 0, 1, 0, 0)
+MotorHip.C1 = CFrame.new(-0.5, 1, 0, 0, 0, -1, 0, 1, 0, 1, 0, 0)
+MotorHip.CurrentAngle = 0
+MotorHip.DesiredAngle = 0
+MotorHip.MaxVelocity = 0.1
+MotorHip.Part0 = game.Players.LocalPlayer.Character.Torso
+MotorHip.Part1 = LeftLeg
+game.Players.LocalPlayer.Character["Right Leg"].Massless = true
+   RightLeg = Instance.new("Part", game.Players.LocalPlayer.Character)
+RightLeg.Name = "Right Leg"
+RightLeg.CanCollide = false
+RightLeg.Color = game.Players.LocalPlayer.Character["Right Leg"].Color
+RightLeg.Size = Vector3.new(1, 2, 1)
+RightLeg.Locked = true
+RightLeg.Position = game.Players.LocalPlayer.Character["Right Leg"].Position
+
+local Attachment = Instance.new("Attachment", RightLeg)
+Attachment.Name = "RightFootAttachment"
+Attachment.Position = Vector3.new(0, -1, 0)
+
+local MotorHip = Instance.new("Motor6D", game.Players.LocalPlayer.Character.Torso)
+MotorHip.Name = "Fake Right Hip"
+MotorHip.C0 = CFrame.new(1, -1, 0, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+MotorHip.C1 = CFrame.new(0.5, 1, 0, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+MotorHip.CurrentAngle = 0
+MotorHip.DesiredAngle = 0
+MotorHip.MaxVelocity = 0.1
+MotorHip.Part0 = game.Players.LocalPlayer.Character.Torso
+MotorHip.Part1 = RightLeg
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Disable",
+	Callback = function()
+    disablereach()
+      if LeftLeg ~= nil then
+LeftLeg:Destroy()
+elseif RightLeg ~= nil then
+RightLeg:Destroy()
+elseif LeftFoot ~= nil then
+LeftFoot:Destroy()
+elseif RightFoot ~= nil then
+RightFoot:Destroy()
+end
+for i,z in pairs(game.Players.LocalPlayer.Character.Torso:GetDescendants()) do
+        if z.Name == "Fake Left Hip" or z.Name == "Fake Right Hip" then
+            z:Destroy()
+        end
+    end
+  	end    
+})
+
+Tab:AddSlider({
+	Name = "Reach Slider",
+	Min = 1,
+	Max = 25,
+	Default = 1,
+	Color = Color3.fromRGB(127, 127, 255),
+	Increment = 0.25,
+	ValueName = "studs",
+	Callback = function(arg)
+    if game.Players.LocalPlayer.Character.Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            if arg == 1 then
+                game.Players.LocalPlayer.Character["Left Leg"].Transparency = 0
+                else
+                game.Players.LocalPlayer.Character["Left Leg"].Transparency = 1
+            end
+            game.Players.LocalPlayer.Character["Left Leg"].Massless = true
+            game.Players.LocalPlayer.Character["Left Leg"].Size = Vector3.new(arg, 2, arg)
+             if arg == 1 then
+                game.Players.LocalPlayer.Character["Right Leg"].Transparency = 0
+                else
+                game.Players.LocalPlayer.Character["Right Leg"].Transparency = 1
+            end
+            game.Players.LocalPlayer.Character["Right Leg"].Massless = true
+            game.Players.LocalPlayer.Character["Right Leg"].Size = Vector3.new(arg, 2, arg)
+            end
+            if game.Players.LocalPlayer.Character.Humanoid.RigType == Enum.HumanoidRigType.R15 then
+                    game.Players.LocalPlayer.Character["LeftLowerLeg"].Transparency = 1
+                    game.Players.LocalPlayer.Character["LeftLowerLeg"].Massless = true
+                    game.Players.LocalPlayer.Character["LeftLowerLeg"].Size = Vector3.new(arg, 2, arg)
+                    game.Players.LocalPlayer.Character["RightLowerLeg"].Transparency = 1
+                    game.Players.LocalPlayer.Character["RightLowerLeg"].Massless = true
+                    game.Players.LocalPlayer.Character["RightLowerLeg"].Size = Vector3.new(arg, 2, arg)
+                    end
+	end    
+})
