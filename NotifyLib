@@ -255,9 +255,7 @@ function Library:new(options)
 	end
 
     function GUI:Unload()
-        if GUI["1"] then
             GUI["1"]:Destroy()
-        end
     end
 	return GUI
 end
