@@ -255,9 +255,18 @@ function Library:new(options)
 	end
 
     function GUI:Unload()
-        GUI["1"]:Destroy()
-    end    
-
+        if GUI["1"] then
+            GUI["1"]:Destroy()
+        end
+    end
 	return GUI
 end
 return Library
+--
+local Main = Library:new({ name = "skatemain" })
+local Image = Main:CreateImage({ image = "rbxassetid://6890587526" })
+local GameName = Main:CreateTitle({ name = "TPS TEST" })
+local Paragraph = Main:CreateParagraph({ text = "test" })
+local Updates = Main:CreateUpdates({ text = "Updates" })
+Updates:AddUpdate({ text = "sadasdasd" })
+Updates:AddUpdate({ text = "update2" })
