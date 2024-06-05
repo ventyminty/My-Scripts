@@ -40,6 +40,10 @@ function Library:new()
 		Helmet["6"] = Instance.new("UIStroke", Helmet["5"])
 		Helmet["6"]["Color"] = Color3.fromRGB(255, 255, 255)
 
+		function Helmet:ChangeImage(newAssetId)
+            Helmet["9"].Image = newAssetId
+        end
+
 		return Helmet
 	end
 	
@@ -56,6 +60,11 @@ function Library:new()
 
 		ChestPlate["8"] = Instance.new("UIStroke", ChestPlate["7"]);
 		ChestPlate["8"]["Color"] = Color3.fromRGB(255, 255, 255);
+
+		function ChestPlate:ChangeImage(newAssetId)
+            ChestPlate["9"].Image = newAssetId
+        end
+
 		return ChestPlate
 	end
 	
@@ -72,6 +81,11 @@ function Library:new()
 
 		Leggings["a"] = Instance.new("UIStroke", Leggings["9"]);
 		Leggings["a"]["Color"] = Color3.fromRGB(255, 255, 255);
+		
+		function Leggings:ChangeImage(newAssetId)
+            Leggings["9"].Image = newAssetId
+        end
+
 		return Leggings
 	end
 	
@@ -93,6 +107,10 @@ function Library:new()
 
 		Gun["4"] = Instance.new("UIStroke", Gun["3"]);
 		Gun["4"]["Color"] = Color3.fromRGB(255, 255, 255);
+
+		function Gun:ChangeImage(newAssetId)
+            Gun["9"].Image = newAssetId
+        end
 
 		return Gun
 	end
