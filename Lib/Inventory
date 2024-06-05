@@ -41,7 +41,7 @@ function Library:new()
 		Helmet["6"]["Color"] = Color3.fromRGB(255, 255, 255)
 
 		function Helmet:ChangeImage(newAssetId)
-            Helmet["9"].Image = newAssetId
+            Helmet["5"].Image = newAssetId
         end
 
 		return Helmet
@@ -62,7 +62,7 @@ function Library:new()
 		ChestPlate["8"]["Color"] = Color3.fromRGB(255, 255, 255);
 
 		function ChestPlate:ChangeImage(newAssetId)
-            ChestPlate["9"].Image = newAssetId
+            ChestPlate["7"].Image = newAssetId
         end
 
 		return ChestPlate
@@ -109,7 +109,7 @@ function Library:new()
 		Gun["4"]["Color"] = Color3.fromRGB(255, 255, 255);
 
 		function Gun:ChangeImage(newAssetId)
-            Gun["9"].Image = newAssetId
+            Gun["3"].Image = newAssetId
         end
 
 		return Gun
