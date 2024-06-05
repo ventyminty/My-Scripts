@@ -1,0 +1,103 @@
+local players = game:GetService("Players")
+local runservice = game:GetService("RunService")
+local coreGui = game:GetService("CoreGui")
+
+local Library = {}
+local GUI = {}
+
+function Library:new()
+	local gui = {}
+
+	gui["1"] = Instance.new("ScreenGui")
+	if runservice:IsStudio() then
+		gui["1"].Parent = players.LocalPlayer:WaitForChild("PlayerGui")
+	else
+		gui["1"].Parent = coreGui
+	end
+	gui["1"]["Name"] = [[EthernalityViewer]]
+	gui["1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling
+
+	gui["2"] = Instance.new("Frame", gui["1"])
+	gui["2"]["BorderSizePixel"] = 0
+	gui["2"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
+	gui["2"]["BackgroundTransparency"] = 1
+	gui["2"]["Size"] = UDim2.new(0, 360, 0, 107)
+	gui["2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
+	gui["2"]["Position"] = UDim2.new(0.323, 0, -0.1, 0)
+	gui["2"]["Name"] = [[Main]]
+
+	function Library:AddHelmet(assetid)
+		local Helmet = {}
+		Helmet["5"] = Instance.new("ImageLabel", gui["2"])
+		Helmet["5"]["BorderSizePixel"] = 0
+		Helmet["5"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
+		Helmet["5"]["Image"] = assetid
+		Helmet["5"]["Size"] = UDim2.new(0, 48, 0, 46)
+		Helmet["5"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
+		Helmet["5"]["Name"] = [[Helmet]]
+		Helmet["5"]["Position"] = UDim2.new(0.10000000149011612, 0, 0.5627440214157104, 0)
+
+		Helmet["6"] = Instance.new("UIStroke", Helmet["5"])
+		Helmet["6"]["Color"] = Color3.fromRGB(255, 255, 255)
+
+		return Helmet
+	end
+	
+	function Library:AddChestplate(assetid)
+		local ChestPlate = {}
+		ChestPlate["7"] = Instance.new("ImageLabel", gui["2"]);
+		ChestPlate["7"]["BorderSizePixel"] = 0;
+		ChestPlate["7"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+		ChestPlate["7"]["Image"] = assetid;
+		ChestPlate["7"]["Size"] = UDim2.new(0, 48, 0, 46);
+		ChestPlate["7"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		ChestPlate["7"]["Name"] = [[Chestplate]];
+		ChestPlate["7"]["Position"] = UDim2.new(0.23333333432674408, 0, 0.5627440214157104, 0);
+
+		ChestPlate["8"] = Instance.new("UIStroke", ChestPlate["7"]);
+		ChestPlate["8"]["Color"] = Color3.fromRGB(255, 255, 255);
+		return ChestPlate
+	end
+	
+	function Library:AddLeggings(assetid)
+		local Leggings = {}
+		Leggings["9"] = Instance.new("ImageLabel", gui["2"]);
+		Leggings["9"]["BorderSizePixel"] = 0;
+		Leggings["9"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+		Leggings["9"]["Image"] = assetid;
+		Leggings["9"]["Size"] = UDim2.new(0, 48, 0, 46);
+		Leggings["9"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		Leggings["9"]["Name"] = [[Leggings]];
+		Leggings["9"]["Position"] = UDim2.new(0.36666667461395264, 0, 0.5627440214157104, 0);
+
+		Leggings["a"] = Instance.new("UIStroke", Leggings["9"]);
+		Leggings["a"]["Color"] = Color3.fromRGB(255, 255, 255);
+		return Leggings
+	end
+	
+	
+	
+	
+	
+	function Library:AddGun(assetid)
+		local Gun = {}
+		Gun["3"] = Instance.new("ImageLabel", gui["2"]);
+		Gun["3"]["BorderSizePixel"] = 0;
+		Gun["3"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+		Gun["3"]["Image"] = assetid;
+		Gun["3"]["Size"] = UDim2.new(0, 48, 0, 46);
+		Gun["3"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		Gun["3"]["Name"] = [[Gun]];
+		Gun["3"]["BackgroundTransparency"] = 1;
+		Gun["3"]["Position"] = UDim2.new(0.4333333373069763, 0, 0.058252494782209396, 0);
+
+		Gun["4"] = Instance.new("UIStroke", Gun["3"]);
+		Gun["4"]["Color"] = Color3.fromRGB(255, 255, 255);
+
+		return Gun
+	end
+
+	return gui
+end
+return Library
+
