@@ -1,6 +1,9 @@
 
-
+local Camera = game:GetService("Workspace").CurrentCamera
+local Cam = game:GetService("Workspace").CurrentCamera
 local SoundService = game:GetService("SoundService")
+
+
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/BigHacker123/Library.lua/main/Library.lua'))()
 local SaveManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/addons/SaveManager.lua'))()
 local ThemeManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/BigHacker123/Library.lua/main/Theme.lua'))()
@@ -91,9 +94,7 @@ while task.wait() do
 end
 end)
 
-local Camera = game:GetService("Workspace").CurrentCamera
 local CrosshairTab = CrosshairTabBox:AddTab('Crosshair X')
-
 local CrossHairX = Drawing.new("Circle"), Drawing.new("Circle")
 --
 CrossHairX.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
@@ -113,7 +114,7 @@ do
   CrossHairX.Filled = Toggles.Crosshair_Filled1.Value
   end)
 
-  CrosshairTab:AddSlider('Crosshair_Radius', {Text = 'Size', Suffix = "Â°", Default = 2, Min = 0, Max = 100, Rounding = 0, Compact = true}):OnChanged(function(CrosshairXRadius)
+  CrosshairTab:AddSlider('Crosshair_Radius', {Text = 'Size', Suffix = "°", Default = 2, Min = 0, Max = 100, Rounding = 0, Compact = true}):OnChanged(function(CrosshairXRadius)
   CrossHairX.Radius = CrosshairXRadius
   end)
 end
@@ -226,3 +227,87 @@ elseif BloodSplatter_Toggle == true then
 game:GetService("Players").LocalPlayer.PlayerGui.GameUI.BloodSplatter.Visible = false
 end
 end)
+
+
+
+
+
+
+--// UI Settings \\--
+
+--// Game
+local GameID = Tabs.UISettings:AddLeftGroupbox('Game')
+GameID:AddInput('GameID_Check', {Default = 'Game ID', Numeric = true, Finished = false, Text = 'Game ID:', Placeholder = 'Game ID Here'})
+GameID:AddButton('Join Game', function()
+game:GetService("TeleportService"):Teleport(Options.GameID_Check.Value, plr)
+end)
+
+--// Menu
+local MenuGroup = Tabs.UISettings:AddRightGroupbox('Menu')
+
+MenuGroup:AddLabel(""..game:GetService("Players").LocalPlayer.PlayerGui.GameUI.ServerInfo.Text.."", true)
+local playerCountLabel = MenuGroup:AddLabel("Player Count: 0", nil, true)
+local function updatePlayerCount()
+local playerCount = #game:GetService("Players"):GetPlayers()
+playerCountLabel:SetText("Players Online: " .. playerCount)
+end
+game:GetService("Players").PlayerAdded:Connect(updatePlayerCount)
+game:GetService("Players").PlayerRemoving:Connect(updatePlayerCount)
+updatePlayerCount()
+
+MenuGroup:AddLabel(' Made by:<font color="#de6cff"> ethernality.wtf#9108</font> 👑', true)
+
+MenuGroup:AddButton('Unload Script', function() Library:Unload()
+for i,v in pairs(Toggles) do
+v:SetValue(false)
+Library:Notify('Unloaded!', 1)
+end
+end)
+
+MenuGroup:AddButton('Panic Button', function()
+for i,v in pairs(Toggles) do
+v:SetValue(false)
+Library:Notify('Panic Button!', 1)
+end
+end)
+
+MenuGroup:AddButton('Copy Discord', function()
+if pcall(setclipboard,"@skatemain") then
+Library:Notify('Successfully copied discord link to your clipboard!', 5)
+end
+end)
+
+MenuGroup:AddToggle('WatermarkToggle', { Text = 'Watermark', Default = false, Tooltip = nil })
+Toggles.WatermarkToggle:OnChanged(function()
+while Toggles.WatermarkToggle.Value do
+task.wait(1)
+local fps = string.format('%.0f', game.Stats.Workspace.Heartbeat:GetValue())
+local ping = string.format('%.0f', game.Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+Library:SetWatermark('ethernality.wtf - FPS: ' .. fps .. ' | Ping: ' .. ping .. ' | [trident survival]')
+Library:SetWatermarkVisibility(true)
+end
+Library:SetWatermarkVisibility(false)
+end)
+
+MenuGroup:AddToggle('UISettings_KeybindFrameVisibility', {Text = 'Keybind', Default = true}):OnChanged(function()
+Library.KeybindFrame.Visible = Toggles.UISettings_KeybindFrameVisibility.Value
+end)
+
+MenuGroup:AddLabel('Menu Keybind'):AddKeyPicker('MenuKeybind', { Default = 'Insert', NoUI = true, Text = 'Menu keybind' })
+Library.ToggleKeybind = Options.MenuKeybind
+
+--// Manager
+SaveManager:SetLibrary(Library)
+SaveManager:SetFolder('ethernality.wtf/folder')
+SaveManager:BuildConfigSection(Tabs.UISettings)
+SaveManager:IgnoreThemeSettings()
+ThemeManager:SetLibrary(Library)
+ThemeManager:SetFolder('ethernality.wtf/themes')
+ThemeManager:ApplyToTab(Tabs.UISettings)
+
+--// Script Loaded
+local Time = (string.format("%."..tostring(Decimals).."f", os.clock() - Clock))
+Library:Notify(("Script [Loaded] In - "..tostring(Time).."s"), 15)
+
+--Wrapping function - needed to unload(Keep at end of script)
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EIOlmqV6v1owgJBEoqj5lK9p01SFE2THpxcOnvX/LinoriaBurnEdition/main/LoaderManager.lua'))
