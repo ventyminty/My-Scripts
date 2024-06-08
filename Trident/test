@@ -16,6 +16,7 @@ local Tabs = {
     VisualsTab = Window:AddTab('Visuals'),
     MiscellaneousTab = Window:AddTab('Miscellaneous'),
     WorldTab = Window:AddTab('World'),
+    LocalTab = Window:AddTab('Local'),
     UISettings = Window:AddTab('Settings')
 }
 
@@ -230,6 +231,72 @@ end)
 
 
 
+local ArmVisTabBox = Tabs.LocalTab:AddLeftTabbox('arm visuals')
+local ArmVisTab = ArmVisTabBox:AddTab('local chams')
+
+--* Local Chams *--
+
+local Misc2 = {Settings = {LocalChams = false,LocalChamsColor = Color3.fromRGB(80, 77, 56),LocalChamsMaterial = "SmoothPlastic"}}
+local DeafultArm = {}
+for i,v in pairs(game:GetService("Workspace").Ignore.FPSArms:GetChildren()) do
+if v:IsA("MeshPart") then
+  DeafultArm[v] = {Color=v.Color,Material=v.Material}
+end
+end
+function Functions:ArmChams()
+if Misc2.Settings.LocalChams == true then
+  for i,v in pairs(game:GetService("Workspace").Ignore.FPSArms:GetChildren()) do
+    if v.ClassName == "MeshPart" then
+      v.Color=Misc2.Settings.LocalChamsColor
+      v.Material=Enum.Material[Misc2.Settings.LocalChamsMaterial]
+    end
+  end
+else
+  for i,v in pairs(DeafultArm) do
+    i.Color=v.Color;i.Material=v.Material
+  end
+end
+end
+for i,v in pairs(game:GetService("Workspace").Ignore.FPSArms:GetChildren()) do
+v.Changed:Connect(function(Change)
+if Change ~= "CFrame" then
+  if Misc2.Settings.LocalChams == true then
+    v.Color=Misc2.Settings.LocalChamsColor
+    v.Material=Enum.Material[Misc2.Settings.LocalChamsMaterial]
+  else
+    for i,v in pairs(DeafultArm) do
+      i.Color=v.Color;i.Material=v.Material
+    end
+  end
+end
+end)
+end
+game:GetService("Workspace").Ignore.FPSArms.Changed:Connect(function()
+Functions:ArmChams()
+end)
+
+ArmVisTab:AddToggle('ArmChams',{Text='enabled',Default=false}):AddColorPicker('ArmChamsColor',{Default=Color3.fromRGB(208,123,255),Title='Color'})
+Toggles.ArmChams:OnChanged(function(Value)
+Misc2.Settings.LocalChams = Value
+Functions:ArmChams()
+end)
+Options.ArmChamsColor:OnChanged(function(Value)
+Misc2.Settings.LocalChamsColor = Value
+end)
+
+ArmVisTab:AddDropdown('ArmChamsMaterial',{Values={"ForceField","Neon","Ice","Glass"},Default=1,Multi=false,Text='arm material:'})
+Options.ArmChamsMaterial:OnChanged(function(Value)
+Misc2.Settings.LocalChamsMaterial = Value
+end)
+
+ArmVisTab:AddInput('', {Default = 'rbxassetid://11414633855', Numeric = false, Finished = true, Text = 'Texture ID:', Placeholder = 'rbxassetid://...'}):OnChanged(function(TextureID)
+game:GetService("Workspace").Ignore.FPSArms.LeftUpperArm.TextureID = TextureID
+game:GetService("Workspace").Ignore.FPSArms.LeftLowerArm.TextureID = TextureID
+game:GetService("Workspace").Ignore.FPSArms.LeftHand.TextureID = TextureID
+game:GetService("Workspace").Ignore.FPSArms.RightUpperArm.TextureID = TextureID
+game:GetService("Workspace").Ignore.FPSArms.RightLowerArm.TextureID = TextureID
+game:GetService("Workspace").Ignore.FPSArms.RightHand.TextureID = TextureID
+end)
 
 
 
@@ -255,7 +322,7 @@ game:GetService("Players").PlayerAdded:Connect(updatePlayerCount)
 game:GetService("Players").PlayerRemoving:Connect(updatePlayerCount)
 updatePlayerCount()
 
-MenuGroup:AddLabel(' Made by:<font color="#de6cff"> ethernality.wtf#9108</font> 👑', true)
+MenuGroup:AddLabel(' Made by:<font color="#de6cff"> skatemain</font> 👑', true)
 
 MenuGroup:AddButton('Unload Script', function() Library:Unload()
 for i,v in pairs(Toggles) do
