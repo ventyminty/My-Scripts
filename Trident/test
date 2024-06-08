@@ -163,7 +163,7 @@ local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
 local PlayerVisualTab = PlayerVisualTabbox:AddTab('player visuals')
 
 PlayerVisualTab:AddToggle('CornerBoxes',{Text='Enable',Default=false}):OnChanged(function(Value)
-Conig.Esp.CornerBoxes.Enabled = Value
+Config.Esp.CornerBoxes.Enabled = Value
 end)
 
 
