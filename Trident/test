@@ -231,6 +231,73 @@ end
 end)
 
 
+
+
+
+local TrashTalkTabBox = Tabs.LocalTab:AddRightTabbox('trash talk')
+local TrashTalkTab = TrashTalkTabBox:AddTab('trash talk')
+
+--* Trash Talk *--
+
+local Trashtalk = false
+local Chats = {
+["ethernality.wtf"] = {"start winning with ethernality.wtf today", "get good, get ethernality.wtf", "if only you had ethernality.wtf smh", "ethernality.wtf, the only way to win", "ur kills would be better if u bought ethernality.wtf", "ethernality.wtf owns you", "start beaming get ethernality.wtf", "beamed u kid u should of had ethernality.wtf", "this is why u should buy ethernality.wtf", "stop dying on the job go get ethernality.wtf"};
+}
+
+local _Network = getrenv()._G.modules.Network
+local _SendCodes = getrenv()._G.modules.Network.SendCodes
+game:GetService("LogService").MessageOut:Connect(function(message)
+local extractedName = message:match("->([%w_]+)")
+local initialHealth, finalHealth = message:match("(%-?%d+%.?%d*)%D*->(%-?%d+%.?%d*)hp")
+local studsValue = message:match("(%d+%.?%d*)s")
+if Trashtalk and extractedName and initialHealth and finalHealth and studsValue and extractedName ~= game.Players.LocalPlayer.Name then
+if Trashtalk and tonumber(finalHealth) <= 0 then
+  _Network.Send(_SendCodes.SEND_CHAT_MESSAGE, extractedName .. " killed from " .. studsValue .. "m, " .. Chats["ethernality.wtf"][math.random(1, #Chats["ethernality.wtf"])] .. " [skatemain]", "Global")
+end
+end
+end)
+
+local enabledspamchat = false
+local chatSpammerText = ""
+local WaitTime = 3
+local function spamChat()
+local args = {[1] = 27, [2] = chatSpammerText, [3] = "Global"}
+while enabledspamchat do
+  game:GetService("Players").LocalPlayer.RemoteEvent:FireServer(unpack(args))
+  wait(WaitTime)
+end
+end
+
+TrashTalkTab:AddToggle('Enabled_Toggle1', {Text = 'enabled', Default = false}):OnChanged(function(value)
+Trashtalk = value
+enabledspamchat = value
+end)
+
+TrashTalkTab:AddDropdown('', {Values = { 'None','Trash Talk', 'Chat Spammer' }, Default = 1, Multi = false, Text = 'type:'}):OnChanged(function(bool2)
+if bool2 == "None" then
+Trashtalk = false
+enabledspamchat = false
+elseif bool2 == "Trash Talk" then
+Trashtalk = true
+elseif bool2 == "Chat Spammer" then
+spamChat()
+end
+end)
+
+TrashTalkTab:AddSlider('SpamChatSpeed', {Text = 'speed:',Suffix = "s", Default = 3, Min = 1, Max = 10, Rounding = 0, Compact = false,}):OnChanged(function(SpamChatSpeedValue)
+WaitTime = SpamChatSpeedValue
+end)
+
+TrashTalkTab:AddInput('ChatSpammer', {Default = "If you cant beat them join them [ethrnality.wtf] on top!", Numeric = false, Finished = true, Text = 'chat spammer:', Placeholder = "Chat Spam Custom Text [HERE]"}):OnChanged(function(value)
+chatSpammerText = value
+end)
+
+
+
+
+
+
+
 local CustomSkyTabBox = Tabs.WorldTab:AddLeftTabbox('lighting')
 local CustomSkyTab = CustomSkyTabBox:AddTab('lighting')
 
@@ -238,7 +305,7 @@ local CustomSkyTab = CustomSkyTabBox:AddTab('lighting')
 
 local Sky = Instance.new("Sky",game:GetService("Lighting"))
 CustomSkyTab:AddDropdown('World_Skybox', {Values = { 'Default', 'Neptune', 'Among Us', 'Nebula', 'Vaporwave', 'Clouds', 'Twilight', 'DaBaby', 'Minecraft', 'Chill', 'Redshift', 'Blue Stars', 'Blue Aurora' },Default = 1,Multi = false,Text = 'custom skybox:',Tooltip = 'Sky Changer',}):OnChanged(function(World_Skybox)
-if LightingEnabled and lighting:FindFirstChild("Sky") then
+if lighting:FindFirstChild("Sky") then
 lighting.Sky.SkyboxBk = skybox_assets[World_Skybox].SkyboxBk
 lighting.Sky.SkyboxDn = skybox_assets[World_Skybox].SkyboxDn
 lighting.Sky.SkyboxFt = skybox_assets[World_Skybox].SkyboxFt
