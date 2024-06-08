@@ -1,0 +1,228 @@
+
+
+local SoundService = game:GetService("SoundService")
+local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/BigHacker123/Library.lua/main/Library.lua'))()
+local SaveManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/addons/SaveManager.lua'))()
+local ThemeManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/BigHacker123/Library.lua/main/Theme.lua'))()
+local skybox_assets = loadstring(game:HttpGet("https://raw.githubusercontent.com/BigHacker123/skybox/main/.lua", true))()
+local Build = "Private";local Color = "#FF0000";local Ver = "v0.3b"
+local Window = Library:CreateWindow({ Size = UDim2.fromOffset(550, 610),Title = "Ethernality.<font color=\"#d17bff\">wtf</font> | ".."<font color=\""..Color.."\">"..Build.."</font>".."                      ["..Ver.."]",Center = true,AutoShow = true})
+
+local Tabs = {
+    CombatTab = Window:AddTab('Combat'),
+    VisualsTab = Window:AddTab('Visuals'),
+    MiscellaneousTab = Window:AddTab('Miscellaneous'),
+    WorldTab = Window:AddTab('World'),
+    UISettings = Window:AddTab('Settings')
+}
+
+local HitboxTabBox = Tabs.CombatTab:AddLeftTabbox()
+local CrosshairTabBox = Tabs.MiscellaneousTab:AddLeftTabbox()
+local HeadHitbox = HitboxTabBox:AddTab('Head Hitbox')
+
+local HedsOn = Instance.new("Part")
+HedsOn.Name = "HedsOn"
+HedsOn.Anchored = false
+HedsOn.CanCollide = false
+HedsOn.Transparency = 0
+HedsOn.Size = Vector3.new(5, 5, 10)
+HedsOn.Parent = game.ReplicatedStorage
+
+local HeadExtends = false
+local XSize = 5
+local YSize = 5
+local ZSize = 10
+local HitboxTransparency = 50
+
+HeadHitbox:AddToggle('HBO',{Text='Enabled',Default=false}):OnChanged(function(Value)
+HeadExtends = Value
+end)
+
+HeadHitbox:AddSlider('HitboxXSize_Slider', {Text = 'Width', Default = 5, Min = 0, Max = 10, Rounding = 2, Suffix = "%", Compact = false}):OnChanged(function(HitboxXSize)
+XSize = HitboxXSize
+end)
+
+HeadHitbox:AddSlider('HitboxYSize_Slider', {Text = 'Height', Default = 5, Min = 0, Max = 10, Rounding = 2, Suffix = "%", Compact = false}):OnChanged(function(HitboxYSize)
+YSize = HitboxYSize
+end)
+
+HeadHitbox:AddSlider('HitboxXSize_Slider', {Text = 'Transparency', Default = 50, Min = 0, Max = 100, Rounding = 0, Suffix = "%", Compact = false}):OnChanged(function(TransparencyValue)
+HitboxTransparency = TransparencyValue / 100
+end)
+
+task.spawn(function()
+while task.wait() do
+  if HeadExtends then
+    for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
+      if i:FindFirstChild("HumanoidRootPart") and not i:FindFirstChild("HedsOn") then
+        local BigHeadsPart = Instance.new("Part")
+        BigHeadsPart.Name = "Head"
+        BigHeadsPart.Anchored = false
+        BigHeadsPart.CanCollide = false
+        BigHeadsPart.Transparency = HitboxTransparency
+        BigHeadsPart.Size = Vector3.new(XSize, YSize, ZSize)
+        local DeletePart = Instance.new("Weld")
+        DeletePart.Parent = BigHeadsPart
+        DeletePart.Name = "FAKEHEAD"
+        local HeadsParts = BigHeadsPart:Clone()
+        HeadsParts.Parent = i
+        HeadsParts.Orientation = i.HumanoidRootPart.Orientation
+        local clonedHedsOn = HedsOn:Clone()
+        clonedHedsOn.Parent = i
+        local Headswelding = Instance.new("Weld")
+        Headswelding.Parent = HeadsParts
+        Headswelding.Part0 = i.HumanoidRootPart
+        Headswelding.Part1 = HeadsParts
+        HeadsParts.Position = Vector3.new(i.HumanoidRootPart.Position.X, i.HumanoidRootPart.Position.Y - 0.6, i.HumanoidRootPart.Position.Z)
+      end
+    end
+  else
+    for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
+      if i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("HedsOn") then
+        i.HedsOn:Remove()
+        for _, a in ipairs(i:GetChildren()) do
+          if a.Name == "Head" and a:FindFirstChild("FAKEHEAD") and (not a:FindFirstChild("Nametag") or not a:FindFirstChild("Face")) then
+            a:Remove()
+          end
+        end
+      end
+    end
+  end
+end
+end)
+
+local Camera = game:GetService("Workspace").CurrentCamera
+local CrosshairTab = CrosshairTabBox:AddTab('Crosshair X')
+
+local CrossHairX = Drawing.new("Circle"), Drawing.new("Circle")
+--
+CrossHairX.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+CrossHairX.Thickness = 1
+CrossHairX.ZIndex = 3
+
+do
+  CrosshairTab:AddToggle('zCrosshairX_Toggle', {Text = 'Enable', Default = false}):AddColorPicker("eCrosshairX_Color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+  CrossHairX.Visible = Toggles.zCrosshairX_Toggle.Value
+  end)
+
+  Options.eCrosshairX_Color:OnChanged(function()
+  CrossHairX.Color = Options.eCrosshairX_Color.Value
+  end)
+
+  CrosshairTab:AddToggle('Crosshair_Filled1', {Text = 'Filled', Default = false}):OnChanged(function()
+  CrossHairX.Filled = Toggles.Crosshair_Filled1.Value
+  end)
+
+  CrosshairTab:AddSlider('Crosshair_Radius', {Text = 'Size', Suffix = "Â°", Default = 2, Min = 0, Max = 100, Rounding = 0, Compact = true}):OnChanged(function(CrosshairXRadius)
+  CrossHairX.Radius = CrosshairXRadius
+  end)
+end
+
+
+local CustomHitsoundsTabBox = Tabs.MiscellaneousTab:AddLeftTabbox('Custom Hitsounds')
+local PlayerHitsoundsTab = CustomHitsoundsTabBox:AddTab('Custom Hitsounds')
+
+--* Player Hitsounds *--
+
+SoundService.PlayerHitHeadshot.Volume = 5
+SoundService.PlayerHitHeadshot.Pitch = 1
+SoundService.PlayerHitHeadshot.EqualizerSoundEffect.HighGain = -1.5
+local sounds = {["Defualt Headshot"] = "rbxassetid://9119561046",["Defualt Body"] = "rbxassetid://9114487369",Neverlose = "rbxassetid://8726881116",Gamesense = "rbxassetid://4817809188",One = "rbxassetid://7380502345",Bell = "rbxassetid://6534947240",Rust = "rbxassetid://1255040462",TF2 = "rbxassetid://2868331684",Slime = "rbxassetid://6916371803",["Among Us"] = "rbxassetid://5700183626",Minecraft = "rbxassetid://4018616850",["CS:GO"] = "rbxassetid://6937353691",Saber = "rbxassetid://8415678813",Baimware = "rbxassetid://3124331820",Osu = "rbxassetid://7149255551",["TF2 Critical"] = "rbxassetid://296102734",Bat = "rbxassetid://3333907347",["Call of Duty"] = "rbxassetid://5952120301",Bubble = "rbxassetid://6534947588",Pick = "rbxassetid://1347140027",Pop = "rbxassetid://198598793",Bruh = "rbxassetid://4275842574",Bamboo = "rbxassetid://3769434519",Crowbar = "rbxassetid://546410481",Weeb = "rbxassetid://6442965016",Beep = "rbxassetid://8177256015",Bambi = "rbxassetid://8437203821",Stone = "rbxassetid://3581383408",["Old Fatality"] = "rbxassetid://6607142036",Click = "rbxassetid://8053704437",Ding = "rbxassetid://7149516994",Snow = "rbxassetid://6455527632",Laser = "rbxassetid://7837461331",Mario = "rbxassetid://2815207981",Steve = "rbxassetid://4965083997"}
+
+PlayerHitsoundsTab:AddToggle('Enabled_Toggle1', {Text = 'Enable', Default = false})
+
+PlayerHitsoundsTab:AddDropdown('HeadshotHit', {Values = { 'Defualt Headshot','Neverlose','Gamesense','One','Bell','Rust','TF2','Slime','Among Us','Minecraft','CS:GO','Saber','Baimware','Osu','TF2 Critical','Bat','Call of Duty','Bubble','Pick','Pop','Bruh','Bamboo','Crowbar','Weeb','Beep','Bambi','Stone','Old Fatality','Click','Ding','Snow','Laser','Mario','Steve','Snowdrake' },Default = 1, Multi = false, Text = 'Head Hitsound:'})
+Options.HeadshotHit:OnChanged(function()
+local soundId = sounds[Options.HeadshotHit.Value]
+game:GetService("SoundService").PlayerHitHeadshot.SoundId = soundId
+game:GetService("SoundService").PlayerHitHeadshot.Playing = true
+end)
+
+PlayerHitsoundsTab:AddSlider('Volume_Slider', {Text = 'volume', Default = 5, Min = 0, Max = 10, Rounding = 0, Compact = true,}):OnChanged(function(vol)
+SoundService.PlayerHitHeadshot.Volume = vol
+end)
+
+PlayerHitsoundsTab:AddSlider('Pitch_Slider', {Text = 'pitch', Default = 1, Min = 0, Max = 2, Rounding = 2, Compact = true,}):OnChanged(function(pich)
+SoundService.PlayerHitHeadshot.Pitch = pich
+end)
+
+PlayerHitsoundsTab:AddInput('HeadShotHitAssetID', {Default = "rbxassetid://9119561046",Numeric = false,Finished = true,Text = 'custom sound:',Placeholder = "rbxassetid://9119561046",}):OnChanged(function(CustomSoundID)
+SoundService.PlayerHitHeadshot.SoundId = CustomSoundID
+end)
+--
+PlayerHitsoundsTab:AddToggle('Enabled_Toggle2', {Text = 'enabled', Default = false})
+
+PlayerHitsoundsTab:AddDropdown('Hit', {Values = { 'Defualt Body','Neverlose','Gamesense','One','Bell','Rust','TF2','Slime','Among Us','Minecraft','CS:GO','Saber','Baimware','Osu','TF2 Critical','Bat','Call of Duty','Bubble','Pick','Pop','Bruh','Bamboo','Crowbar','Weeb','Beep','Bambi','Stone','Old Fatality','Click','Ding','Snow','Laser','Mario','Steve','Snowdrake' },Default = 1, Multi = false, Text = 'Body Hitsound:'})
+Options.Hit:OnChanged(function()
+local soundId = sounds[Options.Hit.Value]
+game:GetService("SoundService").PlayerHit2.SoundId = soundId
+game:GetService("SoundService").PlayerHit2.Playing = true
+end)
+
+PlayerHitsoundsTab:AddSlider('Volume_Slider', {Text = 'volume', Default = 5, Min = 0, Max = 10, Rounding = 0, Compact = true,}):OnChanged(function(vole)
+SoundService.PlayerHit2.Volume = vole
+end)
+
+PlayerHitsoundsTab:AddSlider('Pitch_Slider', {Text = 'pitch', Default = 1, Min = 0, Max = 2, Rounding = 2, Compact = true,}):OnChanged(function(piche)
+SoundService.PlayerHit2.Pitch = piche
+end)
+
+PlayerHitsoundsTab:AddInput('PlayerHitAssetID', {Default = "rbxassetid://9114487369",Numeric = false,Finished = true,Text = 'custom sound:',Placeholder = "rbxassetid://9114487369",}):OnChanged(function(CustomSoundID)
+SoundService.PlayerHit2.SoundId = CustomSoundID
+end)
+
+local XrayTabBox = Tabs.MiscellaneousTab:AddRightTabbox('xray')
+local XrayTab = XrayTabBox:AddTab('xray')
+
+--* X-Ray *--
+
+local XRayEnabled = false
+local CurrentSliderValue = 50
+XrayTab:AddToggle('Xray', {Text = 'Enable', Default = false, Tooltip}):AddKeyPicker('XRayKey', {Default = 'Non', SyncToggleState = true, Mode = 'Toggle', Text = 'X-Ray', NoUI = true}):OnChanged(function(value)
+XRayEnabled = value
+if XRayEnabled then
+for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
+  if v:FindFirstChild("Hitbox") then
+    v.Hitbox.Transparency = CurrentSliderValue
+  end
+end
+else
+for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
+  if v:FindFirstChild("Hitbox") then
+    v.Hitbox.Transparency = 0
+  end
+end
+end
+end)
+
+XrayTab:AddSlider('XrayChangerSlider', {Text = 'transparency:', Suffix = "%", Default = 50, Min = 0, Max = 100, Rounding = 0, Compact = false}):OnChanged(function(Value)
+CurrentSliderValue = Value / 100
+if XRayEnabled then
+CurrentSliderValue = Value / 100
+end
+end)
+
+local ComExtraTabBox = Tabs.MiscellaneousTab:AddLeftTabbox('extra')
+local ComExtraTab = ComExtraTabBox:AddTab('extra')
+
+--* Extra *--
+
+ComExtraTab:AddToggle('GameCrosshair_Value', {Text = 'remove in-game crosshair', Default = false}):AddColorPicker("GameCrosshair_Color", {Default = Color3.fromRGB(255,255,255)}):OnChanged(function(GameCrosshair)
+if GameCrosshair == true then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Crosshair.Visible = false
+elseif GameCrosshair == false then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Crosshair.Visible = true
+end
+end)
+
+Options.GameCrosshair_Color:OnChanged(function(CrosshairColor_Value)
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Crosshair.BackgroundColor3 = CrosshairColor_Value
+end)
+
+ComExtraTab:AddToggle('BloodSplatter', {Text = 'remove blood', Default = false}):OnChanged(function(BloodSplatter_Toggle)
+if BloodSplatter_Toggle == false then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.BloodSplatter.Visible = true
+elseif BloodSplatter_Toggle == true then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.BloodSplatter.Visible = false
+end
+end)
