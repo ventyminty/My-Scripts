@@ -179,7 +179,7 @@ function Esp:RemoveEsp(PlayerTable)
   Esp.Players[PlayerTable] = nil;
 end
 function Esp:UpdateEsp()
-  for i,v in pairs(Esp.Players) do
+  for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
     local Character = i
     local Position,OnScreen = Camera:WorldToViewportPoint(Character:GetPivot().Position);
     local scale = 1 / (Position.Z * math.tan(math.rad(Camera.FieldOfView * 0.5)) * 2) * 100;
