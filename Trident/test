@@ -231,72 +231,63 @@ end)
 
 
 
-local ArmVisTabBox = Tabs.LocalTab:AddLeftTabbox('arm visuals')
-local ArmVisTab = ArmVisTabBox:AddTab('local chams')
+local HudTabBox = Tabs.LocalTab:AddRightTabbox('Hud')
+local HudTab = HudTabBox:AddTab('Hud')
 
---* Local Chams *--
+--* Hud *--
 
-local Misc2 = {Settings = {LocalChams = false,LocalChamsColor = Color3.fromRGB(80, 77, 56),LocalChamsMaterial = "SmoothPlastic"}}
-local DeafultArm = {}
-for i,v in pairs(game:GetService("Workspace").Ignore.FPSArms:GetChildren()) do
-if v:IsA("MeshPart") then
-  DeafultArm[v] = {Color=v.Color,Material=v.Material}
+HudTab:AddToggle('AWASZnfh', {Text = "remove server info",Default = false,Tooltip = "Hides Server Info",}):OnChanged(function(Chillax1)
+if Chillax1 == true then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.ServerInfo.Visible = false
+elseif Chillax1 == false then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.ServerInfo.Visible = true
 end
+end)
+
+HudTab:AddToggle('AWAaSZasanfh', {Text = "remove server status",Default = false,Tooltip = "Hides Server Status",}):OnChanged(function(Chillax2)
+if Chillax2 == true then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.ServerStatus.Visible = false
+elseif Chillax2 == false then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.ServerStatus.Visible = true
 end
-function Functions:ArmChams()
-if Misc2.Settings.LocalChams == true then
-  for i,v in pairs(game:GetService("Workspace").Ignore.FPSArms:GetChildren()) do
-    if v.ClassName == "MeshPart" then
-      v.Color=Misc2.Settings.LocalChamsColor
-      v.Material=Enum.Material[Misc2.Settings.LocalChamsMaterial]
-    end
-  end
-else
-  for i,v in pairs(DeafultArm) do
-    i.Color=v.Color;i.Material=v.Material
-  end
-end
-end
-for i,v in pairs(game:GetService("Workspace").Ignore.FPSArms:GetChildren()) do
-v.Changed:Connect(function(Change)
-if Change ~= "CFrame" then
-  if Misc2.Settings.LocalChams == true then
-    v.Color=Misc2.Settings.LocalChamsColor
-    v.Material=Enum.Material[Misc2.Settings.LocalChamsMaterial]
-  else
-    for i,v in pairs(DeafultArm) do
-      i.Color=v.Color;i.Material=v.Material
-    end
+end)
+
+HudTab:AddToggle('GnAf', {Text = "chat visible",Default = true,Tooltip = "Hides chat )",}):OnChanged(function(HideChat)
+for I,V in pairs(getgc(true)) do
+if type(V) == "function" then
+  if debug.getinfo(V).name == "SetChatVisible" then
+    V(HideChat)
   end
 end
-end)
 end
-game:GetService("Workspace").Ignore.FPSArms.Changed:Connect(function()
-Functions:ArmChams()
 end)
 
-ArmVisTab:AddToggle('ArmChams',{Text='enabled',Default=false}):AddColorPicker('ArmChamsColor',{Default=Color3.fromRGB(208,123,255),Title='Color'})
-Toggles.ArmChams:OnChanged(function(Value)
-Misc2.Settings.LocalChams = Value
-Functions:ArmChams()
-end)
-Options.ArmChamsColor:OnChanged(function(Value)
-Misc2.Settings.LocalChamsColor = Value
+HudTab:AddLabel('energy:'):AddColorPicker('Energy_Color_Value', { Default = Color3.fromRGB(197,187,40)})
+Options.Energy_Color_Value:OnChanged(function(Energy_Color_Value)
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Vitals.EnergyFrame.Energy.BackgroundColor3 = Energy_Color_Value
 end)
 
-ArmVisTab:AddDropdown('ArmChamsMaterial',{Values={"ForceField","Neon","Ice","Glass"},Default=1,Multi=false,Text='arm material:'})
-Options.ArmChamsMaterial:OnChanged(function(Value)
-Misc2.Settings.LocalChamsMaterial = Value
+HudTab:AddLabel('health:'):AddColorPicker('Health_Color_Value', { Default = Color3.fromRGB(78,153,74)})
+Options.Health_Color_Value:OnChanged(function(Health_Color_Value)
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Vitals.HealthFrame.Health.BackgroundColor3 = Health_Color_Value
 end)
 
-ArmVisTab:AddInput('', {Default = 'rbxassetid://11414633855', Numeric = false, Finished = true, Text = 'Texture ID:', Placeholder = 'rbxassetid://...'}):OnChanged(function(TextureID)
-game:GetService("Workspace").Ignore.FPSArms.LeftUpperArm.TextureID = TextureID
-game:GetService("Workspace").Ignore.FPSArms.LeftLowerArm.TextureID = TextureID
-game:GetService("Workspace").Ignore.FPSArms.LeftHand.TextureID = TextureID
-game:GetService("Workspace").Ignore.FPSArms.RightUpperArm.TextureID = TextureID
-game:GetService("Workspace").Ignore.FPSArms.RightLowerArm.TextureID = TextureID
-game:GetService("Workspace").Ignore.FPSArms.RightHand.TextureID = TextureID
+HudTab:AddLabel('ammo:'):AddColorPicker('Ammo_Color_Value', { Default = Color3.fromRGB(255,255,255)})
+Options.Ammo_Color_Value:OnChanged(function(Ammo_Color_Value)
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.BottomCenter.Ammo.TextColor3 = Ammo_Color_Value
 end)
+
+HudTab:AddSlider('Vitals_Transparency', {Text = 'vitals transparency', Suffix = "%", Default = 10, Min = 0, Max = 100, Rounding = 0, Compact = true}):OnChanged(function(VitalsTransparency)
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Vitals.EnergyFrame.Energy.BackgroundTransparency = VitalsTransparency / 100
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Vitals.HealthFrame.Health.BackgroundTransparency = VitalsTransparency / 100
+end)
+
+HudTab:AddSlider('Background_Transparency', {Text = 'inventory transparency', Suffix = "%", Default = 70, Min = 0, Max = 100, Rounding = 0, Compact = true}):OnChanged(function(InventoryTransparency)
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.BottomCenter.Inventory.BackgroundTransparency = InventoryTransparency / 100
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.BottomCenter.Hotbar.BackgroundTransparency = InventoryTransparency / 100
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.BottomCenter.Armor.BackgroundTransparency = InventoryTransparency / 100
+end)
+
 
 
 
