@@ -230,6 +230,147 @@ end
 end)
 
 
+local CustomSkyTabBox = Tabs.WorldTab:AddLeftTabbox('lighting')
+local CustomSkyTab = CustomSkyTabBox:AddTab('lighting')
+
+--* Lighting *--
+
+local LightingEnabled = nil
+
+CustomSkyTab:AddToggle('AWASZnfh', {Text = "enabled",Default = false,Tooltip = "Enables SkyTab",}):OnChanged(function(EnabledLighting)
+LightingEnabled = EnabledLighting
+end)
+
+CustomSkyTab:AddToggle('z1AWASZnfh', {Text = "remove shadows",Default = false,Tooltip = "Global Shadows On/Off",}):OnChanged(function(GlobalShadowsToggle)
+if LightingEnabled and GlobalShadowsToggle == true then
+sethiddenproperty(game:GetService("Lighting"), "GlobalShadows", false)
+elseif LightingEnabled and GlobalShadowsToggle == false then
+sethiddenproperty(game:GetService("Lighting"), "GlobalShadows", true)
+end
+end)
+
+CustomSkyTab:AddToggle('51z1AWASZnfh', {Text = "remove fog",Default = false,Tooltip = "Fog On/Off",}):OnChanged(function(RemoveFogToggle)
+if LightingEnabled and RemoveFogToggle == true then
+sethiddenproperty(game:GetService("Lighting"), "FogStart", math.huge)
+elseif LightingEnabled and RemoveFogToggle == false then
+sethiddenproperty(game:GetService("Lighting"), "FogStart", 150)
+end
+end)
+
+CustomSkyTab:AddToggle('5za1z1AWASZnfh', {Text = "remove clouds",Default = false,Tooltip = "Clouds On/Off",}):OnChanged(function(RemoveCloudsToggle)
+if LightingEnabled and RemoveCloudsToggle == true then
+sethiddenproperty(game:GetService("Workspace").Terrain.Clouds, "Enabled", false)
+elseif LightingEnabled and RemoveCloudsToggle == false then
+sethiddenproperty(game:GetService("Workspace").Terrain.Clouds, "Enabled", true)
+end
+end)
+
+CustomSkyTab:AddToggle('Grass', {Text = 'remove grass',Default = false,Tooltip = "Grass On/Off",}):OnChanged(function(GrassRemove)
+if LightingEnabled and GrassRemove == true then
+sethiddenproperty(game.Workspace.Terrain, "Decoration", false)
+elseif LightingEnabled and GrassRemove == false then
+sethiddenproperty(game.Workspace.Terrain, "Decoration", true)
+end
+end)
+
+function ToggleLeaves(Trans)
+for i,v in pairs(getrenv()._G.modules.Entity.List) do
+  if v.typ == "Tree1" or v.typ == "Tree2" then
+    v.model.Leaves.Transparency = Trans
+  end
+end
+end
+local ToggleLeavesTransparency = 0.4
+CustomSkyTab:AddToggle('Leaves', {Text = 'remove leaves', Default = false, Tooltip = "Leaves On/Off"})
+local function UpdateLeavesTransparency()
+if LightingEnabled and Toggles.Leaves.Value == true then
+  ToggleLeavesTransparency = 1
+else
+  ToggleLeavesTransparency = 0.4
+end
+end
+Toggles.Leaves:OnChanged(UpdateLeavesTransparency)
+game:GetService("RunService").Heartbeat:Connect(function()
+ToggleLeaves(ToggleLeavesTransparency)
+end)
+
+local GCEN = Color3.fromRGB(95, 100, 49)
+local GRCEND = false
+
+CustomSkyTab:AddToggle('CLRG', {Text = 'grass color', Default = true, Tooltip = "Off/On"}):AddColorPicker('ColorGrass', {Default = GCEN, Title = 'Changer Color Grass'})
+Toggles.CLRG:OnChanged(function(T)
+GRCEND = T
+game:GetService("Workspace").Terrain:SetMaterialColor(Enum.Material.Grass, T and GCEN or Color3.fromRGB(95, 100, 49))
+end)
+Options.ColorGrass:OnChanged(function(Grass1)
+if GRCEND then
+GCEN = Grass1
+game:GetService("Workspace").Terrain:SetMaterialColor(Enum.Material.Grass, Grass1)
+end
+end)
+
+local CloudsColor = Color3.fromRGB(255, 255, 255)
+local EnableCustomColor = false
+
+CustomSkyTab:AddToggle('CLRG1', {Text = 'clouds color', Default = EnableCustomColor, Tooltip = "Off/On"}):AddColorPicker('ColorGrass1', {Default = CloudsColor, Title = 'Change Clouds Color'})
+Toggles.CLRG1:OnChanged(function(T)
+EnableCustomColor = T
+game:GetService("Workspace").Terrain.Clouds.Color = T and CloudsColor or Color3.fromRGB(255, 255, 255)
+end)
+Options.ColorGrass1:OnChanged(function(NewColor)
+if LightingEnabled and EnableCustomColor then
+CloudsColor = NewColor
+game:GetService("Workspace").Terrain.Clouds.Color = NewColor
+end
+end)
+
+local Lighting = game:GetService("Lighting")
+local ColorCorrection = Lighting:FindFirstChild("ColorCorrection")
+if not ColorCorrection then
+ColorCorrection = Instance.new("ColorCorrectionEffect")
+ColorCorrection.Name = "ColorCorrection"
+ColorCorrection.Parent = Lighting
+end
+
+CustomSkyTab:AddToggle('CLRG1', {Text = 'ambient', Default = EnableCustomColor, Tooltip = "Off/On"}):AddColorPicker('ColorAmbient1', {Default = Color3.fromRGB(255, 255, 255), Title = 'Change Ambient Color'})
+Options.ColorAmbient1:OnChanged(function(NewColor2)
+sethiddenproperty(ColorCorrection, "TintColor", NewColor2)
+end)
+
+CustomSkyTab:AddSlider('Exposure_sUS', {Text = 'exposure', Suffix = "%", Default = 0, Min = -5, Max = 5, Rounding = 1, Compact = true}):OnChanged(function(ExposureValue)
+if LightingEnabled and sethiddenproperty(game:GetService("Lighting"), "ExposureCompensation", ExposureValue) then
+end
+end)
+
+CustomSkyTab:AddSlider('Saturation_sUS', {Text = 'saturation',Suffix = "%",Default = 0,Min = -5,Max = 5,Rounding = 1,Compact = true}):OnChanged(function(SaturationValue)
+if sethiddenproperty(ColorCorrection, "Saturation", SaturationValue) then
+end
+end)
+
+CustomSkyTab:AddDropdown('World_Technology', {Values = { 'Technology', 'ShadowMap', 'Voxel', 'Compatibility' },Default = 1,Multi = false,Text = 'technology:',Tooltip = 'Game Technology',}):OnChanged(function(GPHZ)
+if LightingEnabled and GPHZ == "Technology" then
+sethiddenproperty(game.Lighting, "Technology", Enum.Technology.Future)
+elseif LightingEnabled and GPHZ == "ShadowMap" then
+sethiddenproperty(game.Lighting, "Technology", Enum.Technology.ShadowMap)
+elseif LightingEnabled and GPHZ == "Voxel" then
+sethiddenproperty(game.Lighting, "Technology", Enum.Technology.Voxel)
+elseif LightingEnabled and GPHZ == "Compatibility" then
+sethiddenproperty(game.Lighting, "Technology", Enum.Technology.Compatibility)
+end
+end)
+
+local Sky = Instance.new("Sky",game:GetService("Lighting"))
+CustomSkyTab:AddDropdown('World_Skybox', {Values = { 'Default', 'Neptune', 'Among Us', 'Nebula', 'Vaporwave', 'Clouds', 'Twilight', 'DaBaby', 'Minecraft', 'Chill', 'Redshift', 'Blue Stars', 'Blue Aurora' },Default = 1,Multi = false,Text = 'custom skybox:',Tooltip = 'Sky Changer',}):OnChanged(function(World_Skybox)
+if LightingEnabled and lighting:FindFirstChild("Sky") then
+lighting.Sky.SkyboxBk = skybox_assets[World_Skybox].SkyboxBk
+lighting.Sky.SkyboxDn = skybox_assets[World_Skybox].SkyboxDn
+lighting.Sky.SkyboxFt = skybox_assets[World_Skybox].SkyboxFt
+lighting.Sky.SkyboxLf = skybox_assets[World_Skybox].SkyboxLf
+lighting.Sky.SkyboxRt = skybox_assets[World_Skybox].SkyboxRt
+lighting.Sky.SkyboxUp = skybox_assets[World_Skybox].SkyboxUp
+end
+end)
+
 
 local HudTabBox = Tabs.LocalTab:AddRightTabbox('Hud')
 local HudTab = HudTabBox:AddTab('Hud')
