@@ -173,10 +173,10 @@ Config.Esp.Box.Color = Value
 end)
 
 PlayerVisualTab:AddToggle('BoxFilled',{Text='Box Filled',Default=false}):AddColorPicker('BoxFilledColor', { Default = Color3.fromRGB(199, 172, 120), Title = 'Color', }):OnChanged(function(Value)
-Config.Esp.Box.Filled = Value
+    print(Value)
 end)
 Options.BoxFilledColor:OnChanged(function(Value)
-Config.Esp.Box.FilledColor = Value
+print(Value)
 end)
 
 PlayerVisualTab:AddToggle('CornerBox',{Text='Corner Boxes',Default=false}):AddColorPicker('CornerBoxColor', { Default = Color3.fromRGB(199, 172, 120), Title = 'Color', }):OnChanged(function(Value)
