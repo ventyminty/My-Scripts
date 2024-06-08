@@ -331,6 +331,192 @@ end
 end)
 
 
+
+local WorldEspTabBox = Tabs.WorldTab:AddRightTabbox('world esp')
+local WorldEspTab = WorldEspTabBox:AddTab('world esp')
+
+--* Player Settings *--
+
+_G.SettingsOre = {
+iron = {
+  enabled = true,
+  colour = Color3.fromRGB(199, 172, 120),
+},
+nitrate = {
+  enabled = true,
+  colour = Color3.fromRGB(248, 248, 248),
+},
+stone = {
+  enabled = true,
+  colour = Color3.fromRGB(205, 205, 205),
+},
+oreDistance = 1000,
+}
+local settings1 = _G.SettingsOre
+if settings1 == nil then
+return
+end
+
+WorldEspTab:AddToggle('iron_Toggle',{Text='enabled',Default=false})
+
+WorldEspTab:AddSlider('OreRenderDistance', {Text='distance:',Default=1000,Min=1,Max=2500,Rounding=0,Compact=false,Suffix=" studs"}):OnChanged(function(Value)
+settings1.oreDistance = Value
+end)
+
+WorldEspTab:AddToggle('iron_Toggle',{Text='iron ore',Default=false}):AddColorPicker('IronColor', { Default = Color3.fromRGB(199, 172, 120), Title = 'Color', }):OnChanged(function(Value)
+settings1.iron.enabled = Value
+end)
+Options.IronColor:OnChanged(function(Value)
+settings1.iron.colour = Value
+if settings1.iron.enabled then
+settings1.iron.enabled = false
+task.wait(0.01)
+settings1.iron.enabled = true
+end
+end)
+
+WorldEspTab:AddToggle('nitrate_Toggle',{Text='nitrate ore',Default=false}):AddColorPicker('NitrateColor', { Default = Color3.fromRGB(248, 248, 248), Title = 'Color', }):OnChanged(function(Value)
+settings1.nitrate.enabled = Value
+end)
+Options.NitrateColor:OnChanged(function(Value)
+settings1.nitrate.colour = Value
+if settings1.nitrate.enabled then
+settings1.nitrate.enabled = false
+task.wait(0.01)
+settings1.nitrate.enabled = true
+end
+end)
+
+WorldEspTab:AddToggle('stone_Toggle',{Text='stone ore',Default=false}):AddColorPicker('StoneColor', { Default = Color3.fromRGB(205, 205, 205), Title = 'Color', }):OnChanged(function(Value)
+settings1.stone.enabled = Value
+end)
+Options.StoneColor:OnChanged(function(Value)
+settings1.stone.colour = Value
+if settings1.stone.enabled then
+settings1.stone.enabled = false
+task.wait(0.01)
+settings1.stone.enabled = true
+end
+end)
+
+local Text1Font = 2
+local textoutlines = true
+local testsize = 11
+local function get_text(text, position)
+local distance = math.floor((position - workspace.Ignore.LocalCharacter.Middle.Position).Magnitude)
+local final_text = tostring(text) .. "\n[" .. tostring(distance) .. "] studs"
+return tostring(final_text)
+end
+local function worldtoviewport(position)
+local a, b = workspace.CurrentCamera:WorldToViewportPoint(position)
+return Vector2.new(a.X, a.Y), b
+end
+local function add_esp(part, text, colour, toggle)
+local drawing_text = Drawing.new("Text")
+drawing_text.Outline = textoutlines
+drawing_text.Center = true
+drawing_text.Visible = false
+drawing_text.Font = Text1Font
+drawing_text.Size = testsize
+drawing_text.Color = colour
+local rendersteploop = game:GetService("RunService").RenderStepped:connect(function()pcall(function()
+if not part:IsDescendantOf(workspace) or not settings1 then
+  table.remove(oresDebris,part)
+  drawing_text:Remove()
+  rendersteploop:Disconnect()
+end
+local part_pos = part.Position
+local screen_pos, on_screen = worldtoviewport(part_pos)
+if not on_screen then
+  drawing_text.Visible = false
+  drawing_text.Size = testsize
+  drawing_text.Outline = textoutlines
+  drawing_text.Font = Text1Font
+  rendersteploop:Disconnect()
+end
+local oreDis = (game:GetService("Workspace").Ignore.LocalCharacter:WaitForChild("Top"):GetPivot().Position-part_pos).Magnitude
+if oreDis >= settings1.oreDistance then
+  drawing_text.Visible = false
+  drawing_text.Size = testsize
+  drawing_text.Outline = textoutlines
+  drawing_text.Font = Text1Font
+  rendersteploop:Disconnect()
+end
+if text == 'Iron' and not settings1.iron.enabled then
+  drawing_text.Visible = false
+  drawing_text.Color = settings1.iron.colour
+  rendersteploop:Disconnect()
+else if text == 'Nitrate' and not settings1.nitrate.enabled then
+  drawing_text.Visible = false
+  drawing_text.Color = settings1.nitrate.colour
+  rendersteploop:Disconnect()
+else if text == 'Stone' and not settings1.stone.enabled then
+  drawing_text.Visible = false
+  drawing_text.Color = settings1.stone.colour
+  rendersteploop:Disconnect()
+end
+end
+end
+drawing_text.Visible = true
+drawing_text.Text = get_text(text, part_pos)
+drawing_text.Position = screen_pos
+drawing_text.Size = testsize
+drawing_text.Outline = textoutlines
+drawing_text.Font = Text1Font
+rendersteploop:Disconnect()
+end)
+end)
+end
+local function filter_models(v)
+if (not v:IsA("Model")) then
+return
+end
+local is_part = v:FindFirstChild("Part")
+local children = v:GetChildren()
+local child_amount = #children
+if is_part then
+if child_amount == 1 then
+add_esp(is_part, "Stone", settings1.stone.colour, settings1.stone.enabled)
+elseif child_amount == 2 then
+for _, v in pairs(children) do
+  local brickcolor = v.BrickColor
+  local is_ore = v.ClassName == "MeshPart" and v.Name == "Part"
+  if is_ore then
+    if brickcolor == BrickColor.new("Institutional white") then
+      add_esp(v, "Nitrate", settings1.nitrate.colour, settings1.nitrate.enabled)
+    elseif brickcolor == BrickColor.new("Burlap") then
+      add_esp(v, "Iron", settings1.iron.colour, settings1.iron.enabled)
+    end
+  end
+end
+end
+end
+end
+for index, model in pairs(workspace:GetChildren()) do
+filter_models(model)
+end
+workspace.ChildAdded:Connect(function(model)
+filter_models(model)
+end)
+
+WorldEspTab:AddDivider("")
+
+WorldEspTab:AddToggle('TextOutline2',{Text='text outlines',Default=true}):OnChanged(function(Value)
+textoutlines = Value
+end)
+
+WorldEspTab:AddSlider('TextSizeSlider2', {Text = 'text size:', Default = 12, Min = 1, Max = 25, Rounding = 0, Suffix = "px", Compact = false}):OnChanged(function(TextSizeValue2)
+testsize = TextSizeValue2
+end)
+
+WorldEspTab:AddDropdown('EspFont2',{Values={"0","1","2","3"},Default=3,Multi=false,Text='font:'}):OnChanged(function(Value)
+Text1Font = Value
+end)
+
+
+
+
+
 local HudTabBox = Tabs.LocalTab:AddRightTabbox('Hud')
 local HudTab = HudTabBox:AddTab('Hud')
 
