@@ -166,29 +166,27 @@ local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
 local PlayerVisualTab = PlayerVisualTabbox:AddTab('player visuals')
 local PlayerSettingsTab = PlayerVisualTabbox:AddTab('player settings')
 
-local BoxesToggle = PlayerVisualTab:AddToggle('Boxes', {Text='Boxes', Default=false}):AddColorPicker('BoxesColor', {Default=Color3.fromRGB(208, 123, 255), Title='Color'})
-BoxesToggle.ColorPicker.OnChanged:Connect(function(Value)
-    Config.Esp.Box.Color = Value
+PlayerVisualTab:AddToggle('BoxToggle',{Text='Boxes',Default=false}):AddColorPicker('BoxColor', { Default = Color3.fromRGB(199, 172, 120), Title = 'Color', }):OnChanged(function(Value)
+Config.Esp.Box.Enabled = Value
 end)
-BoxesToggle.Toggle.OnToggleChanged:Connect(function(Value)
-    Config.Esp.Box.Enabled = Value
-end)
-
-local BoxFilledToggle = PlayerVisualTab:AddToggle('BoxFilled', {Text='Filled Box', Default=false}):AddColorPicker('BoxFilledColor', {Default=Color3.fromRGB(208, 123, 255), Title='Color'})
-BoxFilledToggle.ColorPicker.OnChanged:Connect(function(Value)
-    Config.Esp.Box.FilledColor = Value
-end)
-BoxFilledToggle.Toggle.OnToggleChanged:Connect(function(Value)
-    Config.Esp.Box.Filled = Value
+Options.BoxColor:OnChanged(function(Value)
+Config.Esp.Box.Color = Value
 end)
 
-local CornerBoxesToggle = PlayerVisualTab:AddToggle('CornerBoxes', {Text='Corner Boxes', Default=false}):AddColorPicker('CornerBoxesColor', {Default=Color3.fromRGB(208, 123, 255), Title='Color'})
-CornerBoxesToggle.ColorPicker.OnChanged:Connect(function(Value)
-    Config.Esp.CornerBoxes.Color = Value
+PlayerVisualTab:AddToggle('BoxFilled',{Text='Box Filled',Default=false}):AddColorPicker('BoxFilledColor', { Default = Color3.fromRGB(199, 172, 120), Title = 'Color', }):OnChanged(function(Value)
+Config.Esp.Box.Filled = Value
 end)
-CornerBoxesToggle.Toggle.OnToggleChanged:Connect(function(Value)
-    Config.Esp.CornerBoxes.Enabled = Value
+Options.BoxFilledColor:OnChanged(function(Value)
+Config.Esp.Box.FilledColor = Value
 end)
+
+PlayerVisualTab:AddToggle('CornerBox',{Text='Corner Boxes',Default=false}):AddColorPicker('CornerBoxColor', { Default = Color3.fromRGB(199, 172, 120), Title = 'Color', }):OnChanged(function(Value)
+Config.Esp.CornerBoxes.Enabled = Value
+end)
+Options.CornerBoxColor:OnChanged(function(Value)
+Config.Esp.CornerBoxes.Color = Value
+end)
+
 
 local CrosshairTab = CrosshairTabBox:AddTab('Crosshair X')
 local CrossHairX = Drawing.new("Circle"), Drawing.new("Circle")
