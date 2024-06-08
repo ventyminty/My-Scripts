@@ -73,7 +73,6 @@ local CharacterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middl
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/BigHacker123/Library.lua/main/Library.lua'))()
 local SaveManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/addons/SaveManager.lua'))()
 local ThemeManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/BigHacker123/Library.lua/main/Theme.lua'))()
-local skybox_assets = loadstring(game:HttpGet("https://raw.githubusercontent.com/BigHacker123/skybox/main/.lua", true))()
 local Build = "Private";local Color = "#FF0000";local Ver = "v0.3b"
 local Window = Library:CreateWindow({ Size = UDim2.fromOffset(550, 610),Title = "Ethernality.<font color=\"#d17bff\">wtf</font> | ".."<font color=\""..Color.."\">"..Build.."</font>".."                      ["..Ver.."]",Center = true,AutoShow = true})
 
@@ -329,23 +328,6 @@ end)
 
 
 
-
-local CustomSkyTabBox = Tabs.WorldTab:AddLeftTabbox('lighting')
-local CustomSkyTab = CustomSkyTabBox:AddTab('lighting')
-
---* Lighting *--
-
-local Sky = Instance.new("Sky",game:GetService("Lighting"))
-CustomSkyTab:AddDropdown('World_Skybox', {Values = { 'Default', 'Neptune', 'Among Us', 'Nebula', 'Vaporwave', 'Clouds', 'Twilight', 'DaBaby', 'Minecraft', 'Chill', 'Redshift', 'Blue Stars', 'Blue Aurora' },Default = 1,Multi = false,Text = 'custom skybox:',Tooltip = 'Sky Changer',}):OnChanged(function(World_Skybox)
-if lighting:FindFirstChild("Sky") then
-lighting.Sky.SkyboxBk = skybox_assets[World_Skybox].SkyboxBk
-lighting.Sky.SkyboxDn = skybox_assets[World_Skybox].SkyboxDn
-lighting.Sky.SkyboxFt = skybox_assets[World_Skybox].SkyboxFt
-lighting.Sky.SkyboxLf = skybox_assets[World_Skybox].SkyboxLf
-lighting.Sky.SkyboxRt = skybox_assets[World_Skybox].SkyboxRt
-lighting.Sky.SkyboxUp = skybox_assets[World_Skybox].SkyboxUp
-end
-end)
 
 
 
