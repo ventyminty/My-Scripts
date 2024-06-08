@@ -94,30 +94,6 @@ while task.wait() do
 end
 end)
 
-local CrosshairTab = CrosshairTabBox:AddTab('Crosshair X')
-local CrossHairX = Drawing.new("Circle"), Drawing.new("Circle")
---
-CrossHairX.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
-CrossHairX.Thickness = 1
-CrossHairX.ZIndex = 3
-
-do
-  CrosshairTab:AddToggle('zCrosshairX_Toggle', {Text = 'Enable', Default = false}):AddColorPicker("eCrosshairX_Color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-  CrossHairX.Visible = Toggles.zCrosshairX_Toggle.Value
-  end)
-
-  Options.eCrosshairX_Color:OnChanged(function()
-  CrossHairX.Color = Options.eCrosshairX_Color.Value
-  end)
-
-  CrosshairTab:AddToggle('Crosshair_Filled1', {Text = 'Filled', Default = false}):OnChanged(function()
-  CrossHairX.Filled = Toggles.Crosshair_Filled1.Value
-  end)
-
-  CrosshairTab:AddSlider('Crosshair_Radius', {Text = 'Size', Suffix = "°", Default = 2, Min = 0, Max = 100, Rounding = 0, Compact = true}):OnChanged(function(CrosshairXRadius)
-  CrossHairX.Radius = CrosshairXRadius
-  end)
-end
 
 
 local CustomHitsoundsTabBox = Tabs.MiscellaneousTab:AddLeftTabbox('Custom Hitsounds')
