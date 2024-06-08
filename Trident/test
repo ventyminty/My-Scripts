@@ -183,7 +183,7 @@ Toggles.BoxFilled:OnChanged(function(Value)
 end)
 
 PlayerVisualTab:AddToggle('CornerBoxes',{Text='Corner Boxes',Default=false}):AddColorPicker('CornerBoxesColor',{Default=Color3.fromRGB(208, 123, 255),Title='Color'})
-Options.CornerBoxes:OnChanged(function(Value)
+Options.CornerBoxesColor:OnChanged(function(Value)
 Config.Esp.Box.Color = Value
 end)
 Toggles.CornerBoxes:OnChanged(function(Value)
