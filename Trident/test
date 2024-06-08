@@ -1,7 +1,73 @@
 
+
+local Config = {
+    Esp = {
+        Box = {
+            Enabled = false,
+            FilledColor = Color3.fromRGB(255, 0, 255),
+            Filled = false,
+            FilledTransparency = 0,
+            Color = Color3.fromRGB(255, 0, 255),
+        },
+        Tracer = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 255, 255),
+        },
+        Sleeper = {
+            Enabled = false,
+            Text = "Sleeping",
+            Color = Color3.fromRGB(255, 255, 255),
+            Size = 7
+        },
+        Armor = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 255, 255),
+            Size = 7
+        },
+        Distance = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 0, 255),
+            Size = 7
+        },
+        Name = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 0, 255),
+            Size = 7,
+            Outline = false,
+        },
+        ViewAngle = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 0, 255),
+        },
+        CornerBoxes = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 255, 255),
+            Size = 5,
+            Thickness = 0,
+        },
+        Health = {
+            Enabled = false,
+            LowColor = Color3.fromRGB(255, 0, 255),
+            HightColor = Color3.fromRGB(0, 0, 255),
+        },
+        Skeleton = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 255, 255),
+        },
+        Tool = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 255, 255),
+            Outline = false,
+            Size = 10,
+        },
+    },
+}
+
 local Camera = game:GetService("Workspace").CurrentCamera
 local Cam = game:GetService("Workspace").CurrentCamera
 local SoundService = game:GetService("SoundService")
+local Plr = game:GetService("Players").LocalPlayer
+local CharacterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middle
 
 
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/BigHacker123/Library.lua/main/Library.lua'))()
@@ -95,6 +161,34 @@ task.spawn(function()
   end
   end)
   
+
+local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
+local PlayerVisualTab = PlayerVisualTabbox:AddTab('player visuals')
+local PlayerSettingsTab = PlayerVisualTabbox:AddTab('player settings')
+
+PlayerVisualTab:AddToggle('Boxes',{Text='Boxes',Default=false}):AddColorPicker('BoxesColor',{Default=Color3.fromRGB(208, 123, 255),Title='Color'})
+Options.BoxesColor:OnChanged(function(Value)
+Config.Esp.Box.Color = Value
+end)
+Toggles.Boxes:OnChanged(function(Value)
+Config.Esp.Box.Enabled = Value
+end)
+
+PlayerVisualTab:AddToggle('BoxFilled',{Text='Filled Box',Default=false}):AddColorPicker('BoxFilledColor',{Default=Color3.fromRGB(208, 123, 255),Title='Color'})
+Options.BoxFilledColor:OnChanged(function(Value)
+    Config.Esp.Box.FilledColor = Value
+end)
+Toggles.BoxFilled:OnChanged(function(Value)
+    Config.Esp.Box.Filled = Value
+end)
+
+PlayerVisualTab:AddToggle('CornerBoxes',{Text='Corner Boxes',Default=false}):AddColorPicker('CornerBoxesColor',{Default=Color3.fromRGB(208, 123, 255),Title='Color'})
+Options.CornerBoxes:OnChanged(function(Value)
+Config.Esp.Box.Color = Value
+end)
+Toggles.CornerBoxes:OnChanged(function(Value)
+Config.Esp.CornerBoxes.Enabled = Value
+end)
 
 local CrosshairTab = CrosshairTabBox:AddTab('Crosshair X')
 local CrossHairX = Drawing.new("Circle"), Drawing.new("Circle")
@@ -581,3 +675,433 @@ Library:Notify(("Script [Loaded] In - "..tostring(Time).."s"), 15)
 
 --Wrapping function - needed to unload(Keep at end of script)
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EIOlmqV6v1owgJBEoqj5lK9p01SFE2THpxcOnvX/LinoriaBurnEdition/main/LoaderManager.lua'))
+
+
+
+function Calculate_Magnitude(t)
+    local Distance = CharacterMiddle:GetPivot().Position - t:GetPivot().Position
+    local Index = tostring(Distance):find("%.")
+    local Return = tonumber(string.sub(tostring(Distance), 1, Index - 1))
+    return Return
+end
+
+function CreateEsp(Player)
+    local Box = Drawing.new("Square")
+    local BoxFilled = Drawing.new("Square")
+    local Tracer = Drawing.new("Line")
+    local Sleeper = Drawing.new("Text")
+    local Armor = Drawing.new("Text")
+    local Distance = Drawing.new("Text")
+    local Name = Drawing.new("Text")
+    local ViewAngle = Drawing.new("Line")
+    local Tool = Drawing.new("Text")
+
+    
+    local CornerBoxes2 = {
+        Line1 = Drawing.new("Line"),
+        Line2 = Drawing.new("Line"),
+        Line3 = Drawing.new("Line"),
+        Line4 = Drawing.new("Line"),
+        Line5 = Drawing.new("Line"),
+        Line6 = Drawing.new("Line"),
+        Line7 = Drawing.new("Line"),
+        Line8 = Drawing.new("Line"),
+    }
+
+            
+    local Skeleton = {
+        Line1 = Drawing.new("Line"),
+        Line2 = Drawing.new("Line"),
+        Line3 = Drawing.new("Line"),
+        Line4 = Drawing.new("Line"),
+        Line5 = Drawing.new("Line"),
+        Line6 = Drawing.new("Line"),
+        Line7 = Drawing.new("Line"),
+        Line8 = Drawing.new("Line"),
+        Line9 = Drawing.new("Line"),
+        Line10 = Drawing.new("Line"),
+        Line11 = Drawing.new("Line"),
+        Line12 = Drawing.new("Line"),
+        Line13 = Drawing.new("Line"),
+    }
+
+    local esp = {
+        health = Drawing.new("Line"),
+        healthOutline = Drawing.new("Line"),
+    }
+
+
+
+
+    local Updater
+
+    Updater = game:GetService("RunService").RenderStepped:Connect(function()
+        if Player and Player:FindFirstChild("HumanoidRootPart") and Player:FindFirstChild("Head") then
+            local rootPart = Player:FindFirstChild("HumanoidRootPart")
+            local head = Player:FindFirstChild("Head")
+            local Position,OnScreen = Camera:WorldToViewportPoint(Player:GetPivot().Position);
+            local hrp2D = Camera:WorldToViewportPoint(rootPart.Position)
+            local charSize = (Camera:WorldToViewportPoint(rootPart.Position - Vector3.new(0, 3, 0)).Y - Camera:WorldToViewportPoint(rootPart.Position + Vector3.new(0, 2.6, 0)).Y) / 2
+            local boxSize = Vector2.new(math.floor(charSize * 1.8), math.floor(charSize * 1.9))
+            local boxPosition = Vector2.new(math.floor(hrp2D.X - charSize * 1.8 / 2), math.floor(hrp2D.Y - charSize * 1.6 / 2))
+            local Target2dPosition, IsVisible = Camera:WorldToViewportPoint(Player.HumanoidRootPart.Position)
+            local scale_factor = 1 / (Target2dPosition.Z * math.tan(math.rad(Camera.FieldOfView * 0.5)) * 2) * 90
+            local width, height = math.floor(38.4 * scale_factor), math.floor(63 * scale_factor)
+            local scale = 1 / (Position.Z * math.tan(math.rad(Camera.FieldOfView * 0.5)) * 1.25) * 72;
+            local w,h = math.floor(42 * scale), math.floor(72 * scale);
+            local vec1, onscreen = Camera:WorldToViewportPoint(Player.Head.Position)
+            local vec2, onscreen = Camera:WorldToViewportPoint(Player.LowerTorso.Position)
+            local vec3, onscreen = Camera:WorldToViewportPoint(Player.Torso.Position)
+            local vec4, onscreen = Camera:WorldToViewportPoint(Player.LeftUpperArm.Position)
+            local vec5, onscreen = Camera:WorldToViewportPoint(Player.LeftLowerArm.Position)
+            local vec6, onscreen = Camera:WorldToViewportPoint(Player.LeftHand.Position)
+            local vec7, onscreen = Camera:WorldToViewportPoint(Player.RightUpperArm.Position)
+            local vec8, onscreen = Camera:WorldToViewportPoint(Player.RightLowerArm.Position)
+            local vec9, onscreen = Camera:WorldToViewportPoint(Player.RightHand.Position)
+            local vec10, onscreen = Camera:WorldToViewportPoint(Player.LeftUpperLeg.Position)
+            local vec11, onscreen = Camera:WorldToViewportPoint(Player.LeftLowerLeg.Position) 
+            local vec12, onscreen = Camera:WorldToViewportPoint(Player.LeftFoot.Position)
+            local vec13, onscreen = Camera:WorldToViewportPoint(Player.RightUpperLeg.Position)
+            local vec14, onscreen = Camera:WorldToViewportPoint(Player.RightLowerLeg.Position)
+            local vec15, onscreen = Camera:WorldToViewportPoint(Player.RightFoot.Position)
+            local x, y = math.floor(Position.X), math.floor(Position.Y);
+
+            local SkateToolName = "None"
+            if Config.Esp.Tool.Enabled then
+                local ReplicatedStorage = game:GetService("ReplicatedStorage")
+                local HandModels = ReplicatedStorage:FindFirstChild("HandModels")
+                local integredantsTable = {}
+            
+                if HandModels then
+                    for _, model in pairs(HandModels:GetChildren()) do
+                        local itemName = model.Name
+                        local items = {}
+                        for _, item in pairs(model:GetChildren()) do
+                            table.insert(items, item.Name)
+                        end
+                        table.insert(integredantsTable, {itemName = itemName, items = items})
+                    end
+                end
+            
+                local handModelFound = false
+            
+                for _, child in pairs(Player:GetChildren()) do
+                    if child.Name == "HandModel" then
+                        handModelFound = true
+                        local matchedItems = {}
+                        for _, item in pairs(child:GetChildren()) do
+                            table.insert(matchedItems, item.Name)
+                        end
+            
+                        for _, integredant in pairs(integredantsTable) do
+                            local allMatch = true
+                            for _, itemNameModel in pairs(integredant.items) do
+                                if not table.find(matchedItems, itemNameModel) then
+                                    allMatch = false
+                                    break
+                                end
+                            end
+            
+                            if allMatch then
+                                SkateToolName = integredant.itemName
+                            end
+                        end
+                    end
+                end
+            
+                Tool.Size = Config.Esp.Tool.Size
+                Tool.Visible = IsVisible
+                Tool.Center = true
+                Tool.Outline = Config.Esp.Tool.Outline
+                Tool.Text = SkateToolName
+                Tool.Color = Config.Esp.Tool.Color
+                Tool.Position = Vector2.new(boxSize.X / 2 + boxPosition.X, boxPosition.Y - 20)
+            else
+                Tool.Visible = false
+            end
+            
+
+
+            if Config.Esp.Skeleton.Enabled then
+                Skeleton.Line1.From = Vector2.new(vec1.X, vec1.Y)
+                Skeleton.Line1.To = Vector2.new(vec2.X, vec2.Y)
+                Skeleton.Line1.Color = Config.Esp.Skeleton.Color
+
+                Skeleton.Line2.From = Vector2.new(vec3.X, vec3.Y)
+                Skeleton.Line2.To = Vector2.new(vec4.X, vec4.Y)
+                Skeleton.Line2.Color = Config.Esp.Skeleton.Color
+
+                Skeleton.Line3.From = Vector2.new(vec4.X, vec4.Y)
+                Skeleton.Line3.To = Vector2.new(vec5.X, vec5.Y + 3)
+                Skeleton.Line3.Color = Config.Esp.Skeleton.Color
+
+                Skeleton.Line4.From = Vector2.new(vec5.X, vec5.Y)
+                Skeleton.Line4.To = Vector2.new(vec6.X, vec6.Y)
+                Skeleton.Line4.Color = Config.Esp.Skeleton.Color
+
+                Skeleton.Line5.From = Vector2.new(vec3.X, vec3.Y)
+                Skeleton.Line5.To = Vector2.new(vec7.X, vec7.Y)
+                Skeleton.Line5.Color = Config.Esp.Skeleton.Color
+
+                Skeleton.Line6.From = Vector2.new(vec7.X, vec7.Y)
+                Skeleton.Line6.To = Vector2.new(vec8.X, vec8.Y)
+                Skeleton.Line6.Color = Config.Esp.Skeleton.Color
+
+                Skeleton.Line7.From = Vector2.new(vec8.X, vec8.Y)
+                Skeleton.Line7.To = Vector2.new(vec9.X, vec9.Y)
+                Skeleton.Line7.Color = Config.Esp.Skeleton.Color
+
+                Skeleton.Line8.From = Vector2.new(vec2.X, vec2.Y)
+                Skeleton.Line8.To = Vector2.new(vec10.X, vec10.Y)
+                Skeleton.Line8.Color = Config.Esp.Skeleton.Color
+
+                Skeleton.Line9.From = Vector2.new(vec10.X, vec10.Y)
+                Skeleton.Line9.To = Vector2.new(vec11.X, vec11.Y)
+                Skeleton.Line9.Color = Config.Esp.Skeleton.Color
+
+                Skeleton.Line10.From = Vector2.new(vec11.X, vec11.Y)
+                Skeleton.Line10.To = Vector2.new(vec12.X, vec12.Y)
+                Skeleton.Line10.Color = Config.Esp.Skeleton.Color
+
+                Skeleton.Line11.From = Vector2.new(vec2.X, vec2.Y)
+                Skeleton.Line11.To = Vector2.new(vec13.X, vec13.Y)
+                Skeleton.Line11.Color = Config.Esp.Skeleton.Color
+            
+                Skeleton.Line12.From = Vector2.new(vec13.X, vec13.Y)
+                Skeleton.Line12.To = Vector2.new(vec14.X, vec14.Y)
+                Skeleton.Line12.Color = Config.Esp.Skeleton.Color
+            
+                Skeleton.Line13.From = Vector2.new(vec14.X, vec14.Y)
+                Skeleton.Line13.To = Vector2.new(vec15.X, vec15.Y)
+                Skeleton.Line13.Color = Config.Esp.Skeleton.Color
+
+                  
+                for _, line in pairs(Skeleton) do
+                    line.Visible = onscreen
+                end
+            else
+                for _, line in pairs(Skeleton) do
+                    line.Visible = false
+                end
+            end
+
+
+
+            if Config.Esp.CornerBoxes.Enabled then
+                local lineW = (boxSize.X / 5)
+                local lineH = (boxSize.Y / 6)
+                local lineT = 1
+
+                -- sol üst
+                CornerBoxes2.Line1.From = Vector2.new(boxPosition.X, boxPosition.Y)
+                CornerBoxes2.Line1.To = Vector2.new(boxPosition.X, boxPosition.Y + lineH)
+                CornerBoxes2.Line1.Color = Config.Esp.CornerBoxes.Color
+
+                CornerBoxes2.Line2.From = Vector2.new(boxPosition.X, boxPosition.Y)
+                CornerBoxes2.Line2.To = Vector2.new(boxPosition.X + lineW, boxPosition.Y)
+                CornerBoxes2.Line2.Color = Config.Esp.CornerBoxes.Color
+
+                -- sağ üst
+                CornerBoxes2.Line3.From = Vector2.new(boxPosition.X + boxSize.X - lineW, boxPosition.Y)
+                CornerBoxes2.Line3.To = Vector2.new(boxPosition.X + boxSize.X, boxPosition.Y)
+                CornerBoxes2.Line3.Color = Config.Esp.CornerBoxes.Color
+
+                CornerBoxes2.Line4.From = Vector2.new(boxPosition.X + boxSize.X, boxPosition.Y)
+                CornerBoxes2.Line4.To = Vector2.new(boxPosition.X + boxSize.X, boxPosition.Y + lineH)
+                CornerBoxes2.Line4.Color = Config.Esp.CornerBoxes.Color
+
+                -- sol alt
+                CornerBoxes2.Line5.From = Vector2.new(boxPosition.X, boxPosition.Y + boxSize.Y - lineH)
+                CornerBoxes2.Line5.To = Vector2.new(boxPosition.X, boxPosition.Y + boxSize.Y)
+                CornerBoxes2.Line5.Color = Config.Esp.CornerBoxes.Color
+
+                CornerBoxes2.Line6.From = Vector2.new(boxPosition.X, boxPosition.Y + boxSize.Y)
+                CornerBoxes2.Line6.To = Vector2.new(boxPosition.X + lineW, boxPosition.Y + boxSize.Y)
+                CornerBoxes2.Line6.Color = Config.Esp.CornerBoxes.Color
+
+                -- sağ alt
+                CornerBoxes2.Line7.From = Vector2.new(boxPosition.X + boxSize.X - lineW, boxPosition.Y + boxSize.Y)
+                CornerBoxes2.Line7.To = Vector2.new(boxPosition.X + boxSize.X, boxPosition.Y + boxSize.Y)
+                CornerBoxes2.Line7.Color = Config.Esp.CornerBoxes.Color
+
+                CornerBoxes2.Line8.From = Vector2.new(boxPosition.X + boxSize.X, boxPosition.Y + boxSize.Y - lineH)
+                CornerBoxes2.Line8.To = Vector2.new(boxPosition.X + boxSize.X, boxPosition.Y + boxSize.Y)
+                CornerBoxes2.Line8.Color = Config.Esp.CornerBoxes.Color
+
+                for _, line in pairs(CornerBoxes2) do
+                    line.Visible = IsVisible
+                end
+            else
+                for _, line in pairs(CornerBoxes2) do
+                    line.Visible = false
+                end
+            end
+
+            if Config.Esp.Box.Enabled then
+                Box.Size = boxSize
+                Box.Position = boxPosition
+                Box.Color = Config.Esp.Box.Color
+                Box.Visible = true
+                BoxFilled.Filled = false
+                else
+                Box.Visible = false
+            end
+
+            if Config.Esp.Box.Filled then
+                BoxFilled.Visible = IsVisible
+                BoxFilled.Color = Config.Esp.Box.FilledColor
+                BoxFilled.Transparency = Config.Esp.Box.FilledTransparency
+                BoxFilled.Size = boxSize
+                BoxFilled.Position = boxPosition
+                BoxFilled.Filled = true
+                else
+                BoxFilled.Visible = false
+            end
+
+            if Config.Esp.Name.Enabled then
+                local NameTag = Player.Head:FindFirstChild("Nametag")
+                local Tag = "Player"
+                if NameTag.tag.Text == "" then
+                    Tag = "Player"
+                else
+                    Tag = NameTag.tag.Text
+                end
+                Name.Size = Config.Esp.Name.Size
+                Name.Visible = IsVisible
+                Name.Center = true
+                Name.Outline = Config.Esp.Name.Outline
+                Name.Text = Tag
+                Name.Color = Config.Esp.Name.Color
+                Name.Position = Vector2.new(x, math.floor(y - h * 0.5 - Name.TextBounds.Y))
+            else
+                Name.Visible = false
+            end
+
+            local isPlayingAnimation = false
+            if Player:FindFirstChild("AnimationController") then
+                for _, v in pairs(Player.AnimationController:GetPlayingAnimationTracks()) do
+                    if v.Animation.AnimationId == "rbxassetid://13280887764" then
+                        isPlayingAnimation = true
+                        break
+                    end
+                end
+            end
+
+            if Config.Esp.Sleeper.Enabled and isPlayingAnimation then
+                Sleeper.Size = Config.Esp.Sleeper.Size
+                Sleeper.Visible = IsVisible
+                Sleeper.Center = true
+                Sleeper.Outline = false
+                Sleeper.Text = Config.Esp.Sleeper.Text
+                Sleeper.Color = Config.Esp.Sleeper.Color
+                Sleeper.Position = Vector2.new(Target2dPosition.X, Target2dPosition.Y - height / 2 - 16)
+            else
+                Sleeper.Visible = false
+            end
+
+            if Config.Esp.Armor.Enabled then
+                local ArmorFolder = Player:FindFirstChild("Armor")
+                if ArmorFolder then
+                    local armorText = ""
+                    for _, armorItem in pairs(ArmorFolder:GetChildren()) do
+                        armorText = armorText .. armorItem.Name .. "\n"
+                    end
+                    Armor.Size = Config.Esp.Armor.Size
+                    Armor.Visible = IsVisible
+                    Armor.Center = true
+                    Armor.Outline = false
+                    Armor.Text = armorText
+                    Armor.Color = Config.Esp.Armor.Color
+                    Armor.Position = Vector2.new(Target2dPosition.X, Target2dPosition.Y + height / 2)
+                end
+            else
+                Armor.Visible = false
+            end
+
+            if Config.Esp.Tracer.Enabled then
+                Tracer.Visible = IsVisible
+                Tracer.Color = Config.Esp.Tracer.Color
+                Tracer.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 1)
+                Tracer.To = Vector2.new(Target2dPosition.X, Target2dPosition.Y)
+            else
+                Tracer.Visible = false
+            end
+
+            if Config.Esp.Distance.Enabled then
+                Distance.Size = Config.Esp.Distance.Size
+                Distance.Visible = IsVisible
+                Distance.Center = true
+                Distance.Outline = true
+                Distance.Text = tostring("[" .. math.floor(Calculate_Magnitude(Player))) .. "]"
+                Distance.Color = Config.Esp.Distance.Color
+                Distance.Position = Vector2.new(x, math.floor(y - h * 0.6)+Distance.TextBounds.Y)
+            else
+                Distance.Visible = false
+            end
+
+            if Config.Esp.ViewAngle.Enabled then
+                local Head = Player:FindFirstChild("Head")
+                local headpos = Camera:WorldToViewportPoint(Head.Position)
+                local offsetCFrame = CFrame.new(0, 0, -4)
+                local dir = Player.Head.CFrame:ToWorldSpace(offsetCFrame)
+                offsetCFrame = offsetCFrame * CFrame.new(0, 0, 0.4)
+                local dirpos = Camera:WorldToViewportPoint(Vector3.new(dir.X, dir.Y, dir.Z))
+                ViewAngle.Visible = IsVisible
+                ViewAngle.Color = Config.Esp.ViewAngle.Color
+                ViewAngle.From = Vector2.new(headpos.X, headpos.Y)
+                ViewAngle.To = Vector2.new(dirpos.X, dirpos.Y)
+                else
+                ViewAngle.Visible = false
+            end
+        else
+            Tool.Visible = false
+            Box.Visible = false
+            BoxFilled.Visible = false
+            Tracer.Visible = false
+            Sleeper.Visible = false
+            Armor.Visible = false
+            Distance.Visible = false
+            Name.Visible = false
+            ViewAngle.Visible = false
+            for _, line in pairs(CornerBoxes2) do
+                line.Visible = false
+            end
+        
+            for _, line in pairs(Skeleton) do
+                line.Visible = false
+            end
+
+            if not Player then
+                Tool:Remove()
+                Box:Remove()
+                BoxFilled:Remove()
+                Tracer:Remove()
+                Sleeper:Remove()
+                Armor:Remove()
+                Distance:Remove()
+                Name:Remove()
+                ViewAngle:Remove()
+                for _, line in pairs(CornerBoxes2) do
+                    line:Remove()
+                end
+
+                for _, line in pairs(Skeleton) do
+                    line:Remove()
+                end
+
+            end
+        end
+    end)
+end
+
+for _, i in pairs(game:GetService("Workspace"):GetChildren()) do
+    if i ~= game.Players.LocalPlayer.Character and i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("Head") then
+        CreateEsp(i)
+    end
+end
+
+game.Workspace.DescendantAdded:Connect(function(i)
+    if i ~= game.Players.LocalPlayer.Character and i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("Head") then
+        CreateEsp(i)
+    end
+end)    
