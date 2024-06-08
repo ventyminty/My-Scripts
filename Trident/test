@@ -54,6 +54,48 @@ HeadHitbox:AddSlider('HitboxXSize_Slider', {Text = 'Transparency', Default = 50,
 HitboxTransparency = TransparencyValue / 100
 end)
 
+task.spawn(function()
+  while task.wait() do
+    if HeadExtends then
+      for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
+        if i:FindFirstChild("HumanoidRootPart") and not i:FindFirstChild("HedsOn") then
+          local BigHeadsPart = Instance.new("Part")
+          BigHeadsPart.Name = "Head"
+          BigHeadsPart.Anchored = false
+          BigHeadsPart.CanCollide = false
+          BigHeadsPart.Transparency = HitboxTransparency
+          BigHeadsPart.Size = Vector3.new(XSize, YSize, ZSize)
+          local DeletePart = Instance.new("Weld")
+          DeletePart.Parent = BigHeadsPart
+          DeletePart.Name = "FAKEHEAD"
+          local HeadsParts = BigHeadsPart:Clone()
+          HeadsParts.Parent = i
+          HeadsParts.Orientation = i.HumanoidRootPart.Orientation
+          local clonedHedsOn = HedsOn:Clone()
+          clonedHedsOn.Parent = i
+          local Headswelding = Instance.new("Weld")
+          Headswelding.Parent = HeadsParts
+          Headswelding.Part0 = i.HumanoidRootPart
+          Headswelding.Part1 = HeadsParts
+          HeadsParts.Position = Vector3.new(i.HumanoidRootPart.Position.X, i.HumanoidRootPart.Position.Y - 0.6, i.HumanoidRootPart.Position.Z)
+        end
+      end
+    else
+      for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
+        if i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("HedsOn") then
+          i.HedsOn:Remove()
+          for _, a in ipairs(i:GetChildren()) do
+            if a.Name == "Head" and a:FindFirstChild("FAKEHEAD") and (not a:FindFirstChild("Nametag") or not a:FindFirstChild("Face")) then
+              a:Remove()
+            end
+          end
+        end
+      end
+    end
+  end
+  end)
+  
+
 local CrosshairTab = CrosshairTabBox:AddTab('Crosshair X')
 local CrossHairX = Drawing.new("Circle"), Drawing.new("Circle")
 --
@@ -193,109 +235,6 @@ local CustomSkyTabBox = Tabs.WorldTab:AddLeftTabbox('lighting')
 local CustomSkyTab = CustomSkyTabBox:AddTab('lighting')
 
 --* Lighting *--
-
-local LightingEnabled = nil
-
-CustomSkyTab:AddToggle('AWASZnfh', {Text = "enabled",Default = false,Tooltip = "Enables SkyTab",}):OnChanged(function(EnabledLighting)
-LightingEnabled = EnabledLighting
-end)
-
-CustomSkyTab:AddToggle('z1AWASZnfh', {Text = "remove shadows",Default = false,Tooltip = "Global Shadows On/Off",}):OnChanged(function(GlobalShadowsToggle)
-if LightingEnabled and GlobalShadowsToggle == true then
-sethiddenproperty(game:GetService("Lighting"), "GlobalShadows", false)
-elseif LightingEnabled and GlobalShadowsToggle == false then
-sethiddenproperty(game:GetService("Lighting"), "GlobalShadows", true)
-end
-end)
-
-CustomSkyTab:AddToggle('51z1AWASZnfh', {Text = "remove fog",Default = false,Tooltip = "Fog On/Off",}):OnChanged(function(RemoveFogToggle)
-if LightingEnabled and RemoveFogToggle == true then
-sethiddenproperty(game:GetService("Lighting"), "FogStart", math.huge)
-elseif LightingEnabled and RemoveFogToggle == false then
-sethiddenproperty(game:GetService("Lighting"), "FogStart", 150)
-end
-end)
-
-CustomSkyTab:AddToggle('5za1z1AWASZnfh', {Text = "remove clouds",Default = false,Tooltip = "Clouds On/Off",}):OnChanged(function(RemoveCloudsToggle)
-if LightingEnabled and RemoveCloudsToggle == true then
-sethiddenproperty(game:GetService("Workspace").Terrain.Clouds, "Enabled", false)
-elseif LightingEnabled and RemoveCloudsToggle == false then
-sethiddenproperty(game:GetService("Workspace").Terrain.Clouds, "Enabled", true)
-end
-end)
-
-CustomSkyTab:AddToggle('Grass', {Text = 'remove grass',Default = false,Tooltip = "Grass On/Off",}):OnChanged(function(GrassRemove)
-if LightingEnabled and GrassRemove == true then
-sethiddenproperty(game.Workspace.Terrain, "Decoration", false)
-elseif LightingEnabled and GrassRemove == false then
-sethiddenproperty(game.Workspace.Terrain, "Decoration", true)
-end
-end)
-
-local GCEN = Color3.fromRGB(95, 100, 49)
-local GRCEND = false
-
-CustomSkyTab:AddToggle('CLRG', {Text = 'grass color', Default = true, Tooltip = "Off/On"}):AddColorPicker('ColorGrass', {Default = GCEN, Title = 'Changer Color Grass'})
-Toggles.CLRG:OnChanged(function(T)
-GRCEND = T
-game:GetService("Workspace").Terrain:SetMaterialColor(Enum.Material.Grass, T and GCEN or Color3.fromRGB(95, 100, 49))
-end)
-Options.ColorGrass:OnChanged(function(Grass1)
-if GRCEND then
-GCEN = Grass1
-game:GetService("Workspace").Terrain:SetMaterialColor(Enum.Material.Grass, Grass1)
-end
-end)
-
-local CloudsColor = Color3.fromRGB(255, 255, 255)
-local EnableCustomColor = false
-
-CustomSkyTab:AddToggle('CLRG1', {Text = 'clouds color', Default = EnableCustomColor, Tooltip = "Off/On"}):AddColorPicker('ColorGrass1', {Default = CloudsColor, Title = 'Change Clouds Color'})
-Toggles.CLRG1:OnChanged(function(T)
-EnableCustomColor = T
-game:GetService("Workspace").Terrain.Clouds.Color = T and CloudsColor or Color3.fromRGB(255, 255, 255)
-end)
-Options.ColorGrass1:OnChanged(function(NewColor)
-if LightingEnabled and EnableCustomColor then
-CloudsColor = NewColor
-game:GetService("Workspace").Terrain.Clouds.Color = NewColor
-end
-end)
-
-local Lighting = game:GetService("Lighting")
-local ColorCorrection = Lighting:FindFirstChild("ColorCorrection")
-if not ColorCorrection then
-ColorCorrection = Instance.new("ColorCorrectionEffect")
-ColorCorrection.Name = "ColorCorrection"
-ColorCorrection.Parent = Lighting
-end
-
-CustomSkyTab:AddToggle('CLRG1', {Text = 'ambient', Default = EnableCustomColor, Tooltip = "Off/On"}):AddColorPicker('ColorAmbient1', {Default = Color3.fromRGB(255, 255, 255), Title = 'Change Ambient Color'})
-Options.ColorAmbient1:OnChanged(function(NewColor2)
-sethiddenproperty(ColorCorrection, "TintColor", NewColor2)
-end)
-
-CustomSkyTab:AddSlider('Exposure_sUS', {Text = 'exposure', Suffix = "%", Default = 0, Min = -5, Max = 5, Rounding = 1, Compact = true}):OnChanged(function(ExposureValue)
-if LightingEnabled and sethiddenproperty(game:GetService("Lighting"), "ExposureCompensation", ExposureValue) then
-end
-end)
-
-CustomSkyTab:AddSlider('Saturation_sUS', {Text = 'saturation',Suffix = "%",Default = 0,Min = -5,Max = 5,Rounding = 1,Compact = true}):OnChanged(function(SaturationValue)
-if sethiddenproperty(ColorCorrection, "Saturation", SaturationValue) then
-end
-end)
-
-CustomSkyTab:AddDropdown('World_Technology', {Values = { 'Technology', 'ShadowMap', 'Voxel', 'Compatibility' },Default = 1,Multi = false,Text = 'technology:',Tooltip = 'Game Technology',}):OnChanged(function(GPHZ)
-if LightingEnabled and GPHZ == "Technology" then
-sethiddenproperty(game.Lighting, "Technology", Enum.Technology.Future)
-elseif LightingEnabled and GPHZ == "ShadowMap" then
-sethiddenproperty(game.Lighting, "Technology", Enum.Technology.ShadowMap)
-elseif LightingEnabled and GPHZ == "Voxel" then
-sethiddenproperty(game.Lighting, "Technology", Enum.Technology.Voxel)
-elseif LightingEnabled and GPHZ == "Compatibility" then
-sethiddenproperty(game.Lighting, "Technology", Enum.Technology.Compatibility)
-end
-end)
 
 local Sky = Instance.new("Sky",game:GetService("Lighting"))
 CustomSkyTab:AddDropdown('World_Skybox', {Values = { 'Default', 'Neptune', 'Among Us', 'Nebula', 'Vaporwave', 'Clouds', 'Twilight', 'DaBaby', 'Minecraft', 'Chill', 'Redshift', 'Blue Stars', 'Blue Aurora' },Default = 1,Multi = false,Text = 'custom skybox:',Tooltip = 'Sky Changer',}):OnChanged(function(World_Skybox)
@@ -555,48 +494,6 @@ end)
 
 
 
-task.spawn(function()
-while task.wait() do
-  if HeadExtends then
-    for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
-      if i:FindFirstChild("HumanoidRootPart") and not i:FindFirstChild("HedsOn") then
-        local BigHeadsPart = Instance.new("Part")
-        BigHeadsPart.Name = "Head"
-        BigHeadsPart.Anchored = false
-        BigHeadsPart.CanCollide = false
-        BigHeadsPart.Transparency = HitboxTransparency
-        BigHeadsPart.Size = Vector3.new(XSize, YSize, ZSize)
-        local DeletePart = Instance.new("Weld")
-        DeletePart.Parent = BigHeadsPart
-        DeletePart.Name = "FAKEHEAD"
-        local HeadsParts = BigHeadsPart:Clone()
-        HeadsParts.Parent = i
-        HeadsParts.Orientation = i.HumanoidRootPart.Orientation
-        local clonedHedsOn = HedsOn:Clone()
-        clonedHedsOn.Parent = i
-        local Headswelding = Instance.new("Weld")
-        Headswelding.Parent = HeadsParts
-        Headswelding.Part0 = i.HumanoidRootPart
-        Headswelding.Part1 = HeadsParts
-        HeadsParts.Position = Vector3.new(i.HumanoidRootPart.Position.X, i.HumanoidRootPart.Position.Y - 0.6, i.HumanoidRootPart.Position.Z)
-      end
-    end
-  else
-    for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
-      if i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("HedsOn") then
-        i.HedsOn:Remove()
-        for _, a in ipairs(i:GetChildren()) do
-          if a.Name == "Head" and a:FindFirstChild("FAKEHEAD") and (not a:FindFirstChild("Nametag") or not a:FindFirstChild("Face")) then
-            a:Remove()
-          end
-        end
-      end
-    end
-  end
-end
-end)
-
-
 --// UI Settings \\--
 
 --// Game
@@ -674,47 +571,6 @@ local Time = (string.format("%."..tostring(Decimals).."f", os.clock() - Clock))
 Library:Notify(("Script [Loaded] In - "..tostring(Time).."s"), 15)
 
 
-task.spawn(function()
-  while task.wait() do
-    if HeadExtends then
-      for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
-        if i:FindFirstChild("HumanoidRootPart") and not i:FindFirstChild("HedsOn") then
-          local BigHeadsPart = Instance.new("Part")
-          BigHeadsPart.Name = "Head"
-          BigHeadsPart.Anchored = false
-          BigHeadsPart.CanCollide = false
-          BigHeadsPart.Transparency = HitboxTransparency
-          BigHeadsPart.Size = Vector3.new(XSize, YSize, ZSize)
-          local DeletePart = Instance.new("Weld")
-          DeletePart.Parent = BigHeadsPart
-          DeletePart.Name = "FAKEHEAD"
-          local HeadsParts = BigHeadsPart:Clone()
-          HeadsParts.Parent = i
-          HeadsParts.Orientation = i.HumanoidRootPart.Orientation
-          local clonedHedsOn = HedsOn:Clone()
-          clonedHedsOn.Parent = i
-          local Headswelding = Instance.new("Weld")
-          Headswelding.Parent = HeadsParts
-          Headswelding.Part0 = i.HumanoidRootPart
-          Headswelding.Part1 = HeadsParts
-          HeadsParts.Position = Vector3.new(i.HumanoidRootPart.Position.X, i.HumanoidRootPart.Position.Y - 0.6, i.HumanoidRootPart.Position.Z)
-        end
-      end
-    else
-      for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
-        if i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("HedsOn") then
-          i.HedsOn:Remove()
-          for _, a in ipairs(i:GetChildren()) do
-            if a.Name == "Head" and a:FindFirstChild("FAKEHEAD") and (not a:FindFirstChild("Nametag") or not a:FindFirstChild("Face")) then
-              a:Remove()
-            end
-          end
-        end
-      end
-    end
-  end
-  end)
-  
 
 --Wrapping function - needed to unload(Keep at end of script)
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EIOlmqV6v1owgJBEoqj5lK9p01SFE2THpxcOnvX/LinoriaBurnEdition/main/LoaderManager.lua'))
