@@ -1,5 +1,3 @@
-
-
 local Config = {
     Esp = {
         Box = {
@@ -163,27 +161,9 @@ task.spawn(function()
 
 local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
 local PlayerVisualTab = PlayerVisualTabbox:AddTab('player visuals')
-local PlayerSettingsTab = PlayerVisualTabbox:AddTab('player settings')
 
-PlayerVisualTab:AddToggle('BoxToggle',{Text='Boxes',Default=false}):AddColorPicker('BoxColor', { Default = Color3.fromRGB(199, 172, 120), Title = 'Color', }):OnChanged(function(Value)
-Config.Esp.Box.Enabled = Value
-end)
-Options.BoxColor:OnChanged(function(Value)
-Config.Esp.Box.Color = Value
-end)
-
-PlayerVisualTab:AddToggle('BoxFilled',{Text='Box Filled',Default=false}):AddColorPicker('BoxFilledColor', { Default = Color3.fromRGB(199, 172, 120), Title = 'Color', }):OnChanged(function(Value)
-    print(Value)
-end)
-Options.BoxFilledColor:OnChanged(function(Value)
-print(Value)
-end)
-
-PlayerVisualTab:AddToggle('CornerBox',{Text='Corner Boxes',Default=false}):AddColorPicker('CornerBoxColor', { Default = Color3.fromRGB(199, 172, 120), Title = 'Color', }):OnChanged(function(Value)
-Config.Esp.CornerBoxes.Enabled = Value
-end)
-Options.CornerBoxColor:OnChanged(function(Value)
-Config.Esp.CornerBoxes.Color = Value
+PlayerVisualTab:AddToggle('CornerBoxes',{Text='Enable',Default=false}):OnChanged(function(Value)
+Conig.Esp.CornerBoxes.Enabled = Value
 end)
 
 
