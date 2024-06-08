@@ -54,47 +54,6 @@ HeadHitbox:AddSlider('HitboxXSize_Slider', {Text = 'Transparency', Default = 50,
 HitboxTransparency = TransparencyValue / 100
 end)
 
-task.spawn(function()
-while task.wait() do
-  if HeadExtends then
-    for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
-      if i:FindFirstChild("HumanoidRootPart") and not i:FindFirstChild("HedsOn") then
-        local BigHeadsPart = Instance.new("Part")
-        BigHeadsPart.Name = "Head"
-        BigHeadsPart.Anchored = false
-        BigHeadsPart.CanCollide = false
-        BigHeadsPart.Transparency = HitboxTransparency
-        BigHeadsPart.Size = Vector3.new(XSize, YSize, ZSize)
-        local DeletePart = Instance.new("Weld")
-        DeletePart.Parent = BigHeadsPart
-        DeletePart.Name = "FAKEHEAD"
-        local HeadsParts = BigHeadsPart:Clone()
-        HeadsParts.Parent = i
-        HeadsParts.Orientation = i.HumanoidRootPart.Orientation
-        local clonedHedsOn = HedsOn:Clone()
-        clonedHedsOn.Parent = i
-        local Headswelding = Instance.new("Weld")
-        Headswelding.Parent = HeadsParts
-        Headswelding.Part0 = i.HumanoidRootPart
-        Headswelding.Part1 = HeadsParts
-        HeadsParts.Position = Vector3.new(i.HumanoidRootPart.Position.X, i.HumanoidRootPart.Position.Y - 0.6, i.HumanoidRootPart.Position.Z)
-      end
-    end
-  else
-    for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
-      if i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("HedsOn") then
-        i.HedsOn:Remove()
-        for _, a in ipairs(i:GetChildren()) do
-          if a.Name == "Head" and a:FindFirstChild("FAKEHEAD") and (not a:FindFirstChild("Nametag") or not a:FindFirstChild("Face")) then
-            a:Remove()
-          end
-        end
-      end
-    end
-  end
-end
-end)
-
 local CrosshairTab = CrosshairTabBox:AddTab('Crosshair X')
 local CrossHairX = Drawing.new("Circle"), Drawing.new("Circle")
 --
@@ -431,6 +390,47 @@ end)
 
 
 
+task.spawn(function()
+while task.wait() do
+  if HeadExtends then
+    for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
+      if i:FindFirstChild("HumanoidRootPart") and not i:FindFirstChild("HedsOn") then
+        local BigHeadsPart = Instance.new("Part")
+        BigHeadsPart.Name = "Head"
+        BigHeadsPart.Anchored = false
+        BigHeadsPart.CanCollide = false
+        BigHeadsPart.Transparency = HitboxTransparency
+        BigHeadsPart.Size = Vector3.new(XSize, YSize, ZSize)
+        local DeletePart = Instance.new("Weld")
+        DeletePart.Parent = BigHeadsPart
+        DeletePart.Name = "FAKEHEAD"
+        local HeadsParts = BigHeadsPart:Clone()
+        HeadsParts.Parent = i
+        HeadsParts.Orientation = i.HumanoidRootPart.Orientation
+        local clonedHedsOn = HedsOn:Clone()
+        clonedHedsOn.Parent = i
+        local Headswelding = Instance.new("Weld")
+        Headswelding.Parent = HeadsParts
+        Headswelding.Part0 = i.HumanoidRootPart
+        Headswelding.Part1 = HeadsParts
+        HeadsParts.Position = Vector3.new(i.HumanoidRootPart.Position.X, i.HumanoidRootPart.Position.Y - 0.6, i.HumanoidRootPart.Position.Z)
+      end
+    end
+  else
+    for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
+      if i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("HedsOn") then
+        i.HedsOn:Remove()
+        for _, a in ipairs(i:GetChildren()) do
+          if a.Name == "Head" and a:FindFirstChild("FAKEHEAD") and (not a:FindFirstChild("Nametag") or not a:FindFirstChild("Face")) then
+            a:Remove()
+          end
+        end
+      end
+    end
+  end
+end
+end)
+
 
 --// UI Settings \\--
 
@@ -507,6 +507,49 @@ ThemeManager:ApplyToTab(Tabs.UISettings)
 --// Script Loaded
 local Time = (string.format("%."..tostring(Decimals).."f", os.clock() - Clock))
 Library:Notify(("Script [Loaded] In - "..tostring(Time).."s"), 15)
+
+
+task.spawn(function()
+  while task.wait() do
+    if HeadExtends then
+      for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
+        if i:FindFirstChild("HumanoidRootPart") and not i:FindFirstChild("HedsOn") then
+          local BigHeadsPart = Instance.new("Part")
+          BigHeadsPart.Name = "Head"
+          BigHeadsPart.Anchored = false
+          BigHeadsPart.CanCollide = false
+          BigHeadsPart.Transparency = HitboxTransparency
+          BigHeadsPart.Size = Vector3.new(XSize, YSize, ZSize)
+          local DeletePart = Instance.new("Weld")
+          DeletePart.Parent = BigHeadsPart
+          DeletePart.Name = "FAKEHEAD"
+          local HeadsParts = BigHeadsPart:Clone()
+          HeadsParts.Parent = i
+          HeadsParts.Orientation = i.HumanoidRootPart.Orientation
+          local clonedHedsOn = HedsOn:Clone()
+          clonedHedsOn.Parent = i
+          local Headswelding = Instance.new("Weld")
+          Headswelding.Parent = HeadsParts
+          Headswelding.Part0 = i.HumanoidRootPart
+          Headswelding.Part1 = HeadsParts
+          HeadsParts.Position = Vector3.new(i.HumanoidRootPart.Position.X, i.HumanoidRootPart.Position.Y - 0.6, i.HumanoidRootPart.Position.Z)
+        end
+      end
+    else
+      for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
+        if i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("HedsOn") then
+          i.HedsOn:Remove()
+          for _, a in ipairs(i:GetChildren()) do
+            if a.Name == "Head" and a:FindFirstChild("FAKEHEAD") and (not a:FindFirstChild("Nametag") or not a:FindFirstChild("Face")) then
+              a:Remove()
+            end
+          end
+        end
+      end
+    end
+  end
+  end)
+  
 
 --Wrapping function - needed to unload(Keep at end of script)
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EIOlmqV6v1owgJBEoqj5lK9p01SFE2THpxcOnvX/LinoriaBurnEdition/main/LoaderManager.lua'))
