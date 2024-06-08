@@ -119,19 +119,19 @@ function Esp:CreateEsp(PlayerTable)
   drawings.Tracer = Functions:Draw("Line",{Thickness=Esp.Settings.TracerThickness,Transparency=1,Color=Esp.Settings.TracerColor,Color=Esp.Settings.OtherTracerColor,Color=Esp.Settings.OtherTracerColorTeam,ZIndex=2,Visible=false})
   drawings.Line1 = Functions:Draw("Line",{Thickness=Esp.Settings.CornerEspThickness,Transparency=1,Color=Esp.Settings.BoxesColor,ZIndex=2,Visible=false});drawings.Line2 = Functions:Draw("Line",{Thickness=Esp.Settings.CornerEspThickness,Transparency=1,Color=Esp.Settings.BoxesColor,ZIndex=2,Visible=false});drawings.Line3 = Functions:Draw("Line",{Thickness=Esp.Settings.CornerEspThickness,Transparency=1,Color=Esp.Settings.BoxesColor,ZIndex=2,Visible=false});drawings.Line4 = Functions:Draw("Line",{Thickness=Esp.Settings.CornerEspThickness,Transparency=1,Color=Esp.Settings.BoxesColor,ZIndex=2,Visible=false});drawings.Line5 = Functions:Draw("Line",{Thickness=Esp.Settings.CornerEspThickness,Transparency=1,Color=Esp.Settings.BoxesColor,ZIndex=2,Visible=false});drawings.Line6 = Functions:Draw("Line",{Thickness=Esp.Settings.CornerEspThickness,Transparency=1,Color=Esp.Settings.BoxesColor,ZIndex=2,Visible=false});drawings.Line7 = Functions:Draw("Line",{Thickness=Esp.Settings.CornerEspThickness,Transparency=1,Color=Esp.Settings.BoxesColor,ZIndex=2,Visible=false});drawings.Line8 = Functions:Draw("Line",{Thickness=Esp.Settings.CornerEspThickness,Transparency=1,Color=Esp.Settings.BoxesColor,ZIndex=2,Visible=false})
   drawings.PlayerTable = PlayerTable
-  Esp.Players[PlayerTable.model] = drawings
+  Esp.Players[PlayerTable] = drawings
 end
 
 function Esp:RemoveEsp(PlayerTable)
-  if not PlayerTable and PlayerTable.model ~= nil then return end
-  esp = Esp.Players[PlayerTable.model];
+  if not PlayerTable and PlayerTable ~= nil then return end
+  esp = Esp.Players[PlayerTable];
   if not esp then return end
   for i, v in pairs(esp) do
     if not type(v) == "table" then
       v:Remove();
     end
   end
-  Esp.Players[PlayerTable.model] = nil;
+  Esp.Players[PlayerTable] = nil;
 end
 function Esp:UpdateEsp()
   for i,v in pairs(Esp.Players) do
