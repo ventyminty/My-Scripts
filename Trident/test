@@ -232,27 +232,6 @@ sethiddenproperty(game.Workspace.Terrain, "Decoration", true)
 end
 end)
 
-function ToggleLeaves(Trans)
-for i,v in pairs(getrenv()._G.modules.Entity.List) do
-  if v.typ == "Tree1" or v.typ == "Tree2" then
-    v.model.Leaves.Transparency = Trans
-  end
-end
-end
-local ToggleLeavesTransparency = 0.4
-CustomSkyTab:AddToggle('Leaves', {Text = 'remove leaves', Default = false, Tooltip = "Leaves On/Off"})
-local function UpdateLeavesTransparency()
-if LightingEnabled and Toggles.Leaves.Value == true then
-  ToggleLeavesTransparency = 1
-else
-  ToggleLeavesTransparency = 0.4
-end
-end
-Toggles.Leaves:OnChanged(UpdateLeavesTransparency)
-game:GetService("RunService").Heartbeat:Connect(function()
-ToggleLeaves(ToggleLeavesTransparency)
-end)
-
 local GCEN = Color3.fromRGB(95, 100, 49)
 local GRCEND = false
 
