@@ -1,39 +1,4 @@
-    local utility = {
-        services = {
-            players = cloneref(game:GetService("Players")),
-            workspace = cloneref(game:GetService("Workspace")),
-            userinputservice = cloneref(game:GetService("UserInputService")),
-            runservice = cloneref(game:GetService("RunService")),
-            httpservice = cloneref(game:GetService("HttpService")),
-            coregui = cloneref(game:GetService("CoreGui")),
-            lighting = cloneref(game:GetService("Lighting")),
-            guiservice = cloneref(game:GetService("GuiService")),
-            replicatedstorage = cloneref(game:GetService("ReplicatedStorage")),
-            networkclient = cloneref(game:GetService("NetworkClient"))
-        },
-        functions = {}
-    }
-    local camera = utility.services.workspace.CurrentCamera
-    local mouse = utility.services.players.LocalPlayer:GetMouse()
-    local localplayer = utility.services.players.LocalPlayer
-    local default_fov = camera.FieldOfView
-    local os_clock = os.clock()
-    local FPS = string.split(game.Stats.Workspace.Heartbeat:GetValueString(), ".")
-    local camera = game:GetService("Workspace").Camera
-    local Camera = game:GetService("Workspace").Camera
-    local Camera = game:GetService("Workspace").CurrentCamera
-    local Cam = game:GetService("Workspace").Camera
-    local CharcaterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middle
-    local Mouse = game.Players.LocalPlayer:GetMouse()
-    local lighting = game:GetService("Lighting")
-    local SoundService = game:GetService("SoundService")
-    local Decimals = 2
-    local Clock = os.clock()
-    local Camera = game:GetService("Workspace").Camera
-    local CameraPred = game:GetService("Workspace").CurrentCamera
-    local Mouse = game.Players.LocalPlayer:GetMouse()
-    local CharcaterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middle
-    local camera = utility.services.workspace.CurrentCamera
+
 
 
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/BigHacker123/Library.lua/main/Library.lua'))()
