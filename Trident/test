@@ -197,21 +197,6 @@ local YSize = 5
 local ZSize = 10
 local HitboxTransparency = 50
 
-HeadHitbox:AddToggle('HBO',{Text='Enabled',Default=false}):OnChanged(function(Value)
-HeadExtends = Value
-end)
-
-HeadHitbox:AddSlider('HitboxXSize_Slider', {Text = 'Width', Default = 5, Min = 0, Max = 10, Rounding = 2, Suffix = "%", Compact = false}):OnChanged(function(HitboxXSize)
-XSize = HitboxXSize
-end)
-
-HeadHitbox:AddSlider('HitboxYSize_Slider', {Text = 'Height', Default = 5, Min = 0, Max = 10, Rounding = 2, Suffix = "%", Compact = false}):OnChanged(function(HitboxYSize)
-YSize = HitboxYSize
-end)
-
-HeadHitbox:AddSlider('HitboxXSize_Slider', {Text = 'Transparency', Default = 50, Min = 0, Max = 100, Rounding = 0, Suffix = "%", Compact = false}):OnChanged(function(TransparencyValue)
-HitboxTransparency = TransparencyValue / 100
-end)
 
 task.spawn(function()
   while task.wait() do
@@ -253,6 +238,23 @@ task.spawn(function()
     end
   end
   end)
+  
+HeadHitbox:AddToggle('HBO',{Text='Enabled',Default=false}):OnChanged(function(Value)
+HeadExtends = Value
+end)
+
+HeadHitbox:AddSlider('HitboxXSize_Slider', {Text = 'Width', Default = 5, Min = 0, Max = 10, Rounding = 2, Suffix = "%", Compact = false}):OnChanged(function(HitboxXSize)
+XSize = HitboxXSize
+end)
+
+HeadHitbox:AddSlider('HitboxYSize_Slider', {Text = 'Height', Default = 5, Min = 0, Max = 10, Rounding = 2, Suffix = "%", Compact = false}):OnChanged(function(HitboxYSize)
+YSize = HitboxYSize
+end)
+
+HeadHitbox:AddSlider('HitboxXSize_Slider', {Text = 'Transparency', Default = 50, Min = 0, Max = 100, Rounding = 0, Suffix = "%", Compact = false}):OnChanged(function(TransparencyValue)
+HitboxTransparency = TransparencyValue / 100
+end)
+
   
 
   
