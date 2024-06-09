@@ -235,12 +235,13 @@ end)
 local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
 local PlayerVisualTab = PlayerVisualTabbox:AddTab('Esp')
 
-    PlayerVisualTab:AddToggle('name_esp', {Text = 'Names', Default = false}):OnChanged(function()
-        Name = Toggles.name_esp.Value
+PlayerVisualTab:AddToggle('names',{Text='Names',Default=false}):OnChanged(function(Value)
+    Name = Value
         for _, Esp in ipairs(Boxes) do
-            Esp.TextLabel.Visible = Toggles.name_esp.Value
+            Esp.TextLabel.Visible = Value
         end
-    end)
+end)
+
 
     PlayerVisualTab:AddToggle('sleepercheck', {Text = 'Sleeper Check', Default = false}):OnChanged(function()
         SleeperCheck = Toggles.sleepercheck.Value
