@@ -595,6 +595,22 @@ local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
 local PlayerVisualTab = PlayerVisualTabbox:AddTab('player visuals')
 
 do
+    PlayerVisualTab:AddToggle('boxes', {Text = 'Boxes', Default = false}):AddColorPicker("boxes_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.Box.Enabled = Toggles.boxes.Value
+    end)
+
+    Options.boxes_color:OnChanged(function()
+        Config.Esp.Box.Color = Options.boxes_color.Value
+    end)
+
+    PlayerVisualTab:AddToggle('filled', {Text = 'Boxes', Default = false}):AddColorPicker("filled_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.Box.Filled = Toggles.filled.Value
+    end)
+
+    Options.filled_color:OnChanged(function()
+        Config.Esp.Box.FilledColor = Options.filled_color.Value
+    end)
+
     PlayerVisualTab:AddToggle('corner_boxes', {Text = 'Corner Boxes', Default = false}):AddColorPicker("corner_boxes_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
         Config.Esp.CornerBoxes.Enabled = Toggles.corner_boxes.Value
     end)
