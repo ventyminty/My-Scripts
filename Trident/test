@@ -630,7 +630,30 @@ local PlayerVisualTab = PlayerVisualTabbox:AddTab('Esp')
         Config.Esp.Sleeper.Size = t
     end)
 
-    PlayerVisualTab:AddToggle('tool', {Text = 'Tool', Default = false}):AddColorPicker("tool_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+    PlayerVisualTab:AddToggle('viewangle', {Text = 'View Angle', Default = false}):AddColorPicker("viewangle_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.ViewAngle.Enabled = Toggles.viewangle.Value
+    end)
+
+    Options.viewangle_color:OnChanged(function()
+        Config.Esp.ViewAngle.Color = Options.viewangle_color.Value
+    end)
+
+    local ArmorTab = Tabs.VisualsTab:AddLeftTabbox()
+    local ArmorTabBox = ArmorTab:AddTab('Armor | Tool')
+
+    ArmorTabBox:AddToggle('armor', {Text = 'Armor', Default = false}):AddColorPicker("armor_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.Armor.Enabled = Toggles.armor.Value
+    end)
+
+    Options.armor_color:OnChanged(function()
+        Config.Esp.Armor.Color = Options.armor_color.Value
+    end)
+
+    ArmorTabBox:AddSlider('armorsize', {Text = 'Armor Size', Suffix = "°", Default = 6, Min = 0, Max = 10, Rounding = 0, Compact = true}):OnChanged(function(t)
+        Config.Esp.Armor.Size = t
+    end)
+
+    ArmorTabBox:AddToggle('tool', {Text = 'Tool', Default = false}):AddColorPicker("tool_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
         Config.Esp.Tool.Enabled = Toggles.tool.Value
     end)
 
@@ -638,7 +661,7 @@ local PlayerVisualTab = PlayerVisualTabbox:AddTab('Esp')
         Config.Esp.Tool.Color = Options.tool_color.Value
     end)
 
-    PlayerVisualTab:AddSlider('armorsize', {Text = 'Armor Size', Suffix = "°", Default = 6, Min = 0, Max = 10, Rounding = 0, Compact = true}):OnChanged(function(t)
+    ArmorTabBox:AddSlider('armorsize', {Text = 'Armor Size', Suffix = "°", Default = 6, Min = 0, Max = 10, Rounding = 0, Compact = true}):OnChanged(function(t)
         Config.Esp.Tool.Size = t
     end)
 
