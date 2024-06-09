@@ -40,10 +40,10 @@ local SoundService = game:GetService("SoundService")
 local Plr = game:GetService("Players").LocalPlayer
 local CharacterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middle
 
-local box = true
-local SleeperCheck = true
-local Distance = true
-local Name = true
+local box = false
+local SleeperCheck = false
+local Distance = false
+local Name = false
 local RenderDistance = 1500
 local BoxESP = {}
 local Functions = {}
@@ -243,9 +243,9 @@ PlayerVisualTab:AddToggle('names',{Text='Names',Default=false}):OnChanged(functi
 end)
 
 
-    PlayerVisualTab:AddToggle('sleepercheck', {Text = 'Sleeper Check', Default = false}):OnChanged(function()
-        SleeperCheck = Toggles.sleepercheck.Value
-    end)
+PlayerVisualTab:AddToggle('sleepercheck',{Text='Sleeper Check',Default=false}):OnChanged(function(Value)
+    SleeperCheck = false
+end)
 
     PlayerVisualTab:AddSlider('maxdistance', {Text = 'Render Distance', Suffix = "°", Default = 500, Min = 1, Max = 1500, Rounding = 0, Compact = true}):OnChanged(function(t)
         RenderDistance = t
