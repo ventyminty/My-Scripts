@@ -620,7 +620,7 @@ do
     end)
 
     
-    PlayerVisualTab:AddSlider('filled_trans', {Text = 'Filled Transparency', Default = 0, Min = 0, Max = 1, Rounding = 0.1, Suffix = "%", Compact = false}):OnChanged(function(Value)
+    PlayerVisualTab:AddSlider('filled_trans', {Text = 'Filled Transparency', Default = 0, Min = 0, Max = 1, Rounding = 1, Suffix = "%", Compact = false}):OnChanged(function(Value)
         Config.Esp.Box.FilledTransparency = Value
     end)
 end
