@@ -628,7 +628,7 @@ do
     end)
 
     PlayerVisualTab:AddSlider('sleepersize', {Text = 'Sleeper Size', Suffix = "°", Default = 6, Min = 0, Max = 10, Rounding = 0, Compact = true}):OnChanged(function(t)
-        Config.Esp.Sleeper.Color = t
+        Config.Esp.Sleeper.Size = t
     end)
 
 end
