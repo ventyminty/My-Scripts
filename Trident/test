@@ -599,7 +599,7 @@ do
         Config.Esp.CornerBoxes.Enabled = Toggles.corner_boxest.Value
     end)
 
-    PlayerVisualTab.CornerBoxes_Color:OnChanged(function()
+    Options.CornerBoxes_Color:OnChanged(function()
         Config.Esp.CornerBoxes.Color = Options.CornerBoxes_Color.Value
     end)
 end
