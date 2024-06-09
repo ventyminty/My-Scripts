@@ -68,24 +68,12 @@ Functions.CheckDistance = function(self, Player, RenderDistance)
     return false, 0
 end
 BoxESP.Create = function(Player)
-    local Box = Drawing.new("Square")
-    Box.Visible = box
-    Box.Color = Color3.fromRGB(202, 82, 147)
-    Box.Filled = false
-    Box.Transparency = 1
-    Box.Thickness = 1
     local TextLabel = Drawing.new("Text")
     TextLabel.Visible = Name
     TextLabel.Color = Color3.fromRGB(202, 82, 147)
     TextLabel.Size = 16
     TextLabel.Center = true
     TextLabel.Outline = true
-    local DistanceLabel = Drawing.new("Text")
-    DistanceLabel.Visible = Distance
-    DistanceLabel.Color = Color3.fromRGB(202, 82, 147)
-    DistanceLabel.Size = 14
-    DistanceLabel.Center = true
-    DistanceLabel.Outline = true
     local maxTextSize = 16
     local function UpdateEsp()
         if (Player and Player:IsA("Model") and Player:FindFirstChild("HumanoidRootPart") and Player:FindFirstChild("Head")) then
@@ -97,42 +85,26 @@ BoxESP.Create = function(Player)
                     local distanceScale = math.clamp(1 - (distance / RenderDistance), 0.5, 1)
                     local scale_factor = (1 / (Target2dPosition.Z * math.tan(math.rad(workspace.CurrentCamera.FieldOfView * 0.5)) * 2)) * 100
                     local width, height = math.floor(34 * scale_factor), math.floor(54 * scale_factor)
-                    Box.Visible = IsVisible
-                    Box.Size = Vector2.new(width, height)
-                    Box.Position = Vector2.new(Target2dPosition.X - (Box.Size.X / 2), Target2dPosition.Y - (Box.Size.Y / 2))
                     TextLabel.Visible = IsVisible
                     TextLabel.Position = Vector2.new(Target2dPosition.X, (Target2dPosition.Y - (height / 2)) - 20)
                     TextLabel.Size = math.clamp(maxTextSize * distanceScale, 1, maxTextSize)
                     TextLabel.Text = Player.Name
-                    DistanceLabel.Visible = IsVisible
-                    DistanceLabel.Position = Vector2.new(Target2dPosition.X, Target2dPosition.Y + (height / 2) + 10)
-                    DistanceLabel.Text = (Distance and string.format("%.1f studs", distance)) or ""
                 else
-                    Box.Visible = false
                     TextLabel.Visible = false
-                    DistanceLabel.Visible = false
                 end
             else
-                Box.Visible = false
                 TextLabel.Visible = false
-                DistanceLabel.Visible = false
             end
         else
-            Box.Visible = false
             TextLabel.Visible = false
-            DistanceLabel.Visible = false
             if not Player then
-                Box:Remove()
                 TextLabel:Remove()
-                DistanceLabel:Remove()
             end
         end
     end
     return {
         UpdateEsp = UpdateEsp,
-        Box = Box,
         TextLabel = TextLabel,
-        DistanceLabel = DistanceLabel,
         Player = Player
     }
 end
@@ -183,62 +155,8 @@ local HitboxTabBox = Tabs.CombatTab:AddLeftTabbox()
 local CrosshairTabBox = Tabs.MiscellaneousTab:AddLeftTabbox()
 local HeadHitbox = HitboxTabBox:AddTab('Head Hitbox')
 
-local HedsOn = Instance.new("Part")
-HedsOn.Name = "HedsOn"
-HedsOn.Anchored = false
-HedsOn.CanCollide = false
-HedsOn.Transparency = 0
-HedsOn.Size = Vector3.new(5, 5, 10)
-HedsOn.Parent = game.ReplicatedStorage
-
-local HeadExtends = false
-local XSize = 5
-local YSize = 5
-local ZSize = 10
-local HitboxTransparency = 50
 
 
-task.spawn(function()
-  while task.wait() do
-    if HeadExtends then
-      for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
-        if i:FindFirstChild("HumanoidRootPart") and not i:FindFirstChild("HedsOn") then
-          local BigHeadsPart = Instance.new("Part")
-          BigHeadsPart.Name = "Head"
-          BigHeadsPart.Anchored = false
-          BigHeadsPart.CanCollide = false
-          BigHeadsPart.Transparency = HitboxTransparency
-          BigHeadsPart.Size = Vector3.new(XSize, YSize, ZSize)
-          local DeletePart = Instance.new("Weld")
-          DeletePart.Parent = BigHeadsPart
-          DeletePart.Name = "FAKEHEAD"
-          local HeadsParts = BigHeadsPart:Clone()
-          HeadsParts.Parent = i
-          HeadsParts.Orientation = i.HumanoidRootPart.Orientation
-          local clonedHedsOn = HedsOn:Clone()
-          clonedHedsOn.Parent = i
-          local Headswelding = Instance.new("Weld")
-          Headswelding.Parent = HeadsParts
-          Headswelding.Part0 = i.HumanoidRootPart
-          Headswelding.Part1 = HeadsParts
-          HeadsParts.Position = Vector3.new(i.HumanoidRootPart.Position.X, i.HumanoidRootPart.Position.Y - 0.6, i.HumanoidRootPart.Position.Z)
-        end
-      end
-    else
-      for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
-        if i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("HedsOn") then
-          i.HedsOn:Remove()
-          for _, a in ipairs(i:GetChildren()) do
-            if a.Name == "Head" and a:FindFirstChild("FAKEHEAD") and (not a:FindFirstChild("Nametag") or not a:FindFirstChild("Face")) then
-              a:Remove()
-            end
-          end
-        end
-      end
-    end
-  end
-  end)
-  
 HeadHitbox:AddToggle('HBO',{Text='Enabled',Default=false}):OnChanged(function(Value)
 HeadExtends = Value
 end)
@@ -255,20 +173,55 @@ HeadHitbox:AddSlider('HitboxXSize_Slider', {Text = 'Transparency', Default = 50,
 HitboxTransparency = TransparencyValue / 100
 end)
 
-  
+  function hitboxyap()
+  if HeadExtends then
+    for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
+      if i:FindFirstChild("HumanoidRootPart") and not i:FindFirstChild("HedsOn") then
+        local BigHeadsPart = Instance.new("Part")
+        BigHeadsPart.Name = "Head"
+        BigHeadsPart.Anchored = false
+        BigHeadsPart.CanCollide = false
+        BigHeadsPart.Transparency = HitboxTransparency
+        BigHeadsPart.Size = Vector3.new(XSize, YSize, ZSize)
+        local DeletePart = Instance.new("Weld")
+        DeletePart.Parent = BigHeadsPart
+        DeletePart.Name = "FAKEHEAD"
+        local HeadsParts = BigHeadsPart:Clone()
+        HeadsParts.Parent = i
+        HeadsParts.Orientation = i.HumanoidRootPart.Orientation
+        local clonedHedsOn = HedsOn:Clone()
+        clonedHedsOn.Parent = i
+        local Headswelding = Instance.new("Weld")
+        Headswelding.Parent = HeadsParts
+        Headswelding.Part0 = i.HumanoidRootPart
+        Headswelding.Part1 = HeadsParts
+        HeadsParts.Position = Vector3.new(i.HumanoidRootPart.Position.X, i.HumanoidRootPart.Position.Y - 0.6, i.HumanoidRootPart.Position.Z)
+      end
+    end
+  else
+    for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
+      if i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("HedsOn") then
+        i.HedsOn:Remove()
+        for _, a in ipairs(i:GetChildren()) do
+          if a.Name == "Head" and a:FindFirstChild("FAKEHEAD") and (not a:FindFirstChild("Nametag") or not a:FindFirstChild("Face")) then
+            a:Remove()
+          end
+        end
+      end
+    end
+  end
+end
+
+  game:GetService("RunService").RenderStepped:Connect(function()
+                if HeadExtends then
+                    hitboxyap()
+                end
+            end)
 
   
 
 local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
 local PlayerVisualTab = PlayerVisualTabbox:AddTab('Esp')
-
-    PlayerVisualTab:AddToggle('boxes', {Text = 'Boxes', Default = false}):AddColorPicker("boxes_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        box = Toggles.boxes.Value
-        for _, Esp in ipairs(Boxes) do
-            Esp.Box.Visible = Toggles.boxes.Value
-        end
-    end)
-
 
     PlayerVisualTab:AddToggle('names', {Text = 'Names', Default = false}):AddColorPicker("names_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
         Name = Toggles.names.Value
@@ -277,13 +230,6 @@ local PlayerVisualTab = PlayerVisualTabbox:AddTab('Esp')
         end
     end)
 
-
-    PlayerVisualTab:AddToggle('distance', {Text = 'Distance', Default = false}):AddColorPicker("distance_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Distance = Toggles.distance.Value
-        for _, Esp in ipairs(Boxes) do
-            Esp.DistanceLabel.Visible = Toggles.distance.Value
-        end
-    end)
 
     PlayerVisualTab:AddToggle('sleepercheck', {Text = 'Sleeper Check', Default = false}):OnChanged(function()
         SleeperCheck = Toggles.sleepercheck.Value
