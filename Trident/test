@@ -591,22 +591,18 @@ task.spawn(function()
 
   
 
-  local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
-  local PlayerVisualTab = PlayerVisualTabbox:AddTab('player visuals')
-  
-  do
-      local cornerBoxesToggle = PlayerVisualTab:AddToggle('corner_boxest', {Text = 'Corner Boxes', Default = false})
-      local cornerBoxesColorPicker = PlayerVisualTab:AddColorPicker("corner_boxescol", {Default = Color3.fromRGB(208, 123, 255)})
-      
-      cornerBoxesToggle:OnChanged(function()
-          Config.Esp.CornerBoxes.Enabled = cornerBoxesToggle.Value
-      end)
-  
-      cornerBoxesColorPicker:OnChanged(function()
-          Config.Esp.CornerBoxes.Color = cornerBoxesColorPicker.Value
-      end)
-  end
-  
+local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
+local PlayerVisualTab = PlayerVisualTabbox:AddTab('player visuals')
+
+do
+    PlayerVisualTab:AddToggle('corner_boxest', {Text = 'Corner Boxes', Default = false}):AddColorPicker("corner_boxescol", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.CornerBoxes.Enabled = Toggles.corner_boxest.Value
+    end)
+
+    PlayerVisualTab.corner_boxescol:OnChanged(function()
+        Config.Esp.CornerBoxes.Color = Options.corner_boxescol.Value
+    end)
+end
 
 local CrosshairTab = CrosshairTabBox:AddTab('Crosshair X')
 local CrossHairX = Drawing.new("Circle"), Drawing.new("Circle")
