@@ -603,14 +603,6 @@ do
         Config.Esp.Box.Color = Options.boxes_color.Value
     end)
 
-    PlayerVisualTab:AddToggle('filled', {Text = 'Filled', Default = false}):AddColorPicker("filled_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Config.Esp.Box.Filled = Toggles.filled.Value
-    end)
-
-    Options.filled_color:OnChanged(function()
-        Config.Esp.Box.FilledColor = Options.filled_color.Value
-    end)
-
     PlayerVisualTab:AddToggle('corner_boxes', {Text = 'Corner Boxes', Default = false}):AddColorPicker("corner_boxes_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
         Config.Esp.CornerBoxes.Enabled = Toggles.corner_boxes.Value
     end)
@@ -627,6 +619,17 @@ do
         Config.Esp.Tracer.Color = Options.tracer_color.Value
     end)
 
+    PlayerVisualTab:AddToggle('sleeper', {Text = 'Sleeper', Default = false}):AddColorPicker("sleeper_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.Sleeper.Enabled = Toggles.sleeper.Value
+    end)
+
+    Options.sleeper_color:OnChanged(function()
+        Config.Esp.Sleeper.Color = Options.sleeper_color.Value
+    end)
+
+    PlayerVisualTab:AddSlider('sleepersize', {Text = 'Sleeper Size', Suffix = "°", Default = 6, Min = 0, Max = 10, Rounding = 0, Compact = true}):OnChanged(function(t)
+        Config.Esp.Sleeper.Color = t
+    end)
 
 end
 
