@@ -1,3 +1,82 @@
+
+
+local Config = {
+    Esp = {
+        Box = {
+            Enabled = false,
+            FilledColor = Color3.fromRGB(255, 0, 255),
+            Filled = false,
+            FilledTransparency = 0,
+            Color = Color3.fromRGB(255, 0, 255),
+        },
+        Tracer = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 255, 255),
+        },
+        Sleeper = {
+            Enabled = false,
+            Text = "Sleeping",
+            Color = Color3.fromRGB(255, 255, 255),
+            Size = 7
+        },
+        Armor = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 255, 255),
+            Size = 7
+        },
+        Distance = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 0, 255),
+            Size = 7
+        },
+        Name = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 0, 255),
+            Size = 7,
+            Outline = false,
+        },
+        ViewAngle = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 0, 255),
+        },
+        CornerBoxes = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 255, 255),
+            Size = 5,
+            Thickness = 0,
+        },
+        Health = {
+            Enabled = false,
+            LowColor = Color3.fromRGB(255, 0, 255),
+            HightColor = Color3.fromRGB(0, 0, 255),
+        },
+        Skeleton = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 255, 255),
+        },
+        Tool = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 255, 255),
+            Outline = false,
+            Size = 10,
+        },
+    },
+}
+
+local Hitbox = {
+    Enabled = false,
+    HitBX = 1.672248125076294,
+    HitBY = 0.835624098777771,
+    HitBZ = 0.835624098777771,
+    Material = "ForceField",
+    Color = Color3.fromRGB(255, 0, 255),
+    Transparency = 0.6
+}
+
+local Camera = game:GetService("Workspace").CurrentCamera
+local Plr = game:GetService("Players").LocalPlayer
+local CharacterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middle
+
 local utility = {
     services = {
         players = cloneref(game:GetService("Players")),
@@ -14,768 +93,1029 @@ local utility = {
     functions = {}
 }
 local camera = utility.services.workspace.CurrentCamera
-local mouse = utility.services.players.LocalPlayer:GetMouse()
-local localplayer = utility.services.players.LocalPlayer
-local default_fov = camera.FieldOfView
-local os_clock = os.clock()
-local FPS = string.split(game.Stats.Workspace.Heartbeat:GetValueString(), ".")
-local camera = game:GetService("Workspace").Camera
-local Camera = game:GetService("Workspace").Camera
-local Camera = game:GetService("Workspace").CurrentCamera
-local Cam = game:GetService("Workspace").Camera
-local CharcaterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middle
-local Mouse = game.Players.LocalPlayer:GetMouse()
-local lighting = game:GetService("Lighting")
-local SoundService = game:GetService("SoundService")
-local Decimals = 2
-local Clock = os.clock()
-local Camera = game:GetService("Workspace").Camera
-local CameraPred = game:GetService("Workspace").CurrentCamera
-local Mouse = game.Players.LocalPlayer:GetMouse()
-local CharcaterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middle
-
-local Camera = game:GetService("Workspace").CurrentCamera
-local Cam = game:GetService("Workspace").CurrentCamera
-local SoundService = game:GetService("SoundService")
-local Plr = game:GetService("Players").LocalPlayer
-local CharacterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middle
-
-local box = false
-local SleeperCheck = false
-local Distance = false
-local Name = false
-local RenderDistance = 1500
-local BoxESP = {}
-local Functions = {}
-Functions.IsSleeping = function(self, Model)
-    if Model then
-        local AnimationController = Model:FindFirstChild("AnimationController")
-        if (AnimationController and AnimationController:FindFirstChild("Animator")) then
-            for _, v in pairs(AnimationController.Animator:GetPlayingAnimationTracks()) do
-                if (v.Animation.AnimationId == "rbxassetid://13280887764") then
-                    return true
-                end
-            end
-        end
-    end
-    return false
-end
-Functions.CheckDistance = function(self, Player, RenderDistance)
-    if (Player and Player:IsA("Model") and Player:FindFirstChild("HumanoidRootPart")) then
-        local distance = (workspace.CurrentCamera.CFrame.p - Player.HumanoidRootPart.Position).magnitude
-        return distance <= RenderDistance, distance
-    end
-    return false, 0
-end
-BoxESP.Create = function(Player)
-    local TextLabel = Drawing.new("Text")
-    TextLabel.Visible = Name
-    TextLabel.Color = Color3.fromRGB(202, 82, 147)
-    TextLabel.Size = 16
-    TextLabel.Center = true
-    TextLabel.Outline = true
-    local maxTextSize = 16
-    local function UpdateEsp()
-        if (Player and Player:IsA("Model") and Player:FindFirstChild("HumanoidRootPart") and Player:FindFirstChild("Head")) then
-            local isSleeping = Functions:IsSleeping(Player)
-            if not isSleeping then
-                local isWithinDistance, distance = Functions:CheckDistance(Player, RenderDistance)
-                if isWithinDistance then
-                    local Target2dPosition, IsVisible = workspace.CurrentCamera:WorldToViewportPoint(Player.HumanoidRootPart.Position)
-                    local distanceScale = math.clamp(1 - (distance / RenderDistance), 0.5, 1)
-                    local scale_factor = (1 / (Target2dPosition.Z * math.tan(math.rad(workspace.CurrentCamera.FieldOfView * 0.5)) * 2)) * 100
-                    local width, height = math.floor(34 * scale_factor), math.floor(54 * scale_factor)
-                    TextLabel.Visible = IsVisible
-                    TextLabel.Position = Vector2.new(Target2dPosition.X, (Target2dPosition.Y - (height / 2)) - 20)
-                    TextLabel.Size = math.clamp(maxTextSize * distanceScale, 1, maxTextSize)
-                    TextLabel.Text = Player.Name
-                else
-                    TextLabel.Visible = false
-                end
-            else
-                TextLabel.Visible = false
-            end
-        else
-            TextLabel.Visible = false
-            if not Player then
-                TextLabel:Remove()
-            end
-        end
-    end
-    return {
-        UpdateEsp = UpdateEsp,
-        TextLabel = TextLabel,
-        Player = Player
-    }
-end
-
-local Boxes = {}
-local CachedModels = {}
-local function EnableBoxESP()
-    for _, Model in ipairs(workspace:GetChildren()) do
-        if (Model:IsA("Model") and Model:FindFirstChild("HumanoidRootPart") and Model:FindFirstChild("Head") and not CachedModels[Model]) then
-            local Esp = BoxESP.Create(Model)
-            table.insert(Boxes, Esp)
-            CachedModels[Model] = true
-        end
-    end
-end
-game.Workspace.DescendantAdded:Connect(function(child)
-        if (child:IsA("Model") and child:FindFirstChild("HumanoidRootPart") and child:FindFirstChild("Head") and not CachedModels[child]) then
-            local Esp = BoxESP.Create(child)
-            table.insert(Boxes, Esp)
-            CachedModels[child] = true
-        end
-    end)
-local PlayerUpdater = game:GetService("RunService").RenderStepped
-local PlayerConnection
-PlayerConnection = PlayerUpdater:Connect(function()
-        for _, Esp in ipairs(Boxes) do
-            Esp.UpdateEsp()
-        end
-    end)
-EnableBoxESP()
-
-local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/BigHacker123/Library.lua/main/Library.lua'))()
-local SaveManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/addons/SaveManager.lua'))()
-local ThemeManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/BigHacker123/Library.lua/main/Theme.lua'))()
-local Build = "Private";local Color = "#FF0000";local Ver = "v0.3b"
-local Window = Library:CreateWindow({ Size = UDim2.fromOffset(550, 610),Title = "Ethernality.<font color=\"#d17bff\">wtf</font> | ".."<font color=\""..Color.."\">"..Build.."</font>".."                      ["..Ver.."]",Center = true,AutoShow = true})
-
-local Tabs = {
-    CombatTab = Window:AddTab('Combat'),
-    VisualsTab = Window:AddTab('Visuals'),
-    MiscellaneousTab = Window:AddTab('Miscellaneous'),
-    WorldTab = Window:AddTab('World'),
-    LocalTab = Window:AddTab('Local'),
-    UISettings = Window:AddTab('Settings')
-}
-
-local HitboxTabBox = Tabs.CombatTab:AddLeftTabbox()
-local CrosshairTabBox = Tabs.MiscellaneousTab:AddLeftTabbox()
-local HeadHitbox = HitboxTabBox:AddTab('Head Hitbox')
-
-local HedsOn = Instance.new("Part")
-HedsOn.Name = "HedsOn"
-HedsOn.Anchored = false
-HedsOn.CanCollide = false
-HedsOn.Transparency = 0
-HedsOn.Size = Vector3.new(5, 5, 10)
-HedsOn.Parent = game.ReplicatedStorage
-
-local HeadExtends = false
-local XSize = 5
-local YSize = 5
-local ZSize = 10
-local HitboxTransparency = 50
-
-HeadHitbox:AddToggle('HBO',{Text='Enabled',Default=false}):OnChanged(function(Value)
-HeadExtends = Value
-end)
-
-HeadHitbox:AddSlider('HitboxXSize_Slider', {Text = 'Width', Default = 5, Min = 0, Max = 10, Rounding = 2, Suffix = "%", Compact = false}):OnChanged(function(HitboxXSize)
-XSize = HitboxXSize
-end)
-
-HeadHitbox:AddSlider('HitboxYSize_Slider', {Text = 'Height', Default = 5, Min = 0, Max = 10, Rounding = 2, Suffix = "%", Compact = false}):OnChanged(function(HitboxYSize)
-YSize = HitboxYSize
-end)
-
-HeadHitbox:AddSlider('HitboxXSize_Slider', {Text = 'Transparency', Default = 50, Min = 0, Max = 100, Rounding = 0, Suffix = "%", Compact = false}):OnChanged(function(TransparencyValue)
-HitboxTransparency = TransparencyValue / 100
-end)
-
-function hitboxyap()
-  if HeadExtends then
-    for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
-      if i:FindFirstChild("HumanoidRootPart") and not i:FindFirstChild("HedsOn") then
-        local BigHeadsPart = Instance.new("Part")
-        BigHeadsPart.Name = "Head"
-        BigHeadsPart.Anchored = false
-        BigHeadsPart.CanCollide = false
-        BigHeadsPart.Transparency = HitboxTransparency
-        BigHeadsPart.Size = Vector3.new(XSize, YSize, ZSize)
-        local DeletePart = Instance.new("Weld")
-        DeletePart.Parent = BigHeadsPart
-        DeletePart.Name = "FAKEHEAD"
-        local HeadsParts = BigHeadsPart:Clone()
-        HeadsParts.Parent = i
-        HeadsParts.Orientation = i.HumanoidRootPart.Orientation
-        local clonedHedsOn = HedsOn:Clone()
-        clonedHedsOn.Parent = i
-        local Headswelding = Instance.new("Weld")
-        Headswelding.Parent = HeadsParts
-        Headswelding.Part0 = i.HumanoidRootPart
-        Headswelding.Part1 = HeadsParts
-        HeadsParts.Position = Vector3.new(i.HumanoidRootPart.Position.X, i.HumanoidRootPart.Position.Y - 0.6, i.HumanoidRootPart.Position.Z)
-      end
-    end
-  else
-    for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
-      if i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("HedsOn") then
-        i.HedsOn:Remove()
-        for _, a in ipairs(i:GetChildren()) do
-          if a.Name == "Head" and a:FindFirstChild("FAKEHEAD") and (not a:FindFirstChild("Nametag") or not a:FindFirstChild("Face")) then
-            a:Remove()
-          end
-        end
-      end
-    end
-  end
-end
-
-game:GetService("RunService").RenderStepped:Connect(function()
-    if HeadExtends then
-        hitboxyap()
-    end
-end)
-
-  
-
-local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
-local PlayerVisualTab = PlayerVisualTabbox:AddTab('Esp')
-
-PlayerVisualTab:AddToggle('names',{Text='Names',Default=false}):OnChanged(function(Value)
-    Name = Value
-        for _, Esp in ipairs(Boxes) do
-            Esp.TextLabel.Visible = Value
-        end
-end)
-
-
-PlayerVisualTab:AddToggle('sleepercheck',{Text='Sleeper Check',Default=false}):OnChanged(function(Value)
-    SleeperCheck = false
-end)
-
-    PlayerVisualTab:AddSlider('maxdistance', {Text = 'Render Distance', Suffix = "°", Default = 500, Min = 1, Max = 1500, Rounding = 0, Compact = true}):OnChanged(function(t)
-        RenderDistance = t
-    end)
-
-
-local CrosshairTab = CrosshairTabBox:AddTab('Crosshair X')
-local CrossHairX = Drawing.new("Circle"), Drawing.new("Circle")
---
-CrossHairX.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
-CrossHairX.Thickness = 1
-CrossHairX.ZIndex = 3
 
 do
-  CrosshairTab:AddToggle('zCrosshairX_Toggle', {Text = 'Enable', Default = false}):AddColorPicker("eCrosshairX_Color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-  CrossHairX.Visible = Toggles.zCrosshairX_Toggle.Value
-  end)
+    local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Edaruph/My-Scripts/main/Main", true))()
 
-  Options.eCrosshairX_Color:OnChanged(function()
-  CrossHairX.Color = Options.eCrosshairX_Color.Value
-  end)
+        local Tabs = {
+            Combat = Library:addTab("Combat", "http://www.roblox.com/asset/?id=17582422685"),
+            Visuals = Library:addTab("Visuals", "http://www.roblox.com/asset/?id=17582428946"),
+            World = Library:addTab("World", "http://www.roblox.com/asset/?id=17582463837"), 
+            Settings = Library:addTab("Settings", "http://www.roblox.com/asset/?id=17582467390")
+        }
 
-  CrosshairTab:AddToggle('Crosshair_Filled1', {Text = 'Filled', Default = false}):OnChanged(function()
-  CrossHairX.Filled = Toggles.Crosshair_Filled1.Value
-  end)
+        local HBE = Tabs.Combat:createGroup("left", "Hitbox Expander")
+        _G.patrickcute = false
+        _G.headx = 8
+        _G.heady = 8
+        _G.headz = 8
+        local function modifyPlayerHeads()
+            for _, v in next, game.Workspace:GetChildren() do
+                if ((v.Name == "Model") and v:FindFirstChild("Head")) then
+                    local head = v.Torso
+                    if head then
+                        local success, _ = pcall(function()
+                                head.Size = Vector3.new(_G.headx, _G.heady, _G.headz)
+                                head.Transparency = 0.5
+                                head.CanCollide = false
+                            end)
+                        if not success then
+                            warn("Failed to modify head for player:", v.Name)
+                        end
+                    end
+                end
+            end
+        end
 
-  CrosshairTab:AddSlider('Crosshair_Radius', {Text = 'Size', Suffix = "°", Default = 2, Min = 0, Max = 100, Rounding = 0, Compact = true}):OnChanged(function(CrosshairXRadius)
-  CrossHairX.Radius = CrosshairXRadius
-  end)
+        game:GetService("RunService").RenderStepped:Connect(function()
+                if _G.patrickcute then
+                    modifyPlayerHeads()
+                end
+            end)
+        HBE:addToggle({text = "Hitbox", default = false, flag = "Hitbox", callback = function(state)
+                _G.patrickcute = state
+            end})
+
+        HBE:addSlider({
+                text = "Hitbox X",
+                min = 1,
+                max = 14,
+                suffix = "%",
+                float = 1,
+                default = 1,
+                flag = "_G.headx",
+                callback = function(Value)
+                    _G.headx = Value
+                end})
+
+        HBE:addSlider({
+                text = "Hitbox Y:",
+                min = 1,
+                max = 14,
+                suffix = "%",
+                float = 1,
+                default = 1,
+                flag = "_G.heady",
+                callback = function(Value)
+                    _G.heady = Value
+                end})
+
+        HBE:addSlider({
+                text = "Hitbox Z:",
+                min = 1,
+                max = 14,
+                suffix = "%",
+                float = 1,
+                default = 1,
+                flag = "_G.headz",
+                callback = function(Value)
+                    _G.headz = Value
+                end})
+
+        local ExploitsTab = Tabs.Combat:createGroup('right', 'Exploits | Etc')
+        
+        local longneck = {
+            LongNeckEnabled = false,
+            UpperLimitDefault = 3,
+            LowerLimitDefault = 1.75,
+            CurrentSliderValue = 1.75,
+            }
+            
+            local longNeckKeybindEnabled = false
+            
+            ExploitsTab:addToggle({text = "Long Neck", default = false, flag = "longneck_toggle", callback = function(Value)
+            longneck.LongNeckEnabled = Value
+            longNeckKeybindEnabled = Value
+             if not longneck.LongNeckEnabled then
+                game:GetService("Workspace").Ignore.LocalCharacter.Bottom.PrismaticConstraint.UpperLimit = longneck.UpperLimitDefault
+                game:GetService("Workspace").Ignore.LocalCharacter.Bottom.PrismaticConstraint.LowerLimit = longneck.LowerLimitDefault
+                else
+                game:GetService("Workspace").Ignore.LocalCharacter.Bottom.PrismaticConstraint.UpperLimit = longneck.CurrentSliderValue
+                game:GetService("Workspace").Ignore.LocalCharacter.Bottom.PrismaticConstraint.LowerLimit = longneck.CurrentSliderValue
+             end
+                end}):addKeybind({text = "Toggle Long Neck", default = Enum.KeyCode.Unknown, mode = "toggle", flag = "longneck_keybind", callback = function(Value)
+                longNeckKeybindEnabled = not longNeckKeybindEnabled
+                longneck.LongNeckEnabled = longNeckKeybindEnabled
+                if not longneck.LongNeckEnabled then
+                    game:GetService("Workspace").Ignore.LocalCharacter.Bottom.PrismaticConstraint.UpperLimit = longneck.UpperLimitDefault
+                    game:GetService("Workspace").Ignore.LocalCharacter.Bottom.PrismaticConstraint.LowerLimit = longneck.LowerLimitDefault
+                    else
+                    game:GetService("Workspace").Ignore.LocalCharacter.Bottom.PrismaticConstraint.UpperLimit = longneck.CurrentSliderValue
+                    game:GetService("Workspace").Ignore.LocalCharacter.Bottom.PrismaticConstraint.LowerLimit = longneck.CurrentSliderValue
+                    end
+                    end})
+                    
+                    ExploitsTab:addSlider({text = "Height Changer:", suffix = "m", min = 3.75, max = 7.5, rounding = 2, default = 4.25, flag = "height_slider", callback = function(Value)
+                    longneck.CurrentSliderValue = Value
+                    if longneck.LongNeckEnabled then
+                        game:GetService("Workspace").Ignore.LocalCharacter.Bottom.PrismaticConstraint.LowerLimit = Value
+                        game:GetService("Workspace").Ignore.LocalCharacter.Bottom.PrismaticConstraint.UpperLimit = Value
+                        end
+                        end})
+
+
+local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
+
+
+local function createJumpShootPart()
+    local JSPart = Instance.new("Part", Workspace)
+    JSPart.Name = "JumpShoot"
+    JSPart.Size = Vector3.new(4, 0.2, 4)
+    JSPart.Anchored = true
+
+    JSPart.Color = Color3.fromRGB(202, 82, 147) 
+
+    local forceField = Instance.new("SpecialMesh")
+    forceField.Parent = JSPart
+    forceField.MeshType = Enum.MeshType.FileMesh
+    forceField.MeshId = "rbxassetid://20329976" 
+    return JSPart
 end
 
-
-local CustomHitsoundsTabBox = Tabs.MiscellaneousTab:AddLeftTabbox('Custom Hitsounds')
-local PlayerHitsoundsTab = CustomHitsoundsTabBox:AddTab('Custom Hitsounds')
-
---* Player Hitsounds *--
-
-SoundService.PlayerHitHeadshot.Volume = 5
-SoundService.PlayerHitHeadshot.Pitch = 1
-SoundService.PlayerHitHeadshot.EqualizerSoundEffect.HighGain = -1.5
-local sounds = {["Defualt Headshot"] = "rbxassetid://9119561046",["Defualt Body"] = "rbxassetid://9114487369",Neverlose = "rbxassetid://8726881116",Gamesense = "rbxassetid://4817809188",One = "rbxassetid://7380502345",Bell = "rbxassetid://6534947240",Rust = "rbxassetid://1255040462",TF2 = "rbxassetid://2868331684",Slime = "rbxassetid://6916371803",["Among Us"] = "rbxassetid://5700183626",Minecraft = "rbxassetid://4018616850",["CS:GO"] = "rbxassetid://6937353691",Saber = "rbxassetid://8415678813",Baimware = "rbxassetid://3124331820",Osu = "rbxassetid://7149255551",["TF2 Critical"] = "rbxassetid://296102734",Bat = "rbxassetid://3333907347",["Call of Duty"] = "rbxassetid://5952120301",Bubble = "rbxassetid://6534947588",Pick = "rbxassetid://1347140027",Pop = "rbxassetid://198598793",Bruh = "rbxassetid://4275842574",Bamboo = "rbxassetid://3769434519",Crowbar = "rbxassetid://546410481",Weeb = "rbxassetid://6442965016",Beep = "rbxassetid://8177256015",Bambi = "rbxassetid://8437203821",Stone = "rbxassetid://3581383408",["Old Fatality"] = "rbxassetid://6607142036",Click = "rbxassetid://8053704437",Ding = "rbxassetid://7149516994",Snow = "rbxassetid://6455527632",Laser = "rbxassetid://7837461331",Mario = "rbxassetid://2815207981",Steve = "rbxassetid://4965083997"}
-
-PlayerHitsoundsTab:AddToggle('Enabled_Toggle1', {Text = 'Enable', Default = false})
-
-PlayerHitsoundsTab:AddDropdown('HeadshotHit', {Values = { 'Defualt Headshot','Neverlose','Gamesense','One','Bell','Rust','TF2','Slime','Among Us','Minecraft','CS:GO','Saber','Baimware','Osu','TF2 Critical','Bat','Call of Duty','Bubble','Pick','Pop','Bruh','Bamboo','Crowbar','Weeb','Beep','Bambi','Stone','Old Fatality','Click','Ding','Snow','Laser','Mario','Steve','Snowdrake' },Default = 1, Multi = false, Text = 'Head Hitsound:'})
-Options.HeadshotHit:OnChanged(function()
-local soundId = sounds[Options.HeadshotHit.Value]
-game:GetService("SoundService").PlayerHitHeadshot.SoundId = soundId
-game:GetService("SoundService").PlayerHitHeadshot.Playing = true
-end)
-
-PlayerHitsoundsTab:AddSlider('Volume_Slider', {Text = 'volume', Default = 5, Min = 0, Max = 10, Rounding = 0, Compact = true,}):OnChanged(function(vol)
-SoundService.PlayerHitHeadshot.Volume = vol
-end)
-
-PlayerHitsoundsTab:AddSlider('Pitch_Slider', {Text = 'pitch', Default = 1, Min = 0, Max = 2, Rounding = 2, Compact = true,}):OnChanged(function(pich)
-SoundService.PlayerHitHeadshot.Pitch = pich
-end)
-
-PlayerHitsoundsTab:AddInput('HeadShotHitAssetID', {Default = "rbxassetid://9119561046",Numeric = false,Finished = true,Text = 'custom sound:',Placeholder = "rbxassetid://9119561046",}):OnChanged(function(CustomSoundID)
-SoundService.PlayerHitHeadshot.SoundId = CustomSoundID
-end)
---
-PlayerHitsoundsTab:AddToggle('Enabled_Toggle2', {Text = 'enabled', Default = false})
-
-PlayerHitsoundsTab:AddDropdown('Hit', {Values = { 'Defualt Body','Neverlose','Gamesense','One','Bell','Rust','TF2','Slime','Among Us','Minecraft','CS:GO','Saber','Baimware','Osu','TF2 Critical','Bat','Call of Duty','Bubble','Pick','Pop','Bruh','Bamboo','Crowbar','Weeb','Beep','Bambi','Stone','Old Fatality','Click','Ding','Snow','Laser','Mario','Steve','Snowdrake' },Default = 1, Multi = false, Text = 'Body Hitsound:'})
-Options.Hit:OnChanged(function()
-local soundId = sounds[Options.Hit.Value]
-game:GetService("SoundService").PlayerHit2.SoundId = soundId
-game:GetService("SoundService").PlayerHit2.Playing = true
-end)
-
-PlayerHitsoundsTab:AddSlider('Volume_Slider', {Text = 'volume', Default = 5, Min = 0, Max = 10, Rounding = 0, Compact = true,}):OnChanged(function(vole)
-SoundService.PlayerHit2.Volume = vole
-end)
-
-PlayerHitsoundsTab:AddSlider('Pitch_Slider', {Text = 'pitch', Default = 1, Min = 0, Max = 2, Rounding = 2, Compact = true,}):OnChanged(function(piche)
-SoundService.PlayerHit2.Pitch = piche
-end)
-
-PlayerHitsoundsTab:AddInput('PlayerHitAssetID', {Default = "rbxassetid://9114487369",Numeric = false,Finished = true,Text = 'custom sound:',Placeholder = "rbxassetid://9114487369",}):OnChanged(function(CustomSoundID)
-SoundService.PlayerHit2.SoundId = CustomSoundID
-end)
-
-local XrayTabBox = Tabs.MiscellaneousTab:AddRightTabbox('xray')
-local XrayTab = XrayTabBox:AddTab('xray')
-
---* X-Ray *--
-
-local XRayEnabled = false
-local CurrentSliderValue = 50
-XrayTab:AddToggle('Xray', {Text = 'Enable', Default = false, Tooltip}):AddKeyPicker('XRayKey', {Default = 'Non', SyncToggleState = true, Mode = 'Toggle', Text = 'X-Ray', NoUI = true}):OnChanged(function(value)
-XRayEnabled = value
-if XRayEnabled then
-for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
-  if v:FindFirstChild("Hitbox") then
-    v.Hitbox.Transparency = CurrentSliderValue
-  end
+local function updateJumpShootPosition(JSPart)
+    while true do
+        local characterPosition = Workspace.Ignore.LocalCharacter.Middle.Position
+        JSPart.Position = characterPosition - Vector3.new(0, 3.5, 0)
+        RunService.Heartbeat:Wait()
+    end
 end
-else
-for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
-  if v:FindFirstChild("Hitbox") then
-    v.Hitbox.Transparency = 0
-  end
+
+local JumpShootEnabled = false
+
+local function toggleJumpShoot(state)
+    JumpShootEnabled = state
+    if JumpShootEnabled then
+        if not JSPart then
+            JSPart = createJumpShootPart()
+            spawn(function()
+                updateJumpShootPosition(JSPart)
+            end)
+        end
+    else
+        if JSPart then
+            JSPart:Destroy()
+            JSPart = nil
+        end
+    end
 end
-end
-end)
 
-XrayTab:AddSlider('XrayChangerSlider', {Text = 'transparency:', Suffix = "%", Default = 50, Min = 0, Max = 100, Rounding = 0, Compact = false}):OnChanged(function(Value)
-CurrentSliderValue = Value / 100
-if XRayEnabled then
-CurrentSliderValue = Value / 100
-end
-end)
-
-local ComExtraTabBox = Tabs.MiscellaneousTab:AddLeftTabbox('extra')
-local ComExtraTab = ComExtraTabBox:AddTab('extra')
-
---* Extra *--
-
-ComExtraTab:AddToggle('GameCrosshair_Value', {Text = 'remove in-game crosshair', Default = false}):AddColorPicker("GameCrosshair_Color", {Default = Color3.fromRGB(255,255,255)}):OnChanged(function(GameCrosshair)
-if GameCrosshair == true then
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Crosshair.Visible = false
-elseif GameCrosshair == false then
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Crosshair.Visible = true
-end
-end)
-
-Options.GameCrosshair_Color:OnChanged(function(CrosshairColor_Value)
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Crosshair.BackgroundColor3 = CrosshairColor_Value
-end)
-
-ComExtraTab:AddToggle('BloodSplatter', {Text = 'remove blood', Default = false}):OnChanged(function(BloodSplatter_Toggle)
-if BloodSplatter_Toggle == false then
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.BloodSplatter.Visible = true
-elseif BloodSplatter_Toggle == true then
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.BloodSplatter.Visible = false
-end
-end)
-
-
-
-
-
-
-
-
-
-local WorldTabBox = Tabs.WorldTab:AddLeftTabbox()
-local Fieldofviewtab = WorldTabBox:AddTab('Field Of View')
-
+ExploitsTab:addToggle({
+    text = "Jump Shoot",
+    default = false,
+    flag = "JumpShoot",
+    callback = toggleJumpShoot
+})
+        
+local field_of_viewtab = Tabs.Visuals:createGroup("right", "Fov/Zoom")
 local default_fov = 70
 local slider_fov = 60
 local field_of_view = {enabled = false, amount = default_fov, zoomed = false, zoom_amount = 30}
+    local fov_toggle =
+        field_of_viewtab:addToggle({text = "Enabled", default = false, flag = "fov_changer_toggle", callback = function(value)
+                field_of_view.enabled = value
+                if field_of_view.enabled then
+                    if field_of_view.zoomed then
+                        camera.FieldOfView = field_of_view.zoom_amount
+                    else
+                        camera.FieldOfView = field_of_view.amount
+                    end
+                else
+                    camera.FieldOfView = default_fov
+                end
+            end})
+    local fov_keybind = fov_toggle:addKeybind({
+            text = "Field of View:",
+            type = "toggle",
+            key = Enum.KeyCode.F,
+            flag = "field_of_view_toggle",
+            callback = function()
+                if field_of_view.enabled then
+                    if field_of_view.zoomed then
+                        field_of_view.zoomed = false
+                        camera.FieldOfView = field_of_view.amount
+                    else
+                        field_of_view.zoomed = true
+                        camera.FieldOfView = field_of_view.zoom_amount
+                    end
+                end
+            end})
+    field_of_viewtab:addSlider({
+            text = "field of view:",
+            min = 30,
+            max = 120,
+            suffix = "x",
+            float = 1,
+            default = 70,
+            flag = "fovamount_slider",
+            callback = function(Value)
+                field_of_view.ammount = Value
+                if field_of_view.enabled then
+                    camera.FieldOfView = field_of_view.ammount
+                end
+            end})
+    field_of_viewtab:addToggle({text = "enabled", default = false, flag = "zoom_toggle", callback = function(Value)
+                field_of_view.zoom_check = Value
+            end}):addKeybind({text = "zoom", type = "Hold", key = Enum.KeyCode.Z, flag = "zoomkey_toggle", callback = function(Value)
+                if field_of_view.zoom_check then
+                    field_of_view.zoom = not field_of_view.zoom
+                    if field_of_view.zoom then
+                        camera.FieldOfView = field_of_view.zoom_ammount
+                    else
+                        camera.FieldOfView = default_fov
+                    end
+                else
+                    camera.FieldOfView = default_fov
+                end
+            end})
+    field_of_viewtab:addSlider({
+            text = "zoom:",
+            min = 1,
+            max = 70,
+            suffix = "x",
+            float = 1,
+            default = 30,
+            flag = "zoomamount_slider",
+            callback = function(Value)
+                field_of_view.zoom_ammount = Value
+                if field_of_view.zoom_check then
+                    camera.FieldOfView = field_of_view.zoom_ammount
+                end
+            end})
 
-
-Fieldofviewtab:AddToggle('fov_changer_toggle',{Text='Enable',Default=false}):OnChanged(function(Value)
-    field_of_view.enabled = Value
-        if field_of_view.enabled then
-            if field_of_view.zoomed then
-                camera.FieldOfView = field_of_view.zoom_amount
-            else
-                camera.FieldOfView = field_of_view.amount
+    camera:GetPropertyChangedSignal("FieldOfView"):Connect(function()
+            if (field_of_view.enabled and not field_of_view.zoom) then
+                if (field_of_view.ammount ~= camera.FieldOfView) then
+                    camera.FieldOfView = field_of_view.ammount
+                end
             end
-        else
-            camera.FieldOfView = default_fov
+            if field_of_view.zoom then
+                camera.FieldOfView = field_of_view.zoom_ammount
+            end
+        end)
+
+        local Worldy = Tabs.World:createGroup("left", "World | Etc")
+        local Lighting = game:GetService("Lighting")
+        local Leaves = false
+        local GlobalShadows = false
+        local InfiniteFog = false
+        local function destroyLeavesObjects()
+            local descendants = workspace:GetDescendants()
+            for _, obj in ipairs(descendants) do
+                if (obj:IsA("BasePart") and ((obj.Name == "Fir3_Leaves") or (obj.Name == "Palm1_Leaves") or (obj.Name == "Birch1_Leaves") or (obj.Name == "Elm1_Leaves"))) then
+                    obj:Destroy()
+                end
+            end
         end
-end)
-
-
-Fieldofviewtab:AddSlider('feildofview', {Text='field of view:',Default=70,Min=30,Max=120,Rounding=0,Compact=false,Suffix=" %"}):OnChanged(function(Value)
-    field_of_view.ammount = Value
-    if field_of_view.enabled then
-        camera.FieldOfView = field_of_view.ammount
-    end
-end)
-
-Fieldofviewtab:AddToggle('enablezoom', { Text = 'Enable Zoom', Default = false }):AddKeyPicker('zoomkey', { Default = 'Non', SyncToggleState = true, Mode = 'Toggle', Text = 'zoom', NoUI = true }):OnChanged(function(Value)
-    field_of_view.zoom_check = Value
-    if field_of_view.zoom_check then
-        field_of_view.zoom = not field_of_view.zoom
-        if field_of_view.zoom then
-            camera.FieldOfView = field_of_view.zoom_ammount
-        else
-            camera.FieldOfView = default_fov
+        local function onLeavesToggled(state)
+            Leaves = state
+            if state then
+                destroyLeavesObjects()
+            end
         end
-    else
-        camera.FieldOfView = default_fov
-    end
-end)
+        local function onShadowsToggled(state)
+            GlobalShadows = state
+            Lighting.GlobalShadows = state
+        end
+        local function onFogToggled(state)
+            InfiniteFog = state
+            if state then
+                Lighting.FogStart = math.huge
+            else
+                Lighting.FogStart = 0
+            end
+        end
 
-Fieldofviewtab:AddSlider('zoomaount', {Text='zoom:',Default=30,Min=1,Max=120,Rounding=0,Compact=false,Suffix=" %"}):OnChanged(function(Value)
-    field_of_view.zoom_ammount = Value
-    if field_of_view.zoom_check then
-        camera.FieldOfView = field_of_view.zoom_ammount
-    end
-end)
+        Worldy:addToggle({text = "Remove Leafs Wont Auto Updat", default = false, flag = "Leaves", callback = onLeavesToggled})
+        Worldy:addToggle({text = "No Shadows", default = false, flag = "GlobalShadows", callback = onShadowsToggled})
+        Worldy:addToggle({text = "No Fog", default = false, flag = "InfiniteFog", callback = onFogToggled})
+        local RunService = game:GetService("RunService")
+        local game = game
+        local localDaytime = false
+        local localTimeOfDay = 12
+        game.Lighting.ClockTime = tostring(localTimeOfDay)
+        local function updateLighting()
+            if localDaytime then
+                game.Lighting.ClockTime = tostring(localTimeOfDay)
+            else
+                game.Lighting.ClockTime = "0"
+            end
+        end
 
-camera:GetPropertyChangedSignal("FieldOfView"):Connect(function()
-    if (field_of_view.enabled and not field_of_view.zoom) then
-        if (field_of_view.ammount ~= camera.FieldOfView) then
-            camera.FieldOfView = field_of_view.ammount
+        Worldy:addToggle({text = "Time Of Day", default = false, flag = "localDaytime", callback = function(state)
+            localDaytime = state
+            updateLighting()
+        end})
+
+        Worldy:addSlider({
+                text = "TimeOfDay Slider:",
+                min = 0,
+                max = 12,
+                suffix = "%",
+                float = 1,
+                default = 1,
+                flag = "localTimeOfDay",
+                callback = function(Value)
+                    if localDaytime then
+                        localTimeOfDay = Value
+                        updateLighting()
+                    end
+                end})
+        RunService.RenderStepped:Connect(function()
+                updateLighting()
+            end)
+
+            
+            local Speed = Tabs.World:createGroup("left", "Speed Hack")
+            local workspace = game:GetService("Workspace")
+            local UserInputService = game:GetService("UserInputService")
+            local RunService = game:GetService("RunService")
+            local Character = workspace.Ignore.LocalCharacter.Middle
+            local target = game:GetService("Workspace").Ignore.LocalCharacter
+            local camera = game.Workspace.CurrentCamera
+            local Position = "Down"
+            _G.Speedy = false
+            _G.Speedyk = false
+            local acceleration = 0.5
+            local maxSpeed = 200
+            local currentSpeed = 25
+            RunService.RenderStepped:Connect(function(deltaTime)
+                    if _G.Speedy then
+                        currentSpeed = math.min(currentSpeed + (acceleration * deltaTime), maxSpeed)
+                        for i, v in pairs(game.Workspace.Ignore.LocalCharacter:GetChildren()) do
+                            v.Velocity = v.Velocity + (game.Workspace.CurrentCamera.CFrame.LookVector * currentSpeed)
+                        end
+                    else
+                        currentSpeed = 25
+                    end
+                end)
+            UserInputService.InputBegan:Connect(function(input, g)
+                    if ((input.KeyCode == Enum.KeyCode.U) and not g) then
+                        if (_G.HPress == true) then
+                            _G.HPress = false
+                            _G.Speedyk = true
+                        elseif (_G.HPress == false) then
+                            _G.HPress = true
+                            _G.Speedyk = false
+                        end
+                    end
+                end)
+            UserInputService.InputBegan:Connect(function(input, g)
+                    if ((input.KeyCode == Enum.KeyCode.C) and _G.Speedyk and not g) then
+                        _G.Speedy = true
+                    end
+                end)
+            UserInputService.InputEnded:Connect(function(input, g)
+                    if ((input.KeyCode == Enum.KeyCode.C) and not g) then
+                        _G.Speedy = false
+                    end
+                end)
+            local hopping = false
+            RunService.RenderStepped:Connect(function()
+                    if ((workspace.Ignore.LocalCharacter.Middle.LinearVelocity.MaxAxesForce == Vector3.new(0, 0, 0)) and (workspace.Ignore.LocalCharacter.Middle.Velocity.Y <= 0.2)) then
+                        if not hopping then
+                            hopping = true
+                            Speedyk = true
+                            Position = "Up"
+                            wait(0.15)
+                            Position = "Down"
+                            Speedyk = false
+                            wait(0.09)
+                            hopping = false
+                        end
+                    end
+                end)
+            local Check = {}
+            game:GetService("RunService").Heartbeat:Connect(function()
+                    if (Speedyk == true) then
+                        Check[1] = game.Workspace.Ignore.LocalCharacter.Middle.CFrame
+                        local SpoofThis = game.Workspace.Ignore.LocalCharacter.Middle.CFrame
+                        if (Position == "Up") then
+                            SpoofThis = SpoofThis + Vector3.new(0, 5, 0)
+                        elseif (Position == "Down") then
+                            SpoofThis = SpoofThis
+                        end
+                        game.Workspace.Ignore.LocalCharacter.Middle.CFrame = SpoofThis
+                        game:GetService("RunService").RenderStepped:Wait()
+                        game.Workspace.Ignore.LocalCharacter.Middle.CFrame = Check[1]
+                    end
+                end)
+            Speed:addToggle({text = "Speed Hack", default = false, flag = "_G.Speedyk", callback = function(state)
+                        _G.Speedyk = state
+                    end})
+            Speed:addSlider({
+                    text = "Set Speed:",
+                    min = 1,
+                    max = 80,
+                    suffix = "%",
+                    float = 1,
+                    default = 25,
+                    flag = "maxSpeed",
+                    callback = function(Value)
+                        maxSpeed = Value
+                    end})
+            Speed:addSlider({
+                    text = "acceleration:",
+                    min = 0.2,
+                    max = 1.3,
+                    suffix = "%",
+                    float = 1,
+                    default = 1,
+                    flag = "acceleration",
+                    callback = function(Value)
+                        acceleration = Value
+                    end})
+
+            local Arrow = Tabs.Visuals:createGroup("right", "Arrow Trails")
+            game:GetService("ReplicatedStorage").Arrow.Trail.Lifetime = 6
+            game:GetService("ReplicatedStorage").Arrow.Trail.Brightness = 100
+            game:GetService("ReplicatedStorage").Arrow.Trail.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 255)),ColorSequenceKeypoint.new(1, Color3.fromRGB(202, 0, 147))})
+            Arrow:addToggle({text = "Arrow Trail", default = false, flag = "UpdateArrowTrail", callback = function(state)
+                    end})
+            Arrow:addToggle({text = "Arm | Weapon | Color", default = false, flag = "UpdateArrowTrail", callback = function(state)
+                    end})
+
+                    local workspace = game:GetService("Workspace")
+        local fpsArms = workspace.Ignore.FPSArms
+        local material = Enum.Material.ForceField
+        local color = Color3.fromRGB(202, 82, 147)
+        for _, part in pairs(fpsArms:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Material = material
+                part.Color = color
+            end
+        end
+        local replicatedStorage = game:GetService("ReplicatedStorage")
+        local handModels = replicatedStorage:WaitForChild("HandModels")
+        local material = Enum.Material.ForceField
+        local color = Color3.fromRGB(202, 82, 147)
+        for _, part in pairs(handModels:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Material = material
+                part.Color = color
+            end
+        end
+        local replicatedStorage = game:GetService("ReplicatedStorage")
+        local handModels = replicatedStorage.HandModels
+        local gone = false
+        for _, descendant in ipairs(handModels:GetDescendants()) do
+            if descendant:IsA("RopeConstraint") then
+                descendant.Visible = gone
+            end
+        end
+
+        local Boxes = Tabs.Visuals:createGroup('left', 'Boxes')
+
+        Boxes:addToggle({text = "Box",default = false,flag = "box",callback = function(Value)
+            Config.Esp.Box.Enabled = Value
+        end}):addColorpicker({text = "Color", ontop = false, flag = "boxespColor", color = Color3.fromRGB(202, 82, 147), callback = function(Value)
+            Config.Esp.Box.Color = Value
+        end})
+
+
+        Boxes:addToggle({text = "Box Filled",default = false,flag = "filled_box",callback = function(Value)
+            Config.Esp.Box.Filled = Value
+        end}):addColorpicker({text = "Color", ontop = false, flag = "filled_color", color = Color3.fromRGB(202, 82, 147), callback = function(Value)
+            Config.Esp.Box.FilledColor = Value
+        end})  
+
+        Boxes:addToggle({text = "Corner Box",default = false,flag = "corner",callback = function(Value)
+            Config.Esp.CornerBoxes.Enabled = Value
+        end}):addColorpicker({text = "Color", ontop = false, flag = "corner_color", color = Color3.fromRGB(202, 82, 147), callback = function(Value)
+            Config.Esp.CornerBoxes.Color = Value
+        end}) 
+        
+        Boxes:addSlider({text = "Filled Transparency", min = 0, max = 1, suffix = "%", float = 0.1, default = 0.1, flag = "filled_tranasparency",callback = function(Value)
+            Config.Esp.Box.FilledTransparency = Value
+        end})
+
+        local NameGroup = Tabs.Visuals:createGroup('left', 'Names')
+
+        NameGroup:addToggle({text = "Names",default = false,flag = "names",callback = function(Value)
+            Config.Esp.Name.Enabled = Value
+        end}):addColorpicker({text = "Color", ontop = false, flag = "names_color", color = Color3.fromRGB(202, 82, 147), callback = function(Value)
+            Config.Esp.Name.Color = Value
+        end}) 
+
+        NameGroup:addToggle({text = "Outline",default = false,flag = "outline",callback = function(Value)
+            Config.Esp.Name.Outline = Value
+        end})
+
+        NameGroup:addSlider({text = "Size", min = 0, max = 30, suffix = "%", float = 0.1, default = 0.1, flag = "name_slider",callback = function(Value)
+            Config.Esp.Name.Size = Value
+        end})
+
+        local OthersGroup = Tabs.Visuals:createGroup('left', 'Others')
+
+        OthersGroup:addToggle({text = "Tracers",default = false,flag = "Tracers",callback = function(Value)
+            Config.Esp.Tracer.Enabled = Value
+        end}):addColorpicker({text = "Color", ontop = false, flag = "tracers_color", color = Color3.fromRGB(202, 82, 147), callback = function(Value)
+            Config.Esp.Tracer.Color = Value
+        end}) 
+
+        OthersGroup:addToggle({text = "Skeleton",default = false,flag = "Skeleton",callback = function(Value)
+            Config.Esp.Skeleton.Enabled = Value
+        end}):addColorpicker({text = "Color", ontop = false, flag = "skeleton_color", color = Color3.fromRGB(202, 82, 147), callback = function(Value)
+            Config.Esp.Skeleton.Color = Value
+        end}) 
+
+        OthersGroup:addToggle({text = "View Angle",default = false,flag = "viewangle",callback = function(Value)
+            Config.Esp.ViewAngle.Enabled = Value
+        end}):addColorpicker({text = "Color", ontop = false, flag = "viewangle_color", color = Color3.fromRGB(202, 82, 147), callback = function(Value)
+            Config.Esp.ViewAngle.Color = Value
+        end}) 
+
+        OthersGroup:addToggle({text = "Sleeper",default = false,flag = "sleeper",callback = function(Value)
+            Config.Esp.Sleeper.Enabled = Value
+        end}):addColorpicker({text = "Color", ontop = false, flag = "sleeper_color", color = Color3.fromRGB(202, 82, 147), callback = function(Value)
+            Config.Esp.Sleeper.Color = Value
+        end}) 
+
+        local DistanceGroup = Tabs.Visuals:createGroup('left', 'Distance')
+
+        DistanceGroup:addToggle({text = "Distance",default = false,flag = "distance",callback = function(Value)
+            Config.Esp.Distance.Enabled = Value
+        end}):addColorpicker({text = "Color", ontop = false, flag = "distance_color", color = Color3.fromRGB(202, 82, 147), callback = function(Value)
+            Config.Esp.Distance.Color = Value
+        end}) 
+
+        DistanceGroup:addSlider({text = "Size", min = 0, max = 30, suffix = "%", float = 0.1, default = 0.1, flag = "distance_slider",callback = function(Value)
+            Config.Esp.Distance.Size = Value
+        end})
+
+
+        local ItemsGroup = Tabs.Visuals:createGroup('right', 'Tool | Armor')
+
+        ItemsGroup:addToggle({text = "Armors",default = false,flag = "armors",callback = function(Value)
+            Config.Esp.Armor.Enabled = Value
+        end}):addColorpicker({text = "Color", ontop = false, flag = "armors_color", color = Color3.fromRGB(202, 82, 147), callback = function(Value)
+            Config.Esp.Armor.Color = Value
+        end})
+
+        ItemsGroup:addToggle({text = "Tool",default = false,flag = "tools",callback = function(Value)
+            Config.Esp.Tool.Enabled = Value
+        end}):addColorpicker({text = "Color", ontop = false, flag = "tool_color", color = Color3.fromRGB(202, 82, 147), callback = function(Value)
+            Config.Esp.Tool.Color = Value
+        end}) 
+
+        ItemsGroup:addToggle({text = "Outline",default = false,flag = "tooloutline",callback = function(Value)
+            Config.Esp.Tool.Outline = Value
+        end})
+
+        ItemsGroup:addSlider({text = "Size", min = 0, max = 30, suffix = "%", float = 0.1, default = 0.1, flag = "name_slider",callback = function(Value)
+            Config.Esp.Tool.Size = Value
+        end})
+        
+        
+
+
+
+
+
+
+
+
+
+       
+        local Keyb = Tabs.Settings:createGroup('left', 'Settings')
+
+        Keyb:addToggle({text = "Menu Bind",default = true,flag = "MenuBind_Toggle",callback = function(state)
+        end}):addKeybind({text = "Menu Bind",type = "toggle",key = Enum.KeyCode.K,flag = "menubindkeybind_toggle",callback = function(state)
+        Library.keybind = state
+        end})
+
+
+
+
+
+    end
+
+
+    function Calculate_Magnitude(t)
+        local Distance = CharacterMiddle:GetPivot().Position - t:GetPivot().Position
+        local Index = tostring(Distance):find("%.")
+        local Return = tonumber(string.sub(tostring(Distance), 1, Index - 1))
+        return Return
+    end
+    
+    function CreateEsp(Player)
+        local Box = Drawing.new("Square")
+        local BoxFilled = Drawing.new("Square")
+        local Tracer = Drawing.new("Line")
+        local Sleeper = Drawing.new("Text")
+        local Armor = Drawing.new("Text")
+        local Distance = Drawing.new("Text")
+        local Name = Drawing.new("Text")
+        local ViewAngle = Drawing.new("Line")
+        local Tool = Drawing.new("Text")
+
+        
+        local CornerBoxes2 = {
+            Line1 = Drawing.new("Line"),
+            Line2 = Drawing.new("Line"),
+            Line3 = Drawing.new("Line"),
+            Line4 = Drawing.new("Line"),
+            Line5 = Drawing.new("Line"),
+            Line6 = Drawing.new("Line"),
+            Line7 = Drawing.new("Line"),
+            Line8 = Drawing.new("Line"),
+        }
+
+                
+        local Skeleton = {
+            Line1 = Drawing.new("Line"),
+            Line2 = Drawing.new("Line"),
+            Line3 = Drawing.new("Line"),
+            Line4 = Drawing.new("Line"),
+            Line5 = Drawing.new("Line"),
+            Line6 = Drawing.new("Line"),
+            Line7 = Drawing.new("Line"),
+            Line8 = Drawing.new("Line"),
+            Line9 = Drawing.new("Line"),
+            Line10 = Drawing.new("Line"),
+            Line11 = Drawing.new("Line"),
+            Line12 = Drawing.new("Line"),
+            Line13 = Drawing.new("Line"),
+        }
+    
+        local esp = {
+            health = Drawing.new("Line"),
+            healthOutline = Drawing.new("Line"),
+        }
+    
+
+    
+    
+        local Updater
+    
+        Updater = game:GetService("RunService").RenderStepped:Connect(function()
+            if Player and Player:FindFirstChild("HumanoidRootPart") and Player:FindFirstChild("Head") then
+                local rootPart = Player:FindFirstChild("HumanoidRootPart")
+                local head = Player:FindFirstChild("Head")
+                local Position,OnScreen = Camera:WorldToViewportPoint(Player:GetPivot().Position);
+                local hrp2D = Camera:WorldToViewportPoint(rootPart.Position)
+                local charSize = (Camera:WorldToViewportPoint(rootPart.Position - Vector3.new(0, 3, 0)).Y - Camera:WorldToViewportPoint(rootPart.Position + Vector3.new(0, 2.6, 0)).Y) / 2
+                local boxSize = Vector2.new(math.floor(charSize * 1.8), math.floor(charSize * 1.9))
+                local boxPosition = Vector2.new(math.floor(hrp2D.X - charSize * 1.8 / 2), math.floor(hrp2D.Y - charSize * 1.6 / 2))
+                local Target2dPosition, IsVisible = Camera:WorldToViewportPoint(Player.HumanoidRootPart.Position)
+                local scale_factor = 1 / (Target2dPosition.Z * math.tan(math.rad(Camera.FieldOfView * 0.5)) * 2) * 90
+                local width, height = math.floor(38.4 * scale_factor), math.floor(63 * scale_factor)
+                local scale = 1 / (Position.Z * math.tan(math.rad(Camera.FieldOfView * 0.5)) * 1.25) * 72;
+                local w,h = math.floor(42 * scale), math.floor(72 * scale);
+                local vec1, onscreen = Camera:WorldToViewportPoint(Player.Head.Position)
+                local vec2, onscreen = Camera:WorldToViewportPoint(Player.LowerTorso.Position)
+                local vec3, onscreen = Camera:WorldToViewportPoint(Player.Torso.Position)
+                local vec4, onscreen = Camera:WorldToViewportPoint(Player.LeftUpperArm.Position)
+                local vec5, onscreen = Camera:WorldToViewportPoint(Player.LeftLowerArm.Position)
+                local vec6, onscreen = Camera:WorldToViewportPoint(Player.LeftHand.Position)
+                local vec7, onscreen = Camera:WorldToViewportPoint(Player.RightUpperArm.Position)
+                local vec8, onscreen = Camera:WorldToViewportPoint(Player.RightLowerArm.Position)
+                local vec9, onscreen = Camera:WorldToViewportPoint(Player.RightHand.Position)
+                local vec10, onscreen = Camera:WorldToViewportPoint(Player.LeftUpperLeg.Position)
+                local vec11, onscreen = Camera:WorldToViewportPoint(Player.LeftLowerLeg.Position) 
+                local vec12, onscreen = Camera:WorldToViewportPoint(Player.LeftFoot.Position)
+                local vec13, onscreen = Camera:WorldToViewportPoint(Player.RightUpperLeg.Position)
+                local vec14, onscreen = Camera:WorldToViewportPoint(Player.RightLowerLeg.Position)
+                local vec15, onscreen = Camera:WorldToViewportPoint(Player.RightFoot.Position)
+                local x, y = math.floor(Position.X), math.floor(Position.Y);
+
+                local SkateToolName = "None"
+                if Config.Esp.Tool.Enabled then
+                    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+                    local HandModels = ReplicatedStorage:FindFirstChild("HandModels")
+                    local integredantsTable = {}
+                
+                    if HandModels then
+                        for _, model in pairs(HandModels:GetChildren()) do
+                            local itemName = model.Name
+                            local items = {}
+                            for _, item in pairs(model:GetChildren()) do
+                                table.insert(items, item.Name)
+                            end
+                            table.insert(integredantsTable, {itemName = itemName, items = items})
+                        end
+                    end
+                
+                    local handModelFound = false
+                
+                    for _, child in pairs(Player:GetChildren()) do
+                        if child.Name == "HandModel" then
+                            handModelFound = true
+                            local matchedItems = {}
+                            for _, item in pairs(child:GetChildren()) do
+                                table.insert(matchedItems, item.Name)
+                            end
+                
+                            for _, integredant in pairs(integredantsTable) do
+                                local allMatch = true
+                                for _, itemNameModel in pairs(integredant.items) do
+                                    if not table.find(matchedItems, itemNameModel) then
+                                        allMatch = false
+                                        break
+                                    end
+                                end
+                
+                                if allMatch then
+                                    SkateToolName = integredant.itemName
+                                end
+                            end
+                        end
+                    end
+                
+                    Tool.Size = Config.Esp.Tool.Size
+                    Tool.Visible = IsVisible
+                    Tool.Center = true
+                    Tool.Outline = Config.Esp.Tool.Outline
+                    Tool.Text = SkateToolName
+                    Tool.Color = Config.Esp.Tool.Color
+                    Tool.Position = Vector2.new(boxSize.X / 2 + boxPosition.X, boxPosition.Y - 20)
+                else
+                    Tool.Visible = false
+                end
+                
+
+
+                if Config.Esp.Skeleton.Enabled then
+                    Skeleton.Line1.From = Vector2.new(vec1.X, vec1.Y)
+                    Skeleton.Line1.To = Vector2.new(vec2.X, vec2.Y)
+                    Skeleton.Line1.Color = Config.Esp.Skeleton.Color
+
+                    Skeleton.Line2.From = Vector2.new(vec3.X, vec3.Y)
+                    Skeleton.Line2.To = Vector2.new(vec4.X, vec4.Y)
+                    Skeleton.Line2.Color = Config.Esp.Skeleton.Color
+
+                    Skeleton.Line3.From = Vector2.new(vec4.X, vec4.Y)
+                    Skeleton.Line3.To = Vector2.new(vec5.X, vec5.Y + 3)
+                    Skeleton.Line3.Color = Config.Esp.Skeleton.Color
+
+                    Skeleton.Line4.From = Vector2.new(vec5.X, vec5.Y)
+                    Skeleton.Line4.To = Vector2.new(vec6.X, vec6.Y)
+                    Skeleton.Line4.Color = Config.Esp.Skeleton.Color
+
+                    Skeleton.Line5.From = Vector2.new(vec3.X, vec3.Y)
+                    Skeleton.Line5.To = Vector2.new(vec7.X, vec7.Y)
+                    Skeleton.Line5.Color = Config.Esp.Skeleton.Color
+
+                    Skeleton.Line6.From = Vector2.new(vec7.X, vec7.Y)
+                    Skeleton.Line6.To = Vector2.new(vec8.X, vec8.Y)
+                    Skeleton.Line6.Color = Config.Esp.Skeleton.Color
+
+                    Skeleton.Line7.From = Vector2.new(vec8.X, vec8.Y)
+                    Skeleton.Line7.To = Vector2.new(vec9.X, vec9.Y)
+                    Skeleton.Line7.Color = Config.Esp.Skeleton.Color
+
+                    Skeleton.Line8.From = Vector2.new(vec2.X, vec2.Y)
+                    Skeleton.Line8.To = Vector2.new(vec10.X, vec10.Y)
+                    Skeleton.Line8.Color = Config.Esp.Skeleton.Color
+
+                    Skeleton.Line9.From = Vector2.new(vec10.X, vec10.Y)
+                    Skeleton.Line9.To = Vector2.new(vec11.X, vec11.Y)
+                    Skeleton.Line9.Color = Config.Esp.Skeleton.Color
+
+                    Skeleton.Line10.From = Vector2.new(vec11.X, vec11.Y)
+                    Skeleton.Line10.To = Vector2.new(vec12.X, vec12.Y)
+                    Skeleton.Line10.Color = Config.Esp.Skeleton.Color
+
+                    Skeleton.Line11.From = Vector2.new(vec2.X, vec2.Y)
+                    Skeleton.Line11.To = Vector2.new(vec13.X, vec13.Y)
+                    Skeleton.Line11.Color = Config.Esp.Skeleton.Color
+                
+                    Skeleton.Line12.From = Vector2.new(vec13.X, vec13.Y)
+                    Skeleton.Line12.To = Vector2.new(vec14.X, vec14.Y)
+                    Skeleton.Line12.Color = Config.Esp.Skeleton.Color
+                
+                    Skeleton.Line13.From = Vector2.new(vec14.X, vec14.Y)
+                    Skeleton.Line13.To = Vector2.new(vec15.X, vec15.Y)
+                    Skeleton.Line13.Color = Config.Esp.Skeleton.Color
+
+                      
+                    for _, line in pairs(Skeleton) do
+                        line.Visible = onscreen
+                    end
+                else
+                    for _, line in pairs(Skeleton) do
+                        line.Visible = false
+                    end
+                end
+    
+    
+    
+                if Config.Esp.CornerBoxes.Enabled then
+                    local lineW = (boxSize.X / 5)
+                    local lineH = (boxSize.Y / 6)
+                    local lineT = 1
+    
+                    -- sol üst
+                    CornerBoxes2.Line1.From = Vector2.new(boxPosition.X, boxPosition.Y)
+                    CornerBoxes2.Line1.To = Vector2.new(boxPosition.X, boxPosition.Y + lineH)
+                    CornerBoxes2.Line1.Color = Config.Esp.CornerBoxes.Color
+    
+                    CornerBoxes2.Line2.From = Vector2.new(boxPosition.X, boxPosition.Y)
+                    CornerBoxes2.Line2.To = Vector2.new(boxPosition.X + lineW, boxPosition.Y)
+                    CornerBoxes2.Line2.Color = Config.Esp.CornerBoxes.Color
+    
+                    -- sağ üst
+                    CornerBoxes2.Line3.From = Vector2.new(boxPosition.X + boxSize.X - lineW, boxPosition.Y)
+                    CornerBoxes2.Line3.To = Vector2.new(boxPosition.X + boxSize.X, boxPosition.Y)
+                    CornerBoxes2.Line3.Color = Config.Esp.CornerBoxes.Color
+    
+                    CornerBoxes2.Line4.From = Vector2.new(boxPosition.X + boxSize.X, boxPosition.Y)
+                    CornerBoxes2.Line4.To = Vector2.new(boxPosition.X + boxSize.X, boxPosition.Y + lineH)
+                    CornerBoxes2.Line4.Color = Config.Esp.CornerBoxes.Color
+    
+                    -- sol alt
+                    CornerBoxes2.Line5.From = Vector2.new(boxPosition.X, boxPosition.Y + boxSize.Y - lineH)
+                    CornerBoxes2.Line5.To = Vector2.new(boxPosition.X, boxPosition.Y + boxSize.Y)
+                    CornerBoxes2.Line5.Color = Config.Esp.CornerBoxes.Color
+    
+                    CornerBoxes2.Line6.From = Vector2.new(boxPosition.X, boxPosition.Y + boxSize.Y)
+                    CornerBoxes2.Line6.To = Vector2.new(boxPosition.X + lineW, boxPosition.Y + boxSize.Y)
+                    CornerBoxes2.Line6.Color = Config.Esp.CornerBoxes.Color
+    
+                    -- sağ alt
+                    CornerBoxes2.Line7.From = Vector2.new(boxPosition.X + boxSize.X - lineW, boxPosition.Y + boxSize.Y)
+                    CornerBoxes2.Line7.To = Vector2.new(boxPosition.X + boxSize.X, boxPosition.Y + boxSize.Y)
+                    CornerBoxes2.Line7.Color = Config.Esp.CornerBoxes.Color
+    
+                    CornerBoxes2.Line8.From = Vector2.new(boxPosition.X + boxSize.X, boxPosition.Y + boxSize.Y - lineH)
+                    CornerBoxes2.Line8.To = Vector2.new(boxPosition.X + boxSize.X, boxPosition.Y + boxSize.Y)
+                    CornerBoxes2.Line8.Color = Config.Esp.CornerBoxes.Color
+    
+                    for _, line in pairs(CornerBoxes2) do
+                        line.Visible = IsVisible
+                    end
+                else
+                    for _, line in pairs(CornerBoxes2) do
+                        line.Visible = false
+                    end
+                end
+    
+                if Config.Esp.Box.Enabled then
+                    Box.Size = boxSize
+                    Box.Position = boxPosition
+                    Box.Color = Config.Esp.Box.Color
+                    Box.Visible = true
+                    BoxFilled.Filled = false
+                    else
+                    Box.Visible = false
+                end
+    
+                if Config.Esp.Box.Filled then
+                    BoxFilled.Visible = IsVisible
+                    BoxFilled.Color = Config.Esp.Box.FilledColor
+                    BoxFilled.Transparency = Config.Esp.Box.FilledTransparency
+                    BoxFilled.Size = boxSize
+                    BoxFilled.Position = boxPosition
+                    BoxFilled.Filled = true
+                    else
+                    BoxFilled.Visible = false
+                end
+    
+                if Config.Esp.Name.Enabled then
+                    local NameTag = Player.Head:FindFirstChild("Nametag")
+                    local Tag = "Player"
+                    if NameTag.tag.Text == "" then
+                        Tag = "Player"
+                    else
+                        Tag = NameTag.tag.Text
+                    end
+                    Name.Size = Config.Esp.Name.Size
+                    Name.Visible = IsVisible
+                    Name.Center = true
+                    Name.Outline = Config.Esp.Name.Outline
+                    Name.Text = Tag
+                    Name.Color = Config.Esp.Name.Color
+                    Name.Position = Vector2.new(x, math.floor(y - h * 0.5 - Name.TextBounds.Y))
+                else
+                    Name.Visible = false
+                end
+    
+                local isPlayingAnimation = false
+                if Player:FindFirstChild("AnimationController") then
+                    for _, v in pairs(Player.AnimationController:GetPlayingAnimationTracks()) do
+                        if v.Animation.AnimationId == "rbxassetid://13280887764" then
+                            isPlayingAnimation = true
+                            break
+                        end
+                    end
+                end
+    
+                if Config.Esp.Sleeper.Enabled and isPlayingAnimation then
+                    Sleeper.Size = Config.Esp.Sleeper.Size
+                    Sleeper.Visible = IsVisible
+                    Sleeper.Center = true
+                    Sleeper.Outline = false
+                    Sleeper.Text = Config.Esp.Sleeper.Text
+                    Sleeper.Color = Config.Esp.Sleeper.Color
+                    Sleeper.Position = Vector2.new(Target2dPosition.X, Target2dPosition.Y - height / 2 - 16)
+                else
+                    Sleeper.Visible = false
+                end
+    
+                if Config.Esp.Armor.Enabled then
+                    local ArmorFolder = Player:FindFirstChild("Armor")
+                    if ArmorFolder then
+                        local armorText = ""
+                        for _, armorItem in pairs(ArmorFolder:GetChildren()) do
+                            armorText = armorText .. armorItem.Name .. "\n"
+                        end
+                        Armor.Size = Config.Esp.Armor.Size
+                        Armor.Visible = IsVisible
+                        Armor.Center = true
+                        Armor.Outline = false
+                        Armor.Text = armorText
+                        Armor.Color = Config.Esp.Armor.Color
+                        Armor.Position = Vector2.new(Target2dPosition.X, Target2dPosition.Y + height / 2)
+                    end
+                else
+                    Armor.Visible = false
+                end
+    
+                if Config.Esp.Tracer.Enabled then
+                    Tracer.Visible = IsVisible
+                    Tracer.Color = Config.Esp.Tracer.Color
+                    Tracer.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 1)
+                    Tracer.To = Vector2.new(Target2dPosition.X, Target2dPosition.Y)
+                else
+                    Tracer.Visible = false
+                end
+    
+                if Config.Esp.Distance.Enabled then
+                    Distance.Size = Config.Esp.Distance.Size
+                    Distance.Visible = IsVisible
+                    Distance.Center = true
+                    Distance.Outline = true
+                    Distance.Text = tostring("[" .. math.floor(Calculate_Magnitude(Player))) .. "]"
+                    Distance.Color = Config.Esp.Distance.Color
+                    Distance.Position = Vector2.new(x, math.floor(y - h * 0.6)+Distance.TextBounds.Y)
+                else
+                    Distance.Visible = false
+                end
+    
+                if Config.Esp.ViewAngle.Enabled then
+                    local Head = Player:FindFirstChild("Head")
+                    local headpos = Camera:WorldToViewportPoint(Head.Position)
+                    local offsetCFrame = CFrame.new(0, 0, -4)
+                    local dir = Player.Head.CFrame:ToWorldSpace(offsetCFrame)
+                    offsetCFrame = offsetCFrame * CFrame.new(0, 0, 0.4)
+                    local dirpos = Camera:WorldToViewportPoint(Vector3.new(dir.X, dir.Y, dir.Z))
+                    ViewAngle.Visible = IsVisible
+                    ViewAngle.Color = Config.Esp.ViewAngle.Color
+                    ViewAngle.From = Vector2.new(headpos.X, headpos.Y)
+                    ViewAngle.To = Vector2.new(dirpos.X, dirpos.Y)
+                    else
+                    ViewAngle.Visible = false
+                end
+            else
+                Tool.Visible = false
+                Box.Visible = false
+                BoxFilled.Visible = false
+                Tracer.Visible = false
+                Sleeper.Visible = false
+                Armor.Visible = false
+                Distance.Visible = false
+                Name.Visible = false
+                ViewAngle.Visible = false
+                for _, line in pairs(CornerBoxes2) do
+                    line.Visible = false
+                end
+            
+                for _, line in pairs(Skeleton) do
+                    line.Visible = false
+                end
+    
+                if not Player then
+                    Tool:Remove()
+                    Box:Remove()
+                    BoxFilled:Remove()
+                    Tracer:Remove()
+                    Sleeper:Remove()
+                    Armor:Remove()
+                    Distance:Remove()
+                    Name:Remove()
+                    ViewAngle:Remove()
+                    for _, line in pairs(CornerBoxes2) do
+                        line:Remove()
+                    end
+
+                    for _, line in pairs(Skeleton) do
+                        line:Remove()
+                    end
+    
+                end
+            end
+        end)
+    end
+    
+    for _, i in pairs(game:GetService("Workspace"):GetChildren()) do
+        if i ~= game.Players.LocalPlayer.Character and i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("Head") then
+            CreateEsp(i)
         end
     end
-    if field_of_view.zoom then
-        camera.FieldOfView = field_of_view.zoom_ammount
-    end
-end)
+    
+    game.Workspace.DescendantAdded:Connect(function(i)
+        if i ~= game.Players.LocalPlayer.Character and i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("Head") then
+            CreateEsp(i)
+        end
+    end)    
 
-local WorldEspTabBox = Tabs.WorldTab:AddRightTabbox('world esp')
-local WorldEspTab = WorldEspTabBox:AddTab('world esp')
-
---* Player Settings *--
-
-_G.SettingsOre = {
-iron = {
-  enabled = true,
-  colour = Color3.fromRGB(199, 172, 120),
-},
-nitrate = {
-  enabled = true,
-  colour = Color3.fromRGB(248, 248, 248),
-},
-stone = {
-  enabled = true,
-  colour = Color3.fromRGB(205, 205, 205),
-},
-oreDistance = 1000,
-}
-local settings1 = _G.SettingsOre
-if settings1 == nil then
-return
-end
-
-WorldEspTab:AddToggle('iron_Toggle',{Text='enabled',Default=false})
-
-WorldEspTab:AddSlider('OreRenderDistance', {Text='distance:',Default=1000,Min=1,Max=2500,Rounding=0,Compact=false,Suffix=" studs"}):OnChanged(function(Value)
-settings1.oreDistance = Value
-end)
-
-WorldEspTab:AddToggle('iron_Toggle',{Text='iron ore',Default=false}):AddColorPicker('IronColor', { Default = Color3.fromRGB(199, 172, 120), Title = 'Color', }):OnChanged(function(Value)
-settings1.iron.enabled = Value
-end)
-Options.IronColor:OnChanged(function(Value)
-settings1.iron.colour = Value
-if settings1.iron.enabled then
-settings1.iron.enabled = false
-task.wait(0.01)
-settings1.iron.enabled = true
-end
-end)
-
-WorldEspTab:AddToggle('nitrate_Toggle',{Text='nitrate ore',Default=false}):AddColorPicker('NitrateColor', { Default = Color3.fromRGB(248, 248, 248), Title = 'Color', }):OnChanged(function(Value)
-settings1.nitrate.enabled = Value
-end)
-Options.NitrateColor:OnChanged(function(Value)
-settings1.nitrate.colour = Value
-if settings1.nitrate.enabled then
-settings1.nitrate.enabled = false
-task.wait(0.01)
-settings1.nitrate.enabled = true
-end
-end)
-
-WorldEspTab:AddToggle('stone_Toggle',{Text='stone ore',Default=false}):AddColorPicker('StoneColor', { Default = Color3.fromRGB(205, 205, 205), Title = 'Color', }):OnChanged(function(Value)
-settings1.stone.enabled = Value
-end)
-Options.StoneColor:OnChanged(function(Value)
-settings1.stone.colour = Value
-if settings1.stone.enabled then
-settings1.stone.enabled = false
-task.wait(0.01)
-settings1.stone.enabled = true
-end
-end)
-
-local Text1Font = 2
-local textoutlines = true
-local testsize = 11
-local function get_text(text, position)
-local distance = math.floor((position - workspace.Ignore.LocalCharacter.Middle.Position).Magnitude)
-local final_text = tostring(text) .. "\n[" .. tostring(distance) .. "] studs"
-return tostring(final_text)
-end
-local function worldtoviewport(position)
-local a, b = workspace.CurrentCamera:WorldToViewportPoint(position)
-return Vector2.new(a.X, a.Y), b
-end
-local function add_esp(part, text, colour, toggle)
-local drawing_text = Drawing.new("Text")
-drawing_text.Outline = textoutlines
-drawing_text.Center = true
-drawing_text.Visible = false
-drawing_text.Font = Text1Font
-drawing_text.Size = testsize
-drawing_text.Color = colour
-local rendersteploop = game:GetService("RunService").RenderStepped:connect(function()pcall(function()
-if not part:IsDescendantOf(workspace) or not settings1 then
-  table.remove(oresDebris,part)
-  drawing_text:Remove()
-  rendersteploop:Disconnect()
-end
-local part_pos = part.Position
-local screen_pos, on_screen = worldtoviewport(part_pos)
-if not on_screen then
-  drawing_text.Visible = false
-  drawing_text.Size = testsize
-  drawing_text.Outline = textoutlines
-  drawing_text.Font = Text1Font
-  rendersteploop:Disconnect()
-end
-local oreDis = (game:GetService("Workspace").Ignore.LocalCharacter:WaitForChild("Top"):GetPivot().Position-part_pos).Magnitude
-if oreDis >= settings1.oreDistance then
-  drawing_text.Visible = false
-  drawing_text.Size = testsize
-  drawing_text.Outline = textoutlines
-  drawing_text.Font = Text1Font
-  rendersteploop:Disconnect()
-end
-if text == 'Iron' and not settings1.iron.enabled then
-  drawing_text.Visible = false
-  drawing_text.Color = settings1.iron.colour
-  rendersteploop:Disconnect()
-else if text == 'Nitrate' and not settings1.nitrate.enabled then
-  drawing_text.Visible = false
-  drawing_text.Color = settings1.nitrate.colour
-  rendersteploop:Disconnect()
-else if text == 'Stone' and not settings1.stone.enabled then
-  drawing_text.Visible = false
-  drawing_text.Color = settings1.stone.colour
-  rendersteploop:Disconnect()
-end
-end
-end
-drawing_text.Visible = true
-drawing_text.Text = get_text(text, part_pos)
-drawing_text.Position = screen_pos
-drawing_text.Size = testsize
-drawing_text.Outline = textoutlines
-drawing_text.Font = Text1Font
-rendersteploop:Disconnect()
-end)
-end)
-end
-local function filter_models(v)
-if (not v:IsA("Model")) then
-return
-end
-local is_part = v:FindFirstChild("Part")
-local children = v:GetChildren()
-local child_amount = #children
-if is_part then
-if child_amount == 1 then
-add_esp(is_part, "Stone", settings1.stone.colour, settings1.stone.enabled)
-elseif child_amount == 2 then
-for _, v in pairs(children) do
-  local brickcolor = v.BrickColor
-  local is_ore = v.ClassName == "MeshPart" and v.Name == "Part"
-  if is_ore then
-    if brickcolor == BrickColor.new("Institutional white") then
-      add_esp(v, "Nitrate", settings1.nitrate.colour, settings1.nitrate.enabled)
-    elseif brickcolor == BrickColor.new("Burlap") then
-      add_esp(v, "Iron", settings1.iron.colour, settings1.iron.enabled)
-    end
-  end
-end
-end
-end
-end
-for index, model in pairs(workspace:GetChildren()) do
-filter_models(model)
-end
-workspace.ChildAdded:Connect(function(model)
-filter_models(model)
-end)
-
-WorldEspTab:AddDivider("")
-
-WorldEspTab:AddToggle('TextOutline2',{Text='text outlines',Default=true}):OnChanged(function(Value)
-textoutlines = Value
-end)
-
-WorldEspTab:AddSlider('TextSizeSlider2', {Text = 'text size:', Default = 12, Min = 1, Max = 25, Rounding = 0, Suffix = "px", Compact = false}):OnChanged(function(TextSizeValue2)
-testsize = TextSizeValue2
-end)
-
-WorldEspTab:AddDropdown('EspFont2',{Values={"0","1","2","3"},Default=3,Multi=false,Text='font:'}):OnChanged(function(Value)
-Text1Font = Value
-end)
-
-
-
-
-
-local HudTabBox = Tabs.LocalTab:AddRightTabbox('Hud')
-local HudTab = HudTabBox:AddTab('Hud')
-
---* Hud *--
-
-HudTab:AddToggle('AWASZnfh', {Text = "remove server info",Default = false,Tooltip = "Hides Server Info",}):OnChanged(function(Chillax1)
-if Chillax1 == true then
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.ServerInfo.Visible = false
-elseif Chillax1 == false then
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.ServerInfo.Visible = true
-end
-end)
-
-HudTab:AddToggle('AWAaSZasanfh', {Text = "remove server status",Default = false,Tooltip = "Hides Server Status",}):OnChanged(function(Chillax2)
-if Chillax2 == true then
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.ServerStatus.Visible = false
-elseif Chillax2 == false then
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.ServerStatus.Visible = true
-end
-end)
-
-HudTab:AddToggle('GnAf', {Text = "chat visible",Default = true,Tooltip = "Hides chat )",}):OnChanged(function(HideChat)
-for I,V in pairs(getgc(true)) do
-if type(V) == "function" then
-  if debug.getinfo(V).name == "SetChatVisible" then
-    V(HideChat)
-  end
-end
-end
-end)
-
-HudTab:AddLabel('energy:'):AddColorPicker('Energy_Color_Value', { Default = Color3.fromRGB(197,187,40)})
-Options.Energy_Color_Value:OnChanged(function(Energy_Color_Value)
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Vitals.EnergyFrame.Energy.BackgroundColor3 = Energy_Color_Value
-end)
-
-HudTab:AddLabel('health:'):AddColorPicker('Health_Color_Value', { Default = Color3.fromRGB(78,153,74)})
-Options.Health_Color_Value:OnChanged(function(Health_Color_Value)
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Vitals.HealthFrame.Health.BackgroundColor3 = Health_Color_Value
-end)
-
-HudTab:AddLabel('ammo:'):AddColorPicker('Ammo_Color_Value', { Default = Color3.fromRGB(255,255,255)})
-Options.Ammo_Color_Value:OnChanged(function(Ammo_Color_Value)
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.BottomCenter.Ammo.TextColor3 = Ammo_Color_Value
-end)
-
-HudTab:AddSlider('Vitals_Transparency', {Text = 'vitals transparency', Suffix = "%", Default = 10, Min = 0, Max = 100, Rounding = 0, Compact = true}):OnChanged(function(VitalsTransparency)
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Vitals.EnergyFrame.Energy.BackgroundTransparency = VitalsTransparency / 100
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Vitals.HealthFrame.Health.BackgroundTransparency = VitalsTransparency / 100
-end)
-
-HudTab:AddSlider('Background_Transparency', {Text = 'inventory transparency', Suffix = "%", Default = 70, Min = 0, Max = 100, Rounding = 0, Compact = true}):OnChanged(function(InventoryTransparency)
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.BottomCenter.Inventory.BackgroundTransparency = InventoryTransparency / 100
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.BottomCenter.Hotbar.BackgroundTransparency = InventoryTransparency / 100
-game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.BottomCenter.Armor.BackgroundTransparency = InventoryTransparency / 100
-end)
-
-
-
---// UI Settings \\--
-
---// Game
-local GameID = Tabs.UISettings:AddLeftGroupbox('Game')
-GameID:AddInput('GameID_Check', {Default = 'Game ID', Numeric = true, Finished = false, Text = 'Game ID:', Placeholder = 'Game ID Here'})
-GameID:AddButton('Join Game', function()
-game:GetService("TeleportService"):Teleport(Options.GameID_Check.Value, plr)
-end)
-
---// Menu
-local MenuGroup = Tabs.UISettings:AddRightGroupbox('Menu')
-
-MenuGroup:AddLabel(""..game:GetService("Players").LocalPlayer.PlayerGui.GameUI.ServerInfo.Text.."", true)
-local playerCountLabel = MenuGroup:AddLabel("Player Count: 0", nil, true)
-local function updatePlayerCount()
-local playerCount = #game:GetService("Players"):GetPlayers()
-playerCountLabel:SetText("Players Online: " .. playerCount)
-end
-game:GetService("Players").PlayerAdded:Connect(updatePlayerCount)
-game:GetService("Players").PlayerRemoving:Connect(updatePlayerCount)
-updatePlayerCount()
-
-MenuGroup:AddLabel(' Made by:<font color="#de6cff"> skatemain</font> 👑', true)
-
-MenuGroup:AddButton('Unload Script', function() Library:Unload()
-for i,v in pairs(Toggles) do
-v:SetValue(false)
-Library:Notify('Unloaded!', 1)
-end
-end)
-
-MenuGroup:AddButton('Panic Button', function()
-for i,v in pairs(Toggles) do
-v:SetValue(false)
-Library:Notify('Panic Button!', 1)
-end
-end)
-
-MenuGroup:AddButton('Copy Discord', function()
-if pcall(setclipboard,"@skatemain") then
-Library:Notify('Successfully copied discord link to your clipboard!', 5)
-end
-end)
-
-MenuGroup:AddToggle('WatermarkToggle', { Text = 'Watermark', Default = false, Tooltip = nil })
-Toggles.WatermarkToggle:OnChanged(function()
-while Toggles.WatermarkToggle.Value do
-task.wait(1)
-local fps = string.format('%.0f', game.Stats.Workspace.Heartbeat:GetValue())
-local ping = string.format('%.0f', game.Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
-Library:SetWatermark('ethernality.wtf - FPS: ' .. fps .. ' | Ping: ' .. ping .. ' | [trident survival]')
-Library:SetWatermarkVisibility(true)
-end
-Library:SetWatermarkVisibility(false)
-end)
-
-MenuGroup:AddToggle('UISettings_KeybindFrameVisibility', {Text = 'Keybind', Default = true}):OnChanged(function()
-Library.KeybindFrame.Visible = Toggles.UISettings_KeybindFrameVisibility.Value
-end)
-
-MenuGroup:AddLabel('Menu Keybind'):AddKeyPicker('MenuKeybind', { Default = 'Insert', NoUI = true, Text = 'Menu keybind' })
-Library.ToggleKeybind = Options.MenuKeybind
-
---// Manager
-SaveManager:SetLibrary(Library)
-SaveManager:SetFolder('ethernality.wtf/folder')
-SaveManager:BuildConfigSection(Tabs.UISettings)
-SaveManager:IgnoreThemeSettings()
-ThemeManager:SetLibrary(Library)
-ThemeManager:SetFolder('ethernality.wtf/themes')
-ThemeManager:ApplyToTab(Tabs.UISettings)
-
---// Script Loaded
-local Time = (string.format("%."..tostring(Decimals).."f", os.clock() - Clock))
-Library:Notify(("Script [Loaded] In - "..tostring(Time).."s"), 15)
-
-
-
---Wrapping function - needed to unload(Keep at end of script)
-loadstring(game:HttpGet('https://raw.githubusercontent.com/EIOlmqV6v1owgJBEoqj5lK9p01SFE2THpxcOnvX/LinoriaBurnEdition/main/LoaderManager.lua'))
