@@ -638,6 +638,30 @@ local PlayerVisualTab = PlayerVisualTabbox:AddTab('Esp')
         Config.Esp.ViewAngle.Color = Options.viewangle_color.Value
     end)
 
+    PlayerVisualTab:AddToggle('distance', {Text = 'Distance', Default = false}):AddColorPicker("distance_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.Distance.Enabled = Toggles.distance.Value
+    end)
+
+    Options.distance_color:OnChanged(function()
+        Config.Esp.Distance.Color = Options.distance_color.Value
+    end)
+
+    PlayerVisualTab:AddToggle('name', {Text = 'Names', Default = false}):AddColorPicker("name_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.Name.Enabled = Toggles.name.Value
+    end)
+
+    Options.name_color:OnChanged(function()
+        Config.Esp.Name.Color = Options.name_color.Value
+    end)
+
+    PlayerVisualTab:AddToggle('skeleton', {Text = 'Skeleton', Default = false}):AddColorPicker("skeleton_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.Skeleton.Enabled = Toggles.skeleton.Value
+    end)
+
+    Options.skeleton_color:OnChanged(function()
+        Config.Esp.Skeleton.Color = Options.skeleton_color.Value
+    end)
+
     local ArmorTab = Tabs.VisualsTab:AddLeftTabbox()
     local ArmorTabBox = ArmorTab:AddTab('Armor | Tool')
 
