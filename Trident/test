@@ -1,5 +1,66 @@
-
-
+    
+    local utility = {
+        services = {
+            players = cloneref(game:GetService("Players")),
+            workspace = cloneref(game:GetService("Workspace")),
+            userinputservice = cloneref(game:GetService("UserInputService")),
+            runservice = cloneref(game:GetService("RunService")),
+            httpservice = cloneref(game:GetService("HttpService")),
+            coregui = cloneref(game:GetService("CoreGui")),
+            lighting = cloneref(game:GetService("Lighting")),
+            guiservice = cloneref(game:GetService("GuiService")),
+            replicatedstorage = cloneref(game:GetService("ReplicatedStorage")),
+            networkclient = cloneref(game:GetService("NetworkClient"))
+        },
+        functions = {}
+    }
+    local camera = utility.services.workspace.CurrentCamera
+    local mouse = utility.services.players.LocalPlayer:GetMouse()
+    local localplayer = utility.services.players.LocalPlayer
+    local default_fov = camera.FieldOfView
+    local os_clock = os.clock()
+    local FPS = string.split(game.Stats.Workspace.Heartbeat:GetValueString(), ".")
+    local camera = game:GetService("Workspace").Camera
+    local Camera = game:GetService("Workspace").Camera
+    local Camera = game:GetService("Workspace").CurrentCamera
+    local Cam = game:GetService("Workspace").Camera
+    local CharcaterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middle
+    local Mouse = game.Players.LocalPlayer:GetMouse()
+    local lighting = game:GetService("Lighting")
+    local SoundService = game:GetService("SoundService")
+    local Decimals = 2
+    local Clock = os.clock()
+    local Camera = game:GetService("Workspace").Camera
+    local CameraPred = game:GetService("Workspace").CurrentCamera
+    local Mouse = game.Players.LocalPlayer:GetMouse()
+    local CharcaterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middle
+    if not LPH_OBFUSCATED then
+        function LPH_JIT(...)
+            return ...
+        end
+        function LPH_JIT_MAX(...)
+            return ...
+        end
+        function LPH_JIT_ULTRA(...)
+            return ...
+        end
+        function LPH_NO_VIRTUALIZE(...)
+            return ...
+        end
+        function LPH_ENCSTR(...)
+            return ...
+        end
+        function LPH_STRENC(...)
+            return ...
+        end
+        function LPH_HOOK_FIX(...)
+            return ...
+        end
+        function LPH_CRASH()
+            return print(debug.traceback())
+        end
+    end
+    
 
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/BigHacker123/Library.lua/main/Library.lua'))()
 local SaveManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/addons/SaveManager.lua'))()
@@ -92,6 +153,129 @@ task.spawn(function()
   end)
   
 
+  local box = true
+        local SleeperCheck = true
+        local Distance = true
+        local Name = true
+        local RenderDistance = 1500
+        local BoxESP = {}
+        local Functions = {}
+        Functions.IsSleeping = function(self, Model)
+            if Model then
+                local AnimationController = Model:FindFirstChild("AnimationController")
+                if (AnimationController and AnimationController:FindFirstChild("Animator")) then
+                    for _, v in pairs(AnimationController.Animator:GetPlayingAnimationTracks()) do
+                        if (v.Animation.AnimationId == "rbxassetid://13280887764") then
+                            return true
+                        end
+                    end
+                end
+            end
+            return false
+        end
+        Functions.CheckDistance = function(self, Player, RenderDistance)
+            if (Player and Player:IsA("Model") and Player:FindFirstChild("HumanoidRootPart")) then
+                local distance = (workspace.CurrentCamera.CFrame.p - Player.HumanoidRootPart.Position).magnitude
+                return distance <= RenderDistance, distance
+            end
+            return false, 0
+        end
+        BoxESP.Create = function(Player)
+            local Box = Drawing.new("Square")
+            Box.Visible = box
+            Box.Color = Color3.fromRGB(202, 82, 147)
+            Box.Filled = false
+            Box.Transparency = 1
+            Box.Thickness = 1
+            local TextLabel = Drawing.new("Text")
+            TextLabel.Visible = Name
+            TextLabel.Color = Color3.fromRGB(202, 82, 147)
+            TextLabel.Size = 16
+            TextLabel.Center = true
+            TextLabel.Outline = true
+            local DistanceLabel = Drawing.new("Text")
+            DistanceLabel.Visible = Distance
+            DistanceLabel.Color = Color3.fromRGB(202, 82, 147)
+            DistanceLabel.Size = 14
+            DistanceLabel.Center = true
+            DistanceLabel.Outline = true
+            local maxTextSize = 16
+            local function UpdateEsp()
+                if (Player and Player:IsA("Model") and Player:FindFirstChild("HumanoidRootPart") and Player:FindFirstChild("Head")) then
+                    local isSleeping = Functions:IsSleeping(Player)
+                    if not isSleeping then
+                        local isWithinDistance, distance = Functions:CheckDistance(Player, RenderDistance)
+                        if isWithinDistance then
+                            local Target2dPosition, IsVisible = workspace.CurrentCamera:WorldToViewportPoint(Player.HumanoidRootPart.Position)
+                            local distanceScale = math.clamp(1 - (distance / RenderDistance), 0.5, 1)
+                            local scale_factor = (1 / (Target2dPosition.Z * math.tan(math.rad(workspace.CurrentCamera.FieldOfView * 0.5)) * 2)) * 100
+                            local width, height = math.floor(34 * scale_factor), math.floor(54 * scale_factor)
+                            Box.Visible = IsVisible
+                            Box.Size = Vector2.new(width, height)
+                            Box.Position = Vector2.new(Target2dPosition.X - (Box.Size.X / 2), Target2dPosition.Y - (Box.Size.Y / 2))
+                            TextLabel.Visible = IsVisible
+                            TextLabel.Position = Vector2.new(Target2dPosition.X, (Target2dPosition.Y - (height / 2)) - 20)
+                            TextLabel.Size = math.clamp(maxTextSize * distanceScale, 1, maxTextSize)
+                            TextLabel.Text = Player.Name
+                            DistanceLabel.Visible = IsVisible
+                            DistanceLabel.Position = Vector2.new(Target2dPosition.X, Target2dPosition.Y + (height / 2) + 10)
+                            DistanceLabel.Text = (Distance and string.format("%.1f studs", distance)) or ""
+                        else
+                            Box.Visible = false
+                            TextLabel.Visible = false
+                            DistanceLabel.Visible = false
+                        end
+                    else
+                        Box.Visible = false
+                        TextLabel.Visible = false
+                        DistanceLabel.Visible = false
+                    end
+                else
+                    Box.Visible = false
+                    TextLabel.Visible = false
+                    DistanceLabel.Visible = false
+                    if not Player then
+                        Box:Remove()
+                        TextLabel:Remove()
+                        DistanceLabel:Remove()
+                    end
+                end
+            end
+            return {
+                UpdateEsp = UpdateEsp,
+                Box = Box,
+                TextLabel = TextLabel,
+                DistanceLabel = DistanceLabel,
+                Player = Player
+            }
+        end
+        local Boxes = {}
+        local CachedModels = {}
+        local function EnableBoxESP()
+            for _, Model in ipairs(workspace:GetChildren()) do
+                if (Model:IsA("Model") and Model:FindFirstChild("HumanoidRootPart") and Model:FindFirstChild("Head") and not CachedModels[Model])then
+                    local Esp = BoxESP.Create(Model)
+                    table.insert(Boxes, Esp)
+                    CachedModels[Model] = true
+                end
+            end
+        end
+        game.Workspace.DescendantAdded:Connect(function(child)
+                if (child:IsA("Model") and child:FindFirstChild("HumanoidRootPart") and child:FindFirstChild("Head") and not CachedModels[child]) then
+                    local Esp = BoxESP.Create(child)
+                    table.insert(Boxes, Esp)
+                    CachedModels[child] = true
+                end
+            end)
+        local PlayerUpdater = game:GetService("RunService").RenderStepped
+        local PlayerConnection
+        PlayerConnection = PlayerUpdater:Connect(function()
+                for _, Esp in ipairs(Boxes) do
+                    Esp.UpdateEsp()
+                end
+            end)
+
+        EnableBoxESP()
   
 
 local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
