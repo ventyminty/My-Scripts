@@ -14,7 +14,25 @@ local utility = {
     functions = {}
 }
 local camera = utility.services.workspace.CurrentCamera
-
+local mouse = utility.services.players.LocalPlayer:GetMouse()
+local localplayer = utility.services.players.LocalPlayer
+local default_fov = camera.FieldOfView
+local os_clock = os.clock()
+local FPS = string.split(game.Stats.Workspace.Heartbeat:GetValueString(), ".")
+local camera = game:GetService("Workspace").Camera
+local Camera = game:GetService("Workspace").Camera
+local Camera = game:GetService("Workspace").CurrentCamera
+local Cam = game:GetService("Workspace").Camera
+local CharcaterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middle
+local Mouse = game.Players.LocalPlayer:GetMouse()
+local lighting = game:GetService("Lighting")
+local SoundService = game:GetService("SoundService")
+local Decimals = 2
+local Clock = os.clock()
+local Camera = game:GetService("Workspace").Camera
+local CameraPred = game:GetService("Workspace").CurrentCamera
+local Mouse = game.Players.LocalPlayer:GetMouse()
+local CharcaterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middle
 
 local Camera = game:GetService("Workspace").CurrentCamera
 local Cam = game:GetService("Workspace").CurrentCamera
