@@ -1,3 +1,150 @@
+local utility = {
+    services = {
+        players = cloneref(game:GetService("Players")),
+        workspace = cloneref(game:GetService("Workspace")),
+        userinputservice = cloneref(game:GetService("UserInputService")),
+        runservice = cloneref(game:GetService("RunService")),
+        httpservice = cloneref(game:GetService("HttpService")),
+        coregui = cloneref(game:GetService("CoreGui")),
+        lighting = cloneref(game:GetService("Lighting")),
+        guiservice = cloneref(game:GetService("GuiService")),
+        replicatedstorage = cloneref(game:GetService("ReplicatedStorage")),
+        networkclient = cloneref(game:GetService("NetworkClient"))
+    },
+    functions = {}
+}
+local camera = utility.services.workspace.CurrentCamera
+
+
+local Camera = game:GetService("Workspace").CurrentCamera
+local Cam = game:GetService("Workspace").CurrentCamera
+local SoundService = game:GetService("SoundService")
+local Plr = game:GetService("Players").LocalPlayer
+local CharacterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middle
+
+local box = true
+local SleeperCheck = true
+local Distance = true
+local Name = true
+local RenderDistance = 1500
+local BoxESP = {}
+local Functions = {}
+Functions.IsSleeping = function(self, Model)
+    if Model then
+        local AnimationController = Model:FindFirstChild("AnimationController")
+        if (AnimationController and AnimationController:FindFirstChild("Animator")) then
+            for _, v in pairs(AnimationController.Animator:GetPlayingAnimationTracks()) do
+                if (v.Animation.AnimationId == "rbxassetid://13280887764") then
+                    return true
+                end
+            end
+        end
+    end
+    return false
+end
+Functions.CheckDistance = function(self, Player, RenderDistance)
+    if (Player and Player:IsA("Model") and Player:FindFirstChild("HumanoidRootPart")) then
+        local distance = (workspace.CurrentCamera.CFrame.p - Player.HumanoidRootPart.Position).magnitude
+        return distance <= RenderDistance, distance
+    end
+    return false, 0
+end
+BoxESP.Create = function(Player)
+    local Box = Drawing.new("Square")
+    Box.Visible = box
+    Box.Color = Color3.fromRGB(202, 82, 147)
+    Box.Filled = false
+    Box.Transparency = 1
+    Box.Thickness = 1
+    local TextLabel = Drawing.new("Text")
+    TextLabel.Visible = Name
+    TextLabel.Color = Color3.fromRGB(202, 82, 147)
+    TextLabel.Size = 16
+    TextLabel.Center = true
+    TextLabel.Outline = true
+    local DistanceLabel = Drawing.new("Text")
+    DistanceLabel.Visible = Distance
+    DistanceLabel.Color = Color3.fromRGB(202, 82, 147)
+    DistanceLabel.Size = 14
+    DistanceLabel.Center = true
+    DistanceLabel.Outline = true
+    local maxTextSize = 16
+    local function UpdateEsp()
+        if (Player and Player:IsA("Model") and Player:FindFirstChild("HumanoidRootPart") and Player:FindFirstChild("Head")) then
+            local isSleeping = Functions:IsSleeping(Player)
+            if not isSleeping then
+                local isWithinDistance, distance = Functions:CheckDistance(Player, RenderDistance)
+                if isWithinDistance then
+                    local Target2dPosition, IsVisible = workspace.CurrentCamera:WorldToViewportPoint(Player.HumanoidRootPart.Position)
+                    local distanceScale = math.clamp(1 - (distance / RenderDistance), 0.5, 1)
+                    local scale_factor = (1 / (Target2dPosition.Z * math.tan(math.rad(workspace.CurrentCamera.FieldOfView * 0.5)) * 2)) * 100
+                    local width, height = math.floor(34 * scale_factor), math.floor(54 * scale_factor)
+                    Box.Visible = IsVisible
+                    Box.Size = Vector2.new(width, height)
+                    Box.Position = Vector2.new(Target2dPosition.X - (Box.Size.X / 2), Target2dPosition.Y - (Box.Size.Y / 2))
+                    TextLabel.Visible = IsVisible
+                    TextLabel.Position = Vector2.new(Target2dPosition.X, (Target2dPosition.Y - (height / 2)) - 20)
+                    TextLabel.Size = math.clamp(maxTextSize * distanceScale, 1, maxTextSize)
+                    TextLabel.Text = Player.Name
+                    DistanceLabel.Visible = IsVisible
+                    DistanceLabel.Position = Vector2.new(Target2dPosition.X, Target2dPosition.Y + (height / 2) + 10)
+                    DistanceLabel.Text = (Distance and string.format("%.1f studs", distance)) or ""
+                else
+                    Box.Visible = false
+                    TextLabel.Visible = false
+                    DistanceLabel.Visible = false
+                end
+            else
+                Box.Visible = false
+                TextLabel.Visible = false
+                DistanceLabel.Visible = false
+            end
+        else
+            Box.Visible = false
+            TextLabel.Visible = false
+            DistanceLabel.Visible = false
+            if not Player then
+                Box:Remove()
+                TextLabel:Remove()
+                DistanceLabel:Remove()
+            end
+        end
+    end
+    return {
+        UpdateEsp = UpdateEsp,
+        Box = Box,
+        TextLabel = TextLabel,
+        DistanceLabel = DistanceLabel,
+        Player = Player
+    }
+end
+
+local Boxes = {}
+local CachedModels = {}
+local function EnableBoxESP()
+    for _, Model in ipairs(workspace:GetChildren()) do
+        if (Model:IsA("Model") and Model:FindFirstChild("HumanoidRootPart") and Model:FindFirstChild("Head") and not CachedModels[Model]) then
+            local Esp = BoxESP.Create(Model)
+            table.insert(Boxes, Esp)
+            CachedModels[Model] = true
+        end
+    end
+end
+game.Workspace.DescendantAdded:Connect(function(child)
+        if (child:IsA("Model") and child:FindFirstChild("HumanoidRootPart") and child:FindFirstChild("Head") and not CachedModels[child]) then
+            local Esp = BoxESP.Create(child)
+            table.insert(Boxes, Esp)
+            CachedModels[child] = true
+        end
+    end)
+local PlayerUpdater = game:GetService("RunService").RenderStepped
+local PlayerConnection
+PlayerConnection = PlayerUpdater:Connect(function()
+        for _, Esp in ipairs(Boxes) do
+            Esp.UpdateEsp()
+        end
+    end)
+EnableBoxESP()
 
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/BigHacker123/Library.lua/main/Library.lua'))()
 local SaveManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/addons/SaveManager.lua'))()
@@ -90,168 +237,104 @@ task.spawn(function()
   end)
   
 
-  local box = true
-        local SleeperCheck = true
-        local Distance = true
-        local Name = true
-        local RenderDistance = 1500
-        local BoxESP = {}
-        local Functions = {}
-        Functions.IsSleeping = function(self, Model)
-            if Model then
-                local AnimationController = Model:FindFirstChild("AnimationController")
-                if (AnimationController and AnimationController:FindFirstChild("Animator")) then
-                    for _, v in pairs(AnimationController.Animator:GetPlayingAnimationTracks()) do
-                        if (v.Animation.AnimationId == "rbxassetid://13280887764") then
-                            return true
-                        end
-                    end
-                end
-            end
-            return false
-        end
-        Functions.CheckDistance = function(self, Player, RenderDistance)
-            if (Player and Player:IsA("Model") and Player:FindFirstChild("HumanoidRootPart")) then
-                local distance = (workspace.CurrentCamera.CFrame.p - Player.HumanoidRootPart.Position).magnitude
-                return distance <= RenderDistance, distance
-            end
-            return false, 0
-        end
-        BoxESP.Create = function(Player)
-            local Box = Drawing.new("Square")
-            Box.Visible = box
-            Box.Color = Color3.fromRGB(202, 82, 147)
-            Box.Filled = false
-            Box.Transparency = 1
-            Box.Thickness = 1
-            local TextLabel = Drawing.new("Text")
-            TextLabel.Visible = Name
-            TextLabel.Color = Color3.fromRGB(202, 82, 147)
-            TextLabel.Size = 16
-            TextLabel.Center = true
-            TextLabel.Outline = true
-            local DistanceLabel = Drawing.new("Text")
-            DistanceLabel.Visible = Distance
-            DistanceLabel.Color = Color3.fromRGB(202, 82, 147)
-            DistanceLabel.Size = 14
-            DistanceLabel.Center = true
-            DistanceLabel.Outline = true
-            local maxTextSize = 16
-            local function UpdateEsp()
-                if (Player and Player:IsA("Model") and Player:FindFirstChild("HumanoidRootPart") and Player:FindFirstChild("Head")) then
-                    local isSleeping = Functions:IsSleeping(Player)
-                    if not isSleeping then
-                        local isWithinDistance, distance = Functions:CheckDistance(Player, RenderDistance)
-                        if isWithinDistance then
-                            local Target2dPosition, IsVisible = workspace.CurrentCamera:WorldToViewportPoint(Player.HumanoidRootPart.Position)
-                            local distanceScale = math.clamp(1 - (distance / RenderDistance), 0.5, 1)
-                            local scale_factor = (1 / (Target2dPosition.Z * math.tan(math.rad(workspace.CurrentCamera.FieldOfView * 0.5)) * 2)) * 100
-                            local width, height = math.floor(34 * scale_factor), math.floor(54 * scale_factor)
-                            Box.Visible = IsVisible
-                            Box.Size = Vector2.new(width, height)
-                            Box.Position = Vector2.new(Target2dPosition.X - (Box.Size.X / 2), Target2dPosition.Y - (Box.Size.Y / 2))
-                            TextLabel.Visible = IsVisible
-                            TextLabel.Position = Vector2.new(Target2dPosition.X, (Target2dPosition.Y - (height / 2)) - 20)
-                            TextLabel.Size = math.clamp(maxTextSize * distanceScale, 1, maxTextSize)
-                            TextLabel.Text = Player.Name
-                            DistanceLabel.Visible = IsVisible
-                            DistanceLabel.Position = Vector2.new(Target2dPosition.X, Target2dPosition.Y + (height / 2) + 10)
-                            DistanceLabel.Text = (Distance and string.format("%.1f studs", distance)) or ""
-                        else
-                            Box.Visible = false
-                            TextLabel.Visible = false
-                            DistanceLabel.Visible = false
-                        end
-                    else
-                        Box.Visible = false
-                        TextLabel.Visible = false
-                        DistanceLabel.Visible = false
-                    end
-                else
-                    Box.Visible = false
-                    TextLabel.Visible = false
-                    DistanceLabel.Visible = false
-                    if not Player then
-                        Box:Remove()
-                        TextLabel:Remove()
-                        DistanceLabel:Remove()
-                    end
-                end
-            end
-            return {
-                UpdateEsp = UpdateEsp,
-                Box = Box,
-                TextLabel = TextLabel,
-                DistanceLabel = DistanceLabel,
-                Player = Player
-            }
-        end
-        local Boxes = {}
-        local CachedModels = {}
-        local function EnableBoxESP()
-            for _, Model in ipairs(workspace:GetChildren()) do
-                if (Model:IsA("Model") and Model:FindFirstChild("HumanoidRootPart") and Model:FindFirstChild("Head") and not CachedModels[Model])then
-                    local Esp = BoxESP.Create(Model)
-                    table.insert(Boxes, Esp)
-                    CachedModels[Model] = true
-                end
-            end
-        end
-        game.Workspace.DescendantAdded:Connect(function(child)
-                if (child:IsA("Model") and child:FindFirstChild("HumanoidRootPart") and child:FindFirstChild("Head") and not CachedModels[child]) then
-                    local Esp = BoxESP.Create(child)
-                    table.insert(Boxes, Esp)
-                    CachedModels[child] = true
-                end
-            end)
-        local PlayerUpdater = game:GetService("RunService").RenderStepped
-        local PlayerConnection
-        PlayerConnection = PlayerUpdater:Connect(function()
-                for _, Esp in ipairs(Boxes) do
-                    Esp.UpdateEsp()
-                end
-            end)
-
-        EnableBoxESP()
   
 
 local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
 local PlayerVisualTab = PlayerVisualTabbox:AddTab('Esp')
 
     PlayerVisualTab:AddToggle('boxes', {Text = 'Boxes', Default = false}):AddColorPicker("boxes_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Esp.Box.Visible = Toggles.boxes.Value
+        Config.Esp.Box.Enabled = Toggles.boxes.Value
     end)
 
     Options.boxes_color:OnChanged(function()
         Config.Esp.Box.Color = Options.boxes_color.Value
     end)
 
-    PlayerVisualTab:AddToggle('names', {Text = 'Names', Default = false}):AddColorPicker("names_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Esp.TextLabel.Visible = state = Toggles.corner_boxes.Value
+    PlayerVisualTab:AddToggle('corner_boxes', {Text = 'Corner Boxes', Default = false}):AddColorPicker("corner_boxes_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.CornerBoxes.Enabled = Toggles.corner_boxes.Value
     end)
 
     Options.corner_boxes_color:OnChanged(function()
         Config.Esp.CornerBoxes.Color = Options.corner_boxes_color.Value
     end)
 
+    PlayerVisualTab:AddToggle('tracer', {Text = 'Tracers', Default = false}):AddColorPicker("tracer_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.Tracer.Enabled = Toggles.tracer.Value
+    end)
+
+    Options.tracer_color:OnChanged(function()
+        Config.Esp.Tracer.Color = Options.tracer_color.Value
+    end)
+
+    PlayerVisualTab:AddToggle('sleeper', {Text = 'Sleeper', Default = false}):AddColorPicker("sleeper_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.Sleeper.Enabled = Toggles.sleeper.Value
+    end)
+
+    Options.sleeper_color:OnChanged(function()
+        Config.Esp.Sleeper.Color = Options.sleeper_color.Value
+    end)
+
+    PlayerVisualTab:AddSlider('sleepersize', {Text = 'Sleeper Size', Suffix = "°", Default = 6, Min = 0, Max = 10, Rounding = 0, Compact = true}):OnChanged(function(t)
+        Config.Esp.Sleeper.Size = t
+    end)
+
+    PlayerVisualTab:AddToggle('viewangle', {Text = 'View Angle', Default = false}):AddColorPicker("viewangle_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.ViewAngle.Enabled = Toggles.viewangle.Value
+    end)
+
+    Options.viewangle_color:OnChanged(function()
+        Config.Esp.ViewAngle.Color = Options.viewangle_color.Value
+    end)
+
     PlayerVisualTab:AddToggle('distance', {Text = 'Distance', Default = false}):AddColorPicker("distance_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Esp.DistanceLabel.Visible = Toggles.distance.Value
+        Config.Esp.Distance.Enabled = Toggles.distance.Value
     end)
 
     Options.distance_color:OnChanged(function()
         Config.Esp.Distance.Color = Options.distance_color.Value
     end)
 
-    PlayerVisualTab:AddToggle('sleeper', {Text = 'Sleeper Check', Default = false}):AddColorPicker("sleeper_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        SleeperCheck = Toggles.sleeper.Value
+    PlayerVisualTab:AddToggle('name', {Text = 'Names', Default = false}):AddColorPicker("name_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.Name.Enabled = Toggles.name.Value
     end)
 
     Options.name_color:OnChanged(function()
         Config.Esp.Name.Color = Options.name_color.Value
     end)
 
-    PlayerVisualTab:AddSlider('render', {Text = 'Render Distance', Suffix = "°", Default = 500, Min = 1, Max = 1500, Rounding = 0, Compact = true}):OnChanged(function(t)
-        RenderDistance = t
+    PlayerVisualTab:AddToggle('skeleton', {Text = 'Skeleton', Default = false}):AddColorPicker("skeleton_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.Skeleton.Enabled = Toggles.skeleton.Value
+    end)
+
+    Options.skeleton_color:OnChanged(function()
+        Config.Esp.Skeleton.Color = Options.skeleton_color.Value
+    end)
+
+    local ArmorTab = Tabs.VisualsTab:AddLeftTabbox()
+    local ArmorTabBox = ArmorTab:AddTab('Armor | Tool')
+
+    ArmorTabBox:AddToggle('armor', {Text = 'Armor', Default = false}):AddColorPicker("armor_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.Armor.Enabled = Toggles.armor.Value
+    end)
+
+    Options.armor_color:OnChanged(function()
+        Config.Esp.Armor.Color = Options.armor_color.Value
+    end)
+
+    ArmorTabBox:AddSlider('armorsize', {Text = 'Armor Size', Suffix = "°", Default = 6, Min = 0, Max = 10, Rounding = 0, Compact = true}):OnChanged(function(t)
+        Config.Esp.Armor.Size = t
+    end)
+
+    ArmorTabBox:AddToggle('tool', {Text = 'Tool', Default = false}):AddColorPicker("tool_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.Tool.Enabled = Toggles.tool.Value
+    end)
+
+    Options.tool_color:OnChanged(function()
+        Config.Esp.Tool.Color = Options.tool_color.Value
+    end)
+
+    ArmorTabBox:AddSlider('armorsize', {Text = 'Armor Size', Suffix = "°", Default = 6, Min = 0, Max = 10, Rounding = 0, Compact = true}):OnChanged(function(t)
+        Config.Esp.Tool.Size = t
     end)
 
 
