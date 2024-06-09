@@ -603,7 +603,7 @@ do
         Config.Esp.Box.Color = Options.boxes_color.Value
     end)
 
-    PlayerVisualTab:AddToggle('filled', {Text = 'Boxes', Default = false}):AddColorPicker("filled_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+    PlayerVisualTab:AddToggle('filled', {Text = 'Filled', Default = false}):AddColorPicker("filled_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
         Config.Esp.Box.Filled = Toggles.filled.Value
     end)
 
@@ -617,6 +617,11 @@ do
 
     Options.corner_boxes_color:OnChanged(function()
         Config.Esp.CornerBoxes.Color = Options.corner_boxes_color.Value
+    end)
+
+    
+    PlayerVisualTab:AddSlider('filled_trans', {Text = 'Filled Transparency', Default = 0, Min = 0, Max = 1, Rounding = 0.1, Suffix = "%", Compact = false}):OnChanged(function(Value)
+        Config.Esp.Box.FilledTransparency = Value
     end)
 end
 
