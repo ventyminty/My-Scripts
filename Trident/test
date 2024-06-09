@@ -594,7 +594,6 @@ task.spawn(function()
 local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
 local PlayerVisualTab = PlayerVisualTabbox:AddTab('Esp')
 
-do
     PlayerVisualTab:AddToggle('boxes', {Text = 'Boxes', Default = false}):AddColorPicker("boxes_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
         Config.Esp.Box.Enabled = Toggles.boxes.Value
     end)
@@ -646,7 +645,6 @@ do
         Config.Esp.Armor.Size = t
     end)
 
-end
 
 local CrosshairTab = CrosshairTabBox:AddTab('Crosshair X')
 local CrossHairX = Drawing.new("Circle"), Drawing.new("Circle")
