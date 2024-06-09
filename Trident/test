@@ -235,10 +235,10 @@ end)
 local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
 local PlayerVisualTab = PlayerVisualTabbox:AddTab('Esp')
 
-    PlayerVisualTab:AddToggle('names', {Text = 'Names', Default = false}):AddColorPicker("names_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Name = Toggles.names.Value
+    PlayerVisualTab:AddToggle('name_esp', {Text = 'Names', Default = false}):OnChanged(function()
+        Name = Toggles.name_esp.Value
         for _, Esp in ipairs(Boxes) do
-            Esp.TextLabel.Visible = Toggles.names.Value
+            Esp.TextLabel.Visible = Toggles.name_esp.Value
         end
     end)
 
