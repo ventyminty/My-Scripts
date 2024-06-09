@@ -261,98 +261,34 @@ local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
 local PlayerVisualTab = PlayerVisualTabbox:AddTab('Esp')
 
     PlayerVisualTab:AddToggle('boxes', {Text = 'Boxes', Default = false}):AddColorPicker("boxes_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Config.Esp.Box.Enabled = Toggles.boxes.Value
+        box = Toggles.boxes.Value
+        for _, Esp in ipairs(Boxes) do
+            Esp.Box.Visible = Toggles.boxes.Value
+        end
     end)
 
-    Options.boxes_color:OnChanged(function()
-        Config.Esp.Box.Color = Options.boxes_color.Value
+
+    PlayerVisualTab:AddToggle('names', {Text = 'Names', Default = false}):AddColorPicker("names_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Name = Toggles.names.Value
+        for _, Esp in ipairs(Boxes) do
+            Esp.TextLabel.Visible = Toggles.names.Value
+        end
     end)
 
-    PlayerVisualTab:AddToggle('corner_boxes', {Text = 'Corner Boxes', Default = false}):AddColorPicker("corner_boxes_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Config.Esp.CornerBoxes.Enabled = Toggles.corner_boxes.Value
-    end)
-
-    Options.corner_boxes_color:OnChanged(function()
-        Config.Esp.CornerBoxes.Color = Options.corner_boxes_color.Value
-    end)
-
-    PlayerVisualTab:AddToggle('tracer', {Text = 'Tracers', Default = false}):AddColorPicker("tracer_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Config.Esp.Tracer.Enabled = Toggles.tracer.Value
-    end)
-
-    Options.tracer_color:OnChanged(function()
-        Config.Esp.Tracer.Color = Options.tracer_color.Value
-    end)
-
-    PlayerVisualTab:AddToggle('sleeper', {Text = 'Sleeper', Default = false}):AddColorPicker("sleeper_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Config.Esp.Sleeper.Enabled = Toggles.sleeper.Value
-    end)
-
-    Options.sleeper_color:OnChanged(function()
-        Config.Esp.Sleeper.Color = Options.sleeper_color.Value
-    end)
-
-    PlayerVisualTab:AddSlider('sleepersize', {Text = 'Sleeper Size', Suffix = "°", Default = 6, Min = 0, Max = 10, Rounding = 0, Compact = true}):OnChanged(function(t)
-        Config.Esp.Sleeper.Size = t
-    end)
-
-    PlayerVisualTab:AddToggle('viewangle', {Text = 'View Angle', Default = false}):AddColorPicker("viewangle_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Config.Esp.ViewAngle.Enabled = Toggles.viewangle.Value
-    end)
-
-    Options.viewangle_color:OnChanged(function()
-        Config.Esp.ViewAngle.Color = Options.viewangle_color.Value
-    end)
 
     PlayerVisualTab:AddToggle('distance', {Text = 'Distance', Default = false}):AddColorPicker("distance_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Config.Esp.Distance.Enabled = Toggles.distance.Value
+        Distance = Toggles.distance.Value
+        for _, Esp in ipairs(Boxes) do
+            Esp.DistanceLabel.Visible = Toggles.distance.Value
+        end
     end)
 
-    Options.distance_color:OnChanged(function()
-        Config.Esp.Distance.Color = Options.distance_color.Value
+    PlayerVisualTab:AddToggle('sleepercheck', {Text = 'Sleeper Check', Default = false}):OnChanged(function()
+        SleeperCheck = Toggles.sleepercheck.Value
     end)
 
-    PlayerVisualTab:AddToggle('name', {Text = 'Names', Default = false}):AddColorPicker("name_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Config.Esp.Name.Enabled = Toggles.name.Value
-    end)
-
-    Options.name_color:OnChanged(function()
-        Config.Esp.Name.Color = Options.name_color.Value
-    end)
-
-    PlayerVisualTab:AddToggle('skeleton', {Text = 'Skeleton', Default = false}):AddColorPicker("skeleton_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Config.Esp.Skeleton.Enabled = Toggles.skeleton.Value
-    end)
-
-    Options.skeleton_color:OnChanged(function()
-        Config.Esp.Skeleton.Color = Options.skeleton_color.Value
-    end)
-
-    local ArmorTab = Tabs.VisualsTab:AddLeftTabbox()
-    local ArmorTabBox = ArmorTab:AddTab('Armor | Tool')
-
-    ArmorTabBox:AddToggle('armor', {Text = 'Armor', Default = false}):AddColorPicker("armor_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Config.Esp.Armor.Enabled = Toggles.armor.Value
-    end)
-
-    Options.armor_color:OnChanged(function()
-        Config.Esp.Armor.Color = Options.armor_color.Value
-    end)
-
-    ArmorTabBox:AddSlider('armorsize', {Text = 'Armor Size', Suffix = "°", Default = 6, Min = 0, Max = 10, Rounding = 0, Compact = true}):OnChanged(function(t)
-        Config.Esp.Armor.Size = t
-    end)
-
-    ArmorTabBox:AddToggle('tool', {Text = 'Tool', Default = false}):AddColorPicker("tool_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Config.Esp.Tool.Enabled = Toggles.tool.Value
-    end)
-
-    Options.tool_color:OnChanged(function()
-        Config.Esp.Tool.Color = Options.tool_color.Value
-    end)
-
-    ArmorTabBox:AddSlider('armorsize', {Text = 'Armor Size', Suffix = "°", Default = 6, Min = 0, Max = 10, Rounding = 0, Compact = true}):OnChanged(function(t)
-        Config.Esp.Tool.Size = t
+    PlayerVisualTab:AddSlider('maxdistance', {Text = 'Render Distance', Suffix = "°", Default = 500, Min = 1, Max = 1500, Rounding = 0, Compact = true}):OnChanged(function(t)
+        RenderDistance = t
     end)
 
 
