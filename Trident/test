@@ -1,1 +1,821 @@
---nono
+    local utility = {
+        services = {
+            players = cloneref(game:GetService("Players")),
+            workspace = cloneref(game:GetService("Workspace")),
+            userinputservice = cloneref(game:GetService("UserInputService")),
+            runservice = cloneref(game:GetService("RunService")),
+            httpservice = cloneref(game:GetService("HttpService")),
+            coregui = cloneref(game:GetService("CoreGui")),
+            lighting = cloneref(game:GetService("Lighting")),
+            guiservice = cloneref(game:GetService("GuiService")),
+            replicatedstorage = cloneref(game:GetService("ReplicatedStorage")),
+            networkclient = cloneref(game:GetService("NetworkClient"))
+        },
+        functions = {}
+    }
+    local camera = utility.services.workspace.CurrentCamera
+    local mouse = utility.services.players.LocalPlayer:GetMouse()
+    local localplayer = utility.services.players.LocalPlayer
+    local default_fov = camera.FieldOfView
+    local os_clock = os.clock()
+    local FPS = string.split(game.Stats.Workspace.Heartbeat:GetValueString(), ".")
+    local camera = game:GetService("Workspace").Camera
+    local Camera = game:GetService("Workspace").Camera
+    local Camera = game:GetService("Workspace").CurrentCamera
+    local Cam = game:GetService("Workspace").Camera
+    local CharcaterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middle
+    local Mouse = game.Players.LocalPlayer:GetMouse()
+    local lighting = game:GetService("Lighting")
+    local SoundService = game:GetService("SoundService")
+    local Decimals = 2
+    local Clock = os.clock()
+    local Camera = game:GetService("Workspace").Camera
+    local CameraPred = game:GetService("Workspace").CurrentCamera
+    local Mouse = game.Players.LocalPlayer:GetMouse()
+    local CharcaterMiddle = game:GetService("Workspace").Ignore.LocalCharacter.Middle
+    local camera = utility.services.workspace.CurrentCamera
+
+    local box = true
+        local SleeperCheck = true
+        local Distance = true
+        local Name = true
+        local RenderDistance = 1500
+        local BoxESP = {}
+        local Functions = {}
+        Functions.IsSleeping = function(self, Model)
+            if Model then
+                local AnimationController = Model:FindFirstChild("AnimationController")
+                if (AnimationController and AnimationController:FindFirstChild("Animator")) then
+                    for _, v in pairs(AnimationController.Animator:GetPlayingAnimationTracks()) do
+                        if (v.Animation.AnimationId == "rbxassetid://13280887764") then
+                            return true
+                        end
+                    end
+                end
+            end
+            return false
+        end
+        Functions.CheckDistance = function(self, Player, RenderDistance)
+            if (Player and Player:IsA("Model") and Player:FindFirstChild("HumanoidRootPart")) then
+                local distance = (workspace.CurrentCamera.CFrame.p - Player.HumanoidRootPart.Position).magnitude
+                return distance <= RenderDistance, distance
+            end
+            return false, 0
+        end
+        BoxESP.Create = function(Player)
+            local Box = Drawing.new("Square")
+            Box.Visible = box
+            Box.Color = Color3.fromRGB(202, 82, 147)
+            Box.Filled = false
+            Box.Transparency = 1
+            Box.Thickness = 1
+            local TextLabel = Drawing.new("Text")
+            TextLabel.Visible = Name
+            TextLabel.Color = Color3.fromRGB(202, 82, 147)
+            TextLabel.Size = 16
+            TextLabel.Center = true
+            TextLabel.Outline = true
+            local DistanceLabel = Drawing.new("Text")
+            DistanceLabel.Visible = Distance
+            DistanceLabel.Color = Color3.fromRGB(202, 82, 147)
+            DistanceLabel.Size = 14
+            DistanceLabel.Center = true
+            DistanceLabel.Outline = true
+            local maxTextSize = 16
+            local function UpdateEsp()
+                if (Player and Player:IsA("Model") and Player:FindFirstChild("HumanoidRootPart") and Player:FindFirstChild("Head")) then
+                    local isSleeping = Functions:IsSleeping(Player)
+                    if not isSleeping then
+                        local isWithinDistance, distance = Functions:CheckDistance(Player, RenderDistance)
+                        if isWithinDistance then
+                            local Target2dPosition, IsVisible = workspace.CurrentCamera:WorldToViewportPoint(Player.HumanoidRootPart.Position)
+                            local distanceScale = math.clamp(1 - (distance / RenderDistance), 0.5, 1)
+                            local scale_factor = (1 / (Target2dPosition.Z * math.tan(math.rad(workspace.CurrentCamera.FieldOfView * 0.5)) * 2)) * 100
+                            local width, height = math.floor(34 * scale_factor), math.floor(54 * scale_factor)
+                            Box.Visible = IsVisible
+                            Box.Size = Vector2.new(width, height)
+                            Box.Position = Vector2.new(Target2dPosition.X - (Box.Size.X / 2), Target2dPosition.Y - (Box.Size.Y / 2))
+                            TextLabel.Visible = IsVisible
+                            TextLabel.Position = Vector2.new(Target2dPosition.X, (Target2dPosition.Y - (height / 2)) - 20)
+                            TextLabel.Size = math.clamp(maxTextSize * distanceScale, 1, maxTextSize)
+                            TextLabel.Text = Player.Name
+                            DistanceLabel.Visible = IsVisible
+                            DistanceLabel.Position = Vector2.new(Target2dPosition.X, Target2dPosition.Y + (height / 2) + 10)
+                            DistanceLabel.Text = (Distance and string.format("%.1f studs", distance)) or ""
+                        else
+                            Box.Visible = false
+                            TextLabel.Visible = false
+                            DistanceLabel.Visible = false
+                        end
+                    else
+                        Box.Visible = false
+                        TextLabel.Visible = false
+                        DistanceLabel.Visible = false
+                    end
+                else
+                    Box.Visible = false
+                    TextLabel.Visible = false
+                    DistanceLabel.Visible = false
+                    if not Player then
+                        Box:Remove()
+                        TextLabel:Remove()
+                        DistanceLabel:Remove()
+                    end
+                end
+            end
+            return {
+                UpdateEsp = UpdateEsp,
+                Box = Box,
+                TextLabel = TextLabel,
+                DistanceLabel = DistanceLabel,
+                Player = Player
+            }
+        end
+        local Boxes = {}
+        local CachedModels = {}
+        local function EnableBoxESP()
+            for _, Model in ipairs(workspace:GetChildren()) do
+                if (Model:IsA("Model") and Model:FindFirstChild("HumanoidRootPart") and Model:FindFirstChild("Head") and not CachedModels[Model])then
+                    local Esp = BoxESP.Create(Model)
+                    table.insert(Boxes, Esp)
+                    CachedModels[Model] = true
+                end
+            end
+        end
+        game.Workspace.DescendantAdded:Connect(function(child)
+                if (child:IsA("Model") and child:FindFirstChild("HumanoidRootPart") and child:FindFirstChild("Head") and not CachedModels[child]) then
+                    local Esp = BoxESP.Create(child)
+                    table.insert(Boxes, Esp)
+                    CachedModels[child] = true
+                end
+            end)
+        local PlayerUpdater = game:GetService("RunService").RenderStepped
+        local PlayerConnection
+        PlayerConnection = PlayerUpdater:Connect(function()
+                for _, Esp in ipairs(Boxes) do
+                    Esp.UpdateEsp()
+                end
+            end)
+
+        EnableBoxESP()
+
+local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/BigHacker123/Library.lua/main/Library.lua'))()
+local SaveManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/addons/SaveManager.lua'))()
+local ThemeManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/BigHacker123/Library.lua/main/Theme.lua'))()
+local Build = "Private";local Color = "#FF0000";local Ver = "v0.3b"
+local Window = Library:CreateWindow({ Size = UDim2.fromOffset(550, 610),Title = "Ethernality.<font color=\"#d17bff\">wtf</font> | ".."<font color=\""..Color.."\">"..Build.."</font>".."                      ["..Ver.."]",Center = true,AutoShow = true})
+
+local Tabs = {
+    CombatTab = Window:AddTab('Combat'),
+    VisualsTab = Window:AddTab('Visuals'),
+    MiscellaneousTab = Window:AddTab('Miscellaneous'),
+    WorldTab = Window:AddTab('World'),
+    LocalTab = Window:AddTab('Local'),
+    UISettings = Window:AddTab('Settings')
+}
+
+local HitboxTabBox = Tabs.CombatTab:AddLeftTabbox()
+local CrosshairTabBox = Tabs.MiscellaneousTab:AddLeftTabbox()
+local HeadHitbox = HitboxTabBox:AddTab('Head Hitbox')
+
+local HedsOn = Instance.new("Part")
+HedsOn.Name = "HedsOn"
+HedsOn.Anchored = false
+HedsOn.CanCollide = false
+HedsOn.Transparency = 0
+HedsOn.Size = Vector3.new(5, 5, 10)
+HedsOn.Parent = game.ReplicatedStorage
+
+local HeadExtends = false
+local XSize = 5
+local YSize = 5
+local ZSize = 10
+local HitboxTransparency = 50
+
+HeadHitbox:AddToggle('HBO',{Text='Enabled',Default=false}):OnChanged(function(Value)
+HeadExtends = Value
+end)
+
+HeadHitbox:AddSlider('HitboxXSize_Slider', {Text = 'Width', Default = 5, Min = 0, Max = 10, Rounding = 2, Suffix = "%", Compact = false}):OnChanged(function(HitboxXSize)
+XSize = HitboxXSize
+end)
+
+HeadHitbox:AddSlider('HitboxYSize_Slider', {Text = 'Height', Default = 5, Min = 0, Max = 10, Rounding = 2, Suffix = "%", Compact = false}):OnChanged(function(HitboxYSize)
+YSize = HitboxYSize
+end)
+
+HeadHitbox:AddSlider('HitboxXSize_Slider', {Text = 'Transparency', Default = 50, Min = 0, Max = 100, Rounding = 0, Suffix = "%", Compact = false}):OnChanged(function(TransparencyValue)
+HitboxTransparency = TransparencyValue / 100
+end)
+
+task.spawn(function()
+  while task.wait() do
+    if HeadExtends then
+      for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
+        if i:FindFirstChild("HumanoidRootPart") and not i:FindFirstChild("HedsOn") then
+          local BigHeadsPart = Instance.new("Part")
+          BigHeadsPart.Name = "Head"
+          BigHeadsPart.Anchored = false
+          BigHeadsPart.CanCollide = false
+          BigHeadsPart.Transparency = HitboxTransparency
+          BigHeadsPart.Size = Vector3.new(XSize, YSize, ZSize)
+          local DeletePart = Instance.new("Weld")
+          DeletePart.Parent = BigHeadsPart
+          DeletePart.Name = "FAKEHEAD"
+          local HeadsParts = BigHeadsPart:Clone()
+          HeadsParts.Parent = i
+          HeadsParts.Orientation = i.HumanoidRootPart.Orientation
+          local clonedHedsOn = HedsOn:Clone()
+          clonedHedsOn.Parent = i
+          local Headswelding = Instance.new("Weld")
+          Headswelding.Parent = HeadsParts
+          Headswelding.Part0 = i.HumanoidRootPart
+          Headswelding.Part1 = HeadsParts
+          HeadsParts.Position = Vector3.new(i.HumanoidRootPart.Position.X, i.HumanoidRootPart.Position.Y - 0.6, i.HumanoidRootPart.Position.Z)
+        end
+      end
+    else
+      for _, i in ipairs(game:GetService("Workspace"):GetChildren()) do
+        if i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("HedsOn") then
+          i.HedsOn:Remove()
+          for _, a in ipairs(i:GetChildren()) do
+            if a.Name == "Head" and a:FindFirstChild("FAKEHEAD") and (not a:FindFirstChild("Nametag") or not a:FindFirstChild("Face")) then
+              a:Remove()
+            end
+          end
+        end
+      end
+    end
+  end
+  end)
+  
+
+  
+
+local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
+local PlayerVisualTab = PlayerVisualTabbox:AddTab('Esp')
+
+    PlayerVisualTab:AddToggle('boxes', {Text = 'Boxes', Default = false}):AddColorPicker("boxes_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Esp.Box.Visible = Toggles.boxes.Value
+    end)
+
+    Options.boxes_color:OnChanged(function()
+        Config.Esp.Box.Color = Options.boxes_color.Value
+    end)
+
+    PlayerVisualTab:AddToggle('names', {Text = 'Names', Default = false}):AddColorPicker("names_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Esp.TextLabel.Visible = state = Toggles.corner_boxes.Value
+    end)
+
+    Options.corner_boxes_color:OnChanged(function()
+        Config.Esp.CornerBoxes.Color = Options.corner_boxes_color.Value
+    end)
+
+    PlayerVisualTab:AddToggle('distance', {Text = 'Distance', Default = false}):AddColorPicker("distance_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Esp.DistanceLabel.Visible = Toggles.distance.Value
+    end)
+
+    Options.distance_color:OnChanged(function()
+        Config.Esp.Distance.Color = Options.distance_color.Value
+    end)
+
+    PlayerVisualTab:AddToggle('sleeper', {Text = 'Sleeper Check', Default = false}):AddColorPicker("sleeper_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        SleeperCheck = Toggles.sleeper.Value
+    end)
+
+    Options.name_color:OnChanged(function()
+        Config.Esp.Name.Color = Options.name_color.Value
+    end)
+
+    PlayerVisualTab:AddSlider('render', {Text = 'Render Distance', Suffix = "°", Default = 500, Min = 1, Max = 1500, Rounding = 0, Compact = true}):OnChanged(function(t)
+        RenderDistance = t
+    end)
+
+
+local CrosshairTab = CrosshairTabBox:AddTab('Crosshair X')
+local CrossHairX = Drawing.new("Circle"), Drawing.new("Circle")
+--
+CrossHairX.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+CrossHairX.Thickness = 1
+CrossHairX.ZIndex = 3
+
+do
+  CrosshairTab:AddToggle('zCrosshairX_Toggle', {Text = 'Enable', Default = false}):AddColorPicker("eCrosshairX_Color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+  CrossHairX.Visible = Toggles.zCrosshairX_Toggle.Value
+  end)
+
+  Options.eCrosshairX_Color:OnChanged(function()
+  CrossHairX.Color = Options.eCrosshairX_Color.Value
+  end)
+
+  CrosshairTab:AddToggle('Crosshair_Filled1', {Text = 'Filled', Default = false}):OnChanged(function()
+  CrossHairX.Filled = Toggles.Crosshair_Filled1.Value
+  end)
+
+  CrosshairTab:AddSlider('Crosshair_Radius', {Text = 'Size', Suffix = "°", Default = 2, Min = 0, Max = 100, Rounding = 0, Compact = true}):OnChanged(function(CrosshairXRadius)
+  CrossHairX.Radius = CrosshairXRadius
+  end)
+end
+
+
+local CustomHitsoundsTabBox = Tabs.MiscellaneousTab:AddLeftTabbox('Custom Hitsounds')
+local PlayerHitsoundsTab = CustomHitsoundsTabBox:AddTab('Custom Hitsounds')
+
+--* Player Hitsounds *--
+
+SoundService.PlayerHitHeadshot.Volume = 5
+SoundService.PlayerHitHeadshot.Pitch = 1
+SoundService.PlayerHitHeadshot.EqualizerSoundEffect.HighGain = -1.5
+local sounds = {["Defualt Headshot"] = "rbxassetid://9119561046",["Defualt Body"] = "rbxassetid://9114487369",Neverlose = "rbxassetid://8726881116",Gamesense = "rbxassetid://4817809188",One = "rbxassetid://7380502345",Bell = "rbxassetid://6534947240",Rust = "rbxassetid://1255040462",TF2 = "rbxassetid://2868331684",Slime = "rbxassetid://6916371803",["Among Us"] = "rbxassetid://5700183626",Minecraft = "rbxassetid://4018616850",["CS:GO"] = "rbxassetid://6937353691",Saber = "rbxassetid://8415678813",Baimware = "rbxassetid://3124331820",Osu = "rbxassetid://7149255551",["TF2 Critical"] = "rbxassetid://296102734",Bat = "rbxassetid://3333907347",["Call of Duty"] = "rbxassetid://5952120301",Bubble = "rbxassetid://6534947588",Pick = "rbxassetid://1347140027",Pop = "rbxassetid://198598793",Bruh = "rbxassetid://4275842574",Bamboo = "rbxassetid://3769434519",Crowbar = "rbxassetid://546410481",Weeb = "rbxassetid://6442965016",Beep = "rbxassetid://8177256015",Bambi = "rbxassetid://8437203821",Stone = "rbxassetid://3581383408",["Old Fatality"] = "rbxassetid://6607142036",Click = "rbxassetid://8053704437",Ding = "rbxassetid://7149516994",Snow = "rbxassetid://6455527632",Laser = "rbxassetid://7837461331",Mario = "rbxassetid://2815207981",Steve = "rbxassetid://4965083997"}
+
+PlayerHitsoundsTab:AddToggle('Enabled_Toggle1', {Text = 'Enable', Default = false})
+
+PlayerHitsoundsTab:AddDropdown('HeadshotHit', {Values = { 'Defualt Headshot','Neverlose','Gamesense','One','Bell','Rust','TF2','Slime','Among Us','Minecraft','CS:GO','Saber','Baimware','Osu','TF2 Critical','Bat','Call of Duty','Bubble','Pick','Pop','Bruh','Bamboo','Crowbar','Weeb','Beep','Bambi','Stone','Old Fatality','Click','Ding','Snow','Laser','Mario','Steve','Snowdrake' },Default = 1, Multi = false, Text = 'Head Hitsound:'})
+Options.HeadshotHit:OnChanged(function()
+local soundId = sounds[Options.HeadshotHit.Value]
+game:GetService("SoundService").PlayerHitHeadshot.SoundId = soundId
+game:GetService("SoundService").PlayerHitHeadshot.Playing = true
+end)
+
+PlayerHitsoundsTab:AddSlider('Volume_Slider', {Text = 'volume', Default = 5, Min = 0, Max = 10, Rounding = 0, Compact = true,}):OnChanged(function(vol)
+SoundService.PlayerHitHeadshot.Volume = vol
+end)
+
+PlayerHitsoundsTab:AddSlider('Pitch_Slider', {Text = 'pitch', Default = 1, Min = 0, Max = 2, Rounding = 2, Compact = true,}):OnChanged(function(pich)
+SoundService.PlayerHitHeadshot.Pitch = pich
+end)
+
+PlayerHitsoundsTab:AddInput('HeadShotHitAssetID', {Default = "rbxassetid://9119561046",Numeric = false,Finished = true,Text = 'custom sound:',Placeholder = "rbxassetid://9119561046",}):OnChanged(function(CustomSoundID)
+SoundService.PlayerHitHeadshot.SoundId = CustomSoundID
+end)
+--
+PlayerHitsoundsTab:AddToggle('Enabled_Toggle2', {Text = 'enabled', Default = false})
+
+PlayerHitsoundsTab:AddDropdown('Hit', {Values = { 'Defualt Body','Neverlose','Gamesense','One','Bell','Rust','TF2','Slime','Among Us','Minecraft','CS:GO','Saber','Baimware','Osu','TF2 Critical','Bat','Call of Duty','Bubble','Pick','Pop','Bruh','Bamboo','Crowbar','Weeb','Beep','Bambi','Stone','Old Fatality','Click','Ding','Snow','Laser','Mario','Steve','Snowdrake' },Default = 1, Multi = false, Text = 'Body Hitsound:'})
+Options.Hit:OnChanged(function()
+local soundId = sounds[Options.Hit.Value]
+game:GetService("SoundService").PlayerHit2.SoundId = soundId
+game:GetService("SoundService").PlayerHit2.Playing = true
+end)
+
+PlayerHitsoundsTab:AddSlider('Volume_Slider', {Text = 'volume', Default = 5, Min = 0, Max = 10, Rounding = 0, Compact = true,}):OnChanged(function(vole)
+SoundService.PlayerHit2.Volume = vole
+end)
+
+PlayerHitsoundsTab:AddSlider('Pitch_Slider', {Text = 'pitch', Default = 1, Min = 0, Max = 2, Rounding = 2, Compact = true,}):OnChanged(function(piche)
+SoundService.PlayerHit2.Pitch = piche
+end)
+
+PlayerHitsoundsTab:AddInput('PlayerHitAssetID', {Default = "rbxassetid://9114487369",Numeric = false,Finished = true,Text = 'custom sound:',Placeholder = "rbxassetid://9114487369",}):OnChanged(function(CustomSoundID)
+SoundService.PlayerHit2.SoundId = CustomSoundID
+end)
+
+local XrayTabBox = Tabs.MiscellaneousTab:AddRightTabbox('xray')
+local XrayTab = XrayTabBox:AddTab('xray')
+
+--* X-Ray *--
+
+local XRayEnabled = false
+local CurrentSliderValue = 50
+XrayTab:AddToggle('Xray', {Text = 'Enable', Default = false, Tooltip}):AddKeyPicker('XRayKey', {Default = 'Non', SyncToggleState = true, Mode = 'Toggle', Text = 'X-Ray', NoUI = true}):OnChanged(function(value)
+XRayEnabled = value
+if XRayEnabled then
+for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
+  if v:FindFirstChild("Hitbox") then
+    v.Hitbox.Transparency = CurrentSliderValue
+  end
+end
+else
+for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
+  if v:FindFirstChild("Hitbox") then
+    v.Hitbox.Transparency = 0
+  end
+end
+end
+end)
+
+XrayTab:AddSlider('XrayChangerSlider', {Text = 'transparency:', Suffix = "%", Default = 50, Min = 0, Max = 100, Rounding = 0, Compact = false}):OnChanged(function(Value)
+CurrentSliderValue = Value / 100
+if XRayEnabled then
+CurrentSliderValue = Value / 100
+end
+end)
+
+local ComExtraTabBox = Tabs.MiscellaneousTab:AddLeftTabbox('extra')
+local ComExtraTab = ComExtraTabBox:AddTab('extra')
+
+--* Extra *--
+
+ComExtraTab:AddToggle('GameCrosshair_Value', {Text = 'remove in-game crosshair', Default = false}):AddColorPicker("GameCrosshair_Color", {Default = Color3.fromRGB(255,255,255)}):OnChanged(function(GameCrosshair)
+if GameCrosshair == true then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Crosshair.Visible = false
+elseif GameCrosshair == false then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Crosshair.Visible = true
+end
+end)
+
+Options.GameCrosshair_Color:OnChanged(function(CrosshairColor_Value)
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Crosshair.BackgroundColor3 = CrosshairColor_Value
+end)
+
+ComExtraTab:AddToggle('BloodSplatter', {Text = 'remove blood', Default = false}):OnChanged(function(BloodSplatter_Toggle)
+if BloodSplatter_Toggle == false then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.BloodSplatter.Visible = true
+elseif BloodSplatter_Toggle == true then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.BloodSplatter.Visible = false
+end
+end)
+
+
+
+
+
+
+
+
+
+local WorldTabBox = Tabs.WorldTab:AddLeftTabbox()
+local Fieldofviewtab = WorldTabBox:AddTab('Field Of View')
+
+local default_fov = 70
+local slider_fov = 60
+local field_of_view = {enabled = false, amount = default_fov, zoomed = false, zoom_amount = 30}
+
+
+Fieldofviewtab:AddToggle('fov_changer_toggle',{Text='Enable',Default=false}):OnChanged(function(Value)
+    field_of_view.enabled = Value
+        if field_of_view.enabled then
+            if field_of_view.zoomed then
+                camera.FieldOfView = field_of_view.zoom_amount
+            else
+                camera.FieldOfView = field_of_view.amount
+            end
+        else
+            camera.FieldOfView = default_fov
+        end
+end)
+
+
+Fieldofviewtab:AddSlider('feildofview', {Text='field of view:',Default=70,Min=30,Max=120,Rounding=0,Compact=false,Suffix=" %"}):OnChanged(function(Value)
+    field_of_view.ammount = Value
+    if field_of_view.enabled then
+        camera.FieldOfView = field_of_view.ammount
+    end
+end)
+
+Fieldofviewtab:AddToggle('enablezoom', { Text = 'Enable Zoom', Default = false }):AddKeyPicker('zoomkey', { Default = 'Non', SyncToggleState = true, Mode = 'Toggle', Text = 'zoom', NoUI = true }):OnChanged(function(Value)
+    field_of_view.zoom_check = Value
+    if field_of_view.zoom_check then
+        field_of_view.zoom = not field_of_view.zoom
+        if field_of_view.zoom then
+            camera.FieldOfView = field_of_view.zoom_ammount
+        else
+            camera.FieldOfView = default_fov
+        end
+    else
+        camera.FieldOfView = default_fov
+    end
+end)
+
+Fieldofviewtab:AddSlider('zoomaount', {Text='zoom:',Default=30,Min=1,Max=120,Rounding=0,Compact=false,Suffix=" %"}):OnChanged(function(Value)
+    field_of_view.zoom_ammount = Value
+    if field_of_view.zoom_check then
+        camera.FieldOfView = field_of_view.zoom_ammount
+    end
+end)
+
+camera:GetPropertyChangedSignal("FieldOfView"):Connect(function()
+    if (field_of_view.enabled and not field_of_view.zoom) then
+        if (field_of_view.ammount ~= camera.FieldOfView) then
+            camera.FieldOfView = field_of_view.ammount
+        end
+    end
+    if field_of_view.zoom then
+        camera.FieldOfView = field_of_view.zoom_ammount
+    end
+end)
+
+local WorldEspTabBox = Tabs.WorldTab:AddRightTabbox('world esp')
+local WorldEspTab = WorldEspTabBox:AddTab('world esp')
+
+--* Player Settings *--
+
+_G.SettingsOre = {
+iron = {
+  enabled = true,
+  colour = Color3.fromRGB(199, 172, 120),
+},
+nitrate = {
+  enabled = true,
+  colour = Color3.fromRGB(248, 248, 248),
+},
+stone = {
+  enabled = true,
+  colour = Color3.fromRGB(205, 205, 205),
+},
+oreDistance = 1000,
+}
+local settings1 = _G.SettingsOre
+if settings1 == nil then
+return
+end
+
+WorldEspTab:AddToggle('iron_Toggle',{Text='enabled',Default=false})
+
+WorldEspTab:AddSlider('OreRenderDistance', {Text='distance:',Default=1000,Min=1,Max=2500,Rounding=0,Compact=false,Suffix=" studs"}):OnChanged(function(Value)
+settings1.oreDistance = Value
+end)
+
+WorldEspTab:AddToggle('iron_Toggle',{Text='iron ore',Default=false}):AddColorPicker('IronColor', { Default = Color3.fromRGB(199, 172, 120), Title = 'Color', }):OnChanged(function(Value)
+settings1.iron.enabled = Value
+end)
+Options.IronColor:OnChanged(function(Value)
+settings1.iron.colour = Value
+if settings1.iron.enabled then
+settings1.iron.enabled = false
+task.wait(0.01)
+settings1.iron.enabled = true
+end
+end)
+
+WorldEspTab:AddToggle('nitrate_Toggle',{Text='nitrate ore',Default=false}):AddColorPicker('NitrateColor', { Default = Color3.fromRGB(248, 248, 248), Title = 'Color', }):OnChanged(function(Value)
+settings1.nitrate.enabled = Value
+end)
+Options.NitrateColor:OnChanged(function(Value)
+settings1.nitrate.colour = Value
+if settings1.nitrate.enabled then
+settings1.nitrate.enabled = false
+task.wait(0.01)
+settings1.nitrate.enabled = true
+end
+end)
+
+WorldEspTab:AddToggle('stone_Toggle',{Text='stone ore',Default=false}):AddColorPicker('StoneColor', { Default = Color3.fromRGB(205, 205, 205), Title = 'Color', }):OnChanged(function(Value)
+settings1.stone.enabled = Value
+end)
+Options.StoneColor:OnChanged(function(Value)
+settings1.stone.colour = Value
+if settings1.stone.enabled then
+settings1.stone.enabled = false
+task.wait(0.01)
+settings1.stone.enabled = true
+end
+end)
+
+local Text1Font = 2
+local textoutlines = true
+local testsize = 11
+local function get_text(text, position)
+local distance = math.floor((position - workspace.Ignore.LocalCharacter.Middle.Position).Magnitude)
+local final_text = tostring(text) .. "\n[" .. tostring(distance) .. "] studs"
+return tostring(final_text)
+end
+local function worldtoviewport(position)
+local a, b = workspace.CurrentCamera:WorldToViewportPoint(position)
+return Vector2.new(a.X, a.Y), b
+end
+local function add_esp(part, text, colour, toggle)
+local drawing_text = Drawing.new("Text")
+drawing_text.Outline = textoutlines
+drawing_text.Center = true
+drawing_text.Visible = false
+drawing_text.Font = Text1Font
+drawing_text.Size = testsize
+drawing_text.Color = colour
+local rendersteploop = game:GetService("RunService").RenderStepped:connect(function()pcall(function()
+if not part:IsDescendantOf(workspace) or not settings1 then
+  table.remove(oresDebris,part)
+  drawing_text:Remove()
+  rendersteploop:Disconnect()
+end
+local part_pos = part.Position
+local screen_pos, on_screen = worldtoviewport(part_pos)
+if not on_screen then
+  drawing_text.Visible = false
+  drawing_text.Size = testsize
+  drawing_text.Outline = textoutlines
+  drawing_text.Font = Text1Font
+  rendersteploop:Disconnect()
+end
+local oreDis = (game:GetService("Workspace").Ignore.LocalCharacter:WaitForChild("Top"):GetPivot().Position-part_pos).Magnitude
+if oreDis >= settings1.oreDistance then
+  drawing_text.Visible = false
+  drawing_text.Size = testsize
+  drawing_text.Outline = textoutlines
+  drawing_text.Font = Text1Font
+  rendersteploop:Disconnect()
+end
+if text == 'Iron' and not settings1.iron.enabled then
+  drawing_text.Visible = false
+  drawing_text.Color = settings1.iron.colour
+  rendersteploop:Disconnect()
+else if text == 'Nitrate' and not settings1.nitrate.enabled then
+  drawing_text.Visible = false
+  drawing_text.Color = settings1.nitrate.colour
+  rendersteploop:Disconnect()
+else if text == 'Stone' and not settings1.stone.enabled then
+  drawing_text.Visible = false
+  drawing_text.Color = settings1.stone.colour
+  rendersteploop:Disconnect()
+end
+end
+end
+drawing_text.Visible = true
+drawing_text.Text = get_text(text, part_pos)
+drawing_text.Position = screen_pos
+drawing_text.Size = testsize
+drawing_text.Outline = textoutlines
+drawing_text.Font = Text1Font
+rendersteploop:Disconnect()
+end)
+end)
+end
+local function filter_models(v)
+if (not v:IsA("Model")) then
+return
+end
+local is_part = v:FindFirstChild("Part")
+local children = v:GetChildren()
+local child_amount = #children
+if is_part then
+if child_amount == 1 then
+add_esp(is_part, "Stone", settings1.stone.colour, settings1.stone.enabled)
+elseif child_amount == 2 then
+for _, v in pairs(children) do
+  local brickcolor = v.BrickColor
+  local is_ore = v.ClassName == "MeshPart" and v.Name == "Part"
+  if is_ore then
+    if brickcolor == BrickColor.new("Institutional white") then
+      add_esp(v, "Nitrate", settings1.nitrate.colour, settings1.nitrate.enabled)
+    elseif brickcolor == BrickColor.new("Burlap") then
+      add_esp(v, "Iron", settings1.iron.colour, settings1.iron.enabled)
+    end
+  end
+end
+end
+end
+end
+for index, model in pairs(workspace:GetChildren()) do
+filter_models(model)
+end
+workspace.ChildAdded:Connect(function(model)
+filter_models(model)
+end)
+
+WorldEspTab:AddDivider("")
+
+WorldEspTab:AddToggle('TextOutline2',{Text='text outlines',Default=true}):OnChanged(function(Value)
+textoutlines = Value
+end)
+
+WorldEspTab:AddSlider('TextSizeSlider2', {Text = 'text size:', Default = 12, Min = 1, Max = 25, Rounding = 0, Suffix = "px", Compact = false}):OnChanged(function(TextSizeValue2)
+testsize = TextSizeValue2
+end)
+
+WorldEspTab:AddDropdown('EspFont2',{Values={"0","1","2","3"},Default=3,Multi=false,Text='font:'}):OnChanged(function(Value)
+Text1Font = Value
+end)
+
+
+
+
+
+local HudTabBox = Tabs.LocalTab:AddRightTabbox('Hud')
+local HudTab = HudTabBox:AddTab('Hud')
+
+--* Hud *--
+
+HudTab:AddToggle('AWASZnfh', {Text = "remove server info",Default = false,Tooltip = "Hides Server Info",}):OnChanged(function(Chillax1)
+if Chillax1 == true then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.ServerInfo.Visible = false
+elseif Chillax1 == false then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.ServerInfo.Visible = true
+end
+end)
+
+HudTab:AddToggle('AWAaSZasanfh', {Text = "remove server status",Default = false,Tooltip = "Hides Server Status",}):OnChanged(function(Chillax2)
+if Chillax2 == true then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.ServerStatus.Visible = false
+elseif Chillax2 == false then
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.ServerStatus.Visible = true
+end
+end)
+
+HudTab:AddToggle('GnAf', {Text = "chat visible",Default = true,Tooltip = "Hides chat )",}):OnChanged(function(HideChat)
+for I,V in pairs(getgc(true)) do
+if type(V) == "function" then
+  if debug.getinfo(V).name == "SetChatVisible" then
+    V(HideChat)
+  end
+end
+end
+end)
+
+HudTab:AddLabel('energy:'):AddColorPicker('Energy_Color_Value', { Default = Color3.fromRGB(197,187,40)})
+Options.Energy_Color_Value:OnChanged(function(Energy_Color_Value)
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Vitals.EnergyFrame.Energy.BackgroundColor3 = Energy_Color_Value
+end)
+
+HudTab:AddLabel('health:'):AddColorPicker('Health_Color_Value', { Default = Color3.fromRGB(78,153,74)})
+Options.Health_Color_Value:OnChanged(function(Health_Color_Value)
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Vitals.HealthFrame.Health.BackgroundColor3 = Health_Color_Value
+end)
+
+HudTab:AddLabel('ammo:'):AddColorPicker('Ammo_Color_Value', { Default = Color3.fromRGB(255,255,255)})
+Options.Ammo_Color_Value:OnChanged(function(Ammo_Color_Value)
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.BottomCenter.Ammo.TextColor3 = Ammo_Color_Value
+end)
+
+HudTab:AddSlider('Vitals_Transparency', {Text = 'vitals transparency', Suffix = "%", Default = 10, Min = 0, Max = 100, Rounding = 0, Compact = true}):OnChanged(function(VitalsTransparency)
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Vitals.EnergyFrame.Energy.BackgroundTransparency = VitalsTransparency / 100
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.Vitals.HealthFrame.Health.BackgroundTransparency = VitalsTransparency / 100
+end)
+
+HudTab:AddSlider('Background_Transparency', {Text = 'inventory transparency', Suffix = "%", Default = 70, Min = 0, Max = 100, Rounding = 0, Compact = true}):OnChanged(function(InventoryTransparency)
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.BottomCenter.Inventory.BackgroundTransparency = InventoryTransparency / 100
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.BottomCenter.Hotbar.BackgroundTransparency = InventoryTransparency / 100
+game:GetService("Players").LocalPlayer.PlayerGui.GameUI.FPS.BottomCenter.Armor.BackgroundTransparency = InventoryTransparency / 100
+end)
+
+
+
+--// UI Settings \\--
+
+--// Game
+local GameID = Tabs.UISettings:AddLeftGroupbox('Game')
+GameID:AddInput('GameID_Check', {Default = 'Game ID', Numeric = true, Finished = false, Text = 'Game ID:', Placeholder = 'Game ID Here'})
+GameID:AddButton('Join Game', function()
+game:GetService("TeleportService"):Teleport(Options.GameID_Check.Value, plr)
+end)
+
+--// Menu
+local MenuGroup = Tabs.UISettings:AddRightGroupbox('Menu')
+
+MenuGroup:AddLabel(""..game:GetService("Players").LocalPlayer.PlayerGui.GameUI.ServerInfo.Text.."", true)
+local playerCountLabel = MenuGroup:AddLabel("Player Count: 0", nil, true)
+local function updatePlayerCount()
+local playerCount = #game:GetService("Players"):GetPlayers()
+playerCountLabel:SetText("Players Online: " .. playerCount)
+end
+game:GetService("Players").PlayerAdded:Connect(updatePlayerCount)
+game:GetService("Players").PlayerRemoving:Connect(updatePlayerCount)
+updatePlayerCount()
+
+MenuGroup:AddLabel(' Made by:<font color="#de6cff"> skatemain</font> 👑', true)
+
+MenuGroup:AddButton('Unload Script', function() Library:Unload()
+for i,v in pairs(Toggles) do
+v:SetValue(false)
+Library:Notify('Unloaded!', 1)
+end
+end)
+
+MenuGroup:AddButton('Panic Button', function()
+for i,v in pairs(Toggles) do
+v:SetValue(false)
+Library:Notify('Panic Button!', 1)
+end
+end)
+
+MenuGroup:AddButton('Copy Discord', function()
+if pcall(setclipboard,"@skatemain") then
+Library:Notify('Successfully copied discord link to your clipboard!', 5)
+end
+end)
+
+MenuGroup:AddToggle('WatermarkToggle', { Text = 'Watermark', Default = false, Tooltip = nil })
+Toggles.WatermarkToggle:OnChanged(function()
+while Toggles.WatermarkToggle.Value do
+task.wait(1)
+local fps = string.format('%.0f', game.Stats.Workspace.Heartbeat:GetValue())
+local ping = string.format('%.0f', game.Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+Library:SetWatermark('ethernality.wtf - FPS: ' .. fps .. ' | Ping: ' .. ping .. ' | [trident survival]')
+Library:SetWatermarkVisibility(true)
+end
+Library:SetWatermarkVisibility(false)
+end)
+
+MenuGroup:AddToggle('UISettings_KeybindFrameVisibility', {Text = 'Keybind', Default = true}):OnChanged(function()
+Library.KeybindFrame.Visible = Toggles.UISettings_KeybindFrameVisibility.Value
+end)
+
+MenuGroup:AddLabel('Menu Keybind'):AddKeyPicker('MenuKeybind', { Default = 'Insert', NoUI = true, Text = 'Menu keybind' })
+Library.ToggleKeybind = Options.MenuKeybind
+
+--// Manager
+SaveManager:SetLibrary(Library)
+SaveManager:SetFolder('ethernality.wtf/folder')
+SaveManager:BuildConfigSection(Tabs.UISettings)
+SaveManager:IgnoreThemeSettings()
+ThemeManager:SetLibrary(Library)
+ThemeManager:SetFolder('ethernality.wtf/themes')
+ThemeManager:ApplyToTab(Tabs.UISettings)
+
+--// Script Loaded
+local Time = (string.format("%."..tostring(Decimals).."f", os.clock() - Clock))
+Library:Notify(("Script [Loaded] In - "..tostring(Time).."s"), 15)
+
+
+
+--Wrapping function - needed to unload(Keep at end of script)
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EIOlmqV6v1owgJBEoqj5lK9p01SFE2THpxcOnvX/LinoriaBurnEdition/main/LoaderManager.lua'))
