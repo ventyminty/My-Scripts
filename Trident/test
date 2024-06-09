@@ -631,6 +631,18 @@ do
         Config.Esp.Sleeper.Size = t
     end)
 
+    PlayerVisualTab:AddToggle('armor', {Text = 'Armor', Default = false}):AddColorPicker("armor_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.Armor.Enabled = Toggles.armor.Value
+    end)
+
+    Options.armor_color:OnChanged(function()
+        Config.Esp.Armor.Color = Options.armor_color.Value
+    end)
+
+    PlayerVisualTab:AddSlider('armorsize', {Text = 'Armor Size', Suffix = "°", Default = 6, Min = 0, Max = 10, Rounding = 0, Compact = true}):OnChanged(function(t)
+        Config.Esp.Armor.Size = t
+    end)
+
 end
 
 local CrosshairTab = CrosshairTabBox:AddTab('Crosshair X')
