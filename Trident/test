@@ -619,10 +619,15 @@ do
         Config.Esp.CornerBoxes.Color = Options.corner_boxes_color.Value
     end)
 
-    
-    PlayerVisualTab:AddSlider('filled_trans', {Text = 'Filled Transparency', Default = 0, Min = 0, Max = 1, Rounding = 1, Suffix = "%", Compact = false}):OnChanged(function(Value)
-        Config.Esp.Box.FilledTransparency = Value
+    PlayerVisualTab:AddToggle('tracer', {Text = 'Tracers', Default = false}):AddColorPicker("tracer_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.Tracer.Enabled = Toggles.tracer.Value
     end)
+
+    Options.tracer_color:OnChanged(function()
+        Config.Esp.Tracer.Color = Options.tracer_color.Value
+    end)
+
+
 end
 
 local CrosshairTab = CrosshairTabBox:AddTab('Crosshair X')
