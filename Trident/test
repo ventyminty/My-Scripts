@@ -595,12 +595,12 @@ local PlayerVisualTabbox = Tabs.VisualsTab:AddLeftTabbox()
 local PlayerVisualTab = PlayerVisualTabbox:AddTab('player visuals')
 
 do
-    PlayerVisualTab:AddToggle('corner_boxest', {Text = 'Corner Boxes', Default = false}):AddColorPicker("CornerBoxes_Color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
-        Config.Esp.CornerBoxes.Enabled = Toggles.corner_boxest.Value
+    PlayerVisualTab:AddToggle('corner_boxes', {Text = 'Corner Boxes', Default = false}):AddColorPicker("corner_boxes_color", {Default = Color3.fromRGB(208, 123, 255)}):OnChanged(function()
+        Config.Esp.CornerBoxes.Enabled = Toggles.corner_boxes.Value
     end)
 
-    Options.CornerBoxes_Color:OnChanged(function()
-        Config.Esp.CornerBoxes.Color = Options.CornerBoxes_Color.Value
+    Options.corner_boxes_color:OnChanged(function()
+        Config.Esp.CornerBoxes.Color = Options.corner_boxes_color.Value
     end)
 end
 
