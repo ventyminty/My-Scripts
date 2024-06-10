@@ -2,12 +2,6 @@
 -- Wait for game
 repeat task.wait() until game:IsLoaded();
 
--- Game Globals
-local _Network = getrenv()._G.Network;
-local _Player = getrenv()._G.Player;
-local _Character = getrenv()._G.Character;
-local _Camera = getrenv()._G.Camera;
-
 -- Locals
 local Players = game:GetService("Players");
 local LocalPlayer = Players.LocalPlayer;
@@ -92,7 +86,7 @@ anticam = hookmetamethod(game, "__index", newcclosure(function(...)
     local self, k = ...
 
     if not checkcaller() and k == "CFrame" and self.Name == "Camera" and self == Camera then
-        return _Camera.GetCFrame()
+        return workspace.CurrentCamera.CFrame
     end
 
     return anticam(...)
@@ -188,8 +182,8 @@ SilentAim:AddLabel('SilentAim Keybind'):AddKeyPicker('SilentAimbot_Bind', {
 })
 
 -- Replace Camera function
-local OrginalGetCFrame = _Camera.GetCFrame;
-_Camera.GetCFrame = function()
+local OrginalGetCFrame = _workspace.CurrentCamera.CFrame;
+workspace.CurrentCamera.CFrame = function()
     if _SilentAim["Enabled"] and _SilentAim["Silent_Target"] then
         return CFrame.new(OrginalGetCFrame().p, _SilentAim["Silent_Target"].Position + Vector3.new((_SilentAim["X_Offset"]), (_SilentAim["Y_Offset"]), 0.001));
     else
@@ -397,120 +391,9 @@ end)
 
 -- // Gun Settings \\ --
 
--- No Recoil
-GunSettings:AddToggle('No_Recoil', {
-    Text = 'No Recoil (Bows/Guns)',
-    Default = false,
-    Tooltip = 'Disables recoil for bows/guns',
-})
-
--- Store Orginal Recoil function
-local RecoilFunc = _Camera.Recoil;
-
-Toggles.No_Recoil:OnChanged(function()
-    local Bool = Toggles.No_Recoil.Value;
-
-    if Bool then
-        _Camera.Recoil = function()
-            return;
-        end
-    else
-        _Camera.Recoil = RecoilFunc;
-    end
-end)
 
 
--- // Keybinds \\ --
 
--- Grab All
-GeneralBinds:AddLabel('Grab All'):AddKeyPicker('Grab_All', {
-    Default = 'F',
-    Text = 'Grab All',
-    Tooltip = 'Auto grabs all items in chest/inventory.',
-    NoUI = false,
-})
-
-Options.Grab_All:OnClick(function()
-    for i = 1, 20 do
-        task.wait()
-        _Network.Send("QuickMove", i, true);
-    end
-end)
-
--- Camera Zoom Out
-GeneralBinds:AddLabel('Camera Zoom Out'):AddKeyPicker('Camera_Zoom_Out', {
-    Default = 'LeftBracket',
-    Text = 'Camera Zoom Out',
-    Tooltip = 'Zooms the camera out.',
-    NoUI = false,
-})
-
-Options.Camera_Zoom_Out:OnClick(function()
-    if (Settings["CameraZoom"] - 1) < 0 then return; end
-    Settings["CameraZoom"] = Settings["CameraZoom"] - 1;
-    _Camera.SetZoom(Settings["CameraZoom"]);
-end)
-
--- Camera Zoom In
-GeneralBinds:AddLabel('Camera Zoom In'):AddKeyPicker('Camera_Zoom_In', {
-    Default = 'RightBracket',
-    Text = 'Camera Zoom In',
-    Tooltip = 'Zooms the camera in.',
-    NoUI = false,
-})
-
-Options.Camera_Zoom_In:OnClick(function()
-    Settings["CameraZoom"] = Settings["CameraZoom"] + 1;
-    _Camera.SetZoom(Settings["CameraZoom"]);
-end)
-
--- Free Cam
-GeneralBinds:AddLabel('Free Cam'):AddKeyPicker('Free_Cam', {
-    Default = 'B',
-    Text = 'Free Cam',
-    Tooltip = 'Allows you to go into a free cam mode.',
-    NoUI = false,
-})
-
-Options.Free_Cam:OnClick(function()
-    ToggleFreecam();
-end)
-
--- ESP Toggle
-GeneralBinds:AddLabel('Name ESP'):AddKeyPicker('ESP_Toggle', {
-    Default = 'Semicolon',
-    Text = 'Toggle ESP',
-    Tooltip = 'Abuses the built in ESP.',
-    NoUI = false,
-})
-
-Options.ESP_Toggle:OnClick(function()
-    if not _Toggles["ESP"] then
-        _Toggles["ESP"] = true;
-        _Player.SetEsp(true);
-    else
-        _Toggles["ESP"] = false;
-        _Player.SetEsp(false);
-    end
-end)
-
--- Noclip Toggle
-GeneralBinds:AddLabel('Noclip (CAN BAN)'):AddKeyPicker('Noclip_Toggle', {
-    Default = 'V',
-    Text = 'Toggle Noclip',
-    Tooltip = 'CAN BAN IF ABUSED!',
-    NoUI = false,
-})
-
-Options.Noclip_Toggle:OnClick(function()
-    if not _Toggles["Noclip"] then
-        _Toggles["Noclip"] = true;
-        _Character.SetNoclipping(true);
-    else
-        _Toggles["Noclip"] = false;
-        _Character.SetNoclipping(false);
-    end
-end)
 
 
 --  // [[ ESP Window ]] \\ --
