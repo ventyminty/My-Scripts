@@ -1,30 +1,40 @@
-getgenv().ASSettings = {
-    AimType = "To Cursor",
-    AimDis = 200,
-    AimSleepers = false,
-    VisibleCheck = false
-}
-
-function getClosestPlayerToCursor()
-    local closestPlayer = nil;
-    local shortestDistance = ASSettings["AimDis"];
-
-    for i, v in pairs(workspace:GetChildren()) do
-        if v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") then
-            if v:FindFirstChild("Head") then
-                local pos = Camera.WorldToViewportPoint(Camera, v.Head.Position)
-                local magnitude = (Vector2.new(pos.X, pos.Y) - Vector2.new(Mouse.X, Mouse.Y)).magnitude
-
-                if magnitude < shortestDistance then
-                    closestPlayer = v
-                    shortestDistance = magnitude
-                end
-            end
+local hitmarkerenabled = true
+local hasclicked = true
+game:GetService("RunService").RenderStepped:connect(function()
+    wait()
+        if hitmarkerenabled == true then
+        if game.Workspace.Ignore:FindFirstChild("Blood") then
+        mainpart = Instance.new("Part")
+        mainpart.Parent = workspace
+        mainpart.Name = "Hitmarker"
+        mainpart.Size = Vector3.new(1,1,1)
+        mainpart.Transparency = 1
+        mainpart.Anchored = true
+        mainpart.CanCollide = false
+        
+        billboardgui = Instance.new("BillboardGui")
+        billboardgui.Parent = mainpart
+        billboardgui.AlwaysOnTop = true
+        billboardgui.Size = UDim2.new(1, 0, 1, 0)
+        billboardgui.Enabled = false
+        billboardgui.StudsOffset = Vector3.new(0,1000,0)
+        
+        framex = Instance.new("TextLabel")
+        framex.Parent = billboardgui
+        framex.Size = UDim2.new(1, 0, 1, 0)
+        framex.Text = "+"
+        framex.TextScaled = true
+        framex.TextColor3 = Color3.new(255, 255, 255)
+        framex.BackgroundTransparency = 1
+        
+        if hasclicked == true then
+        if game.Workspace.Ignore:FindFirstChild("Blood") then
+        mainpart.Position = Vector3.new(game.Workspace.Ignore.Blood.Position.X,-1000+game.Workspace.Ignore.Blood.Position.Y,game.Workspace.Ignore.Blood.Position.Z)
+        billboardgui.Enabled = true
         end
     end
-
-    return closestPlayer
-end
-
-
-print(getClosestPlayerToCursor())
+        wait(3)
+        mainpart:Destroy()
+        end 
+    end
+end)
