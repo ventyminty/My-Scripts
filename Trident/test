@@ -1,4 +1,10 @@
--- Get Closest to mouse
+getgenv().ASSettings = {
+    AimType = "To Cursor",
+    AimDis = 200,
+    AimSleepers = false,
+    VisibleCheck = false
+}
+
 function getClosestPlayerToCursor()
     local closestPlayer = nil;
     local shortestDistance = ASSettings["AimDis"];
