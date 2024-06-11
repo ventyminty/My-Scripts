@@ -1,40 +1,243 @@
-local hitmarkerenabled = true
-local hasclicked = true
-game:GetService("RunService").RenderStepped:connect(function()
-    wait()
-        if hitmarkerenabled == true then
-        if game.Workspace.Ignore:FindFirstChild("Blood") then
-        mainpart = Instance.new("Part")
-        mainpart.Parent = workspace
-        mainpart.Name = "Hitmarker"
-        mainpart.Size = Vector3.new(1,1,1)
-        mainpart.Transparency = 1
-        mainpart.Anchored = true
-        mainpart.CanCollide = false
-        
-        billboardgui = Instance.new("BillboardGui")
-        billboardgui.Parent = mainpart
-        billboardgui.AlwaysOnTop = true
-        billboardgui.Size = UDim2.new(1, 0, 1, 0)
-        billboardgui.Enabled = false
-        billboardgui.StudsOffset = Vector3.new(0,1000,0)
-        
-        framex = Instance.new("TextLabel")
-        framex.Parent = billboardgui
-        framex.Size = UDim2.new(1, 0, 1, 0)
-        framex.Text = "+"
-        framex.TextScaled = true
-        framex.TextColor3 = Color3.new(255, 255, 255)
-        framex.BackgroundTransparency = 1
-        
-        if hasclicked == true then
-        if game.Workspace.Ignore:FindFirstChild("Blood") then
-        mainpart.Position = Vector3.new(game.Workspace.Ignore.Blood.Position.X,-1000+game.Workspace.Ignore.Blood.Position.Y,game.Workspace.Ignore.Blood.Position.Z)
-        billboardgui.Enabled = true
-        end
-    end
-        wait(3)
-        mainpart:Destroy()
-        end 
+getgenv().ETH = {
+    Esp = {
+        Highlight = {
+            Enabled = true,
+            FillColor = Color3.new(255, 0, 255),
+            FillTransparency = 0.5,
+            OutlineColor = Color3.new(255, 255, 255),
+            OutlineTransparency = 0
+        },
+    },
+    Combat = {
+        Hitbox = {
+            Enabled = true,
+            Size = Vector3.new(7, 7, 7),
+            Part = "Torso",
+            Transparency = 0.8
+        },
+    },
+    Others = {
+        Crosshair = {
+            Enabled = true,
+            Filled = true,
+            Size = 3,
+            Color = Color3.new(255, 255, 255)
+        },
+        Hitsounds = {
+            Enabled = true,
+            Selected = "Neverlose"
+        },
+    },
+}
+
+
+local G2L = {};
+
+G2L["1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"));
+G2L["1"]["Name"] = [[Loader2]];
+G2L["1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
+
+G2L["2"] = Instance.new("Frame", G2L["1"]);
+G2L["2"]["BorderSizePixel"] = 0;
+G2L["2"]["BackgroundColor3"] = Color3.fromRGB(24, 24, 24);
+G2L["2"]["Size"] = UDim2.new(0, 265, 0, 210);
+G2L["2"]["BorderColor3"] = Color3.fromRGB(24, 24, 24);
+G2L["2"]["Position"] = UDim2.new(0.28026533126831055, 0, 0.34210526943206787, 0);
+G2L["2"]["Name"] = [[Main]];
+
+G2L["3"] = Instance.new("Frame", G2L["2"]);
+G2L["3"]["BorderSizePixel"] = 0;
+G2L["3"]["BackgroundColor3"] = Color3.fromRGB(203, 83, 148);
+G2L["3"]["Size"] = UDim2.new(1, 0, 0, 1);
+G2L["3"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+G2L["3"]["Name"] = [[Divider]];
+
+G2L["4"] = Instance.new("LocalScript", G2L["2"]);
+
+G2L["5"] = Instance.new("TextLabel", G2L["2"]);
+G2L["5"]["BorderSizePixel"] = 0;
+G2L["5"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["5"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+G2L["5"]["FontFace"] = Font.new([[rbxasset://fonts/families/ComicNeueAngular.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+G2L["5"]["TextSize"] = 14;
+G2L["5"]["TextColor3"] = Color3.fromRGB(203, 83, 148);
+G2L["5"]["Size"] = UDim2.new(0, 265, 0, 27);
+G2L["5"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+G2L["5"]["Text"] = [[Ethernality.wtf(Paid and UD version)]];
+G2L["5"]["Name"] = [[Title]];
+G2L["5"]["BackgroundTransparency"] = 1;
+
+G2L["6"] = Instance.new("UIPadding", G2L["5"]);
+G2L["6"]["PaddingLeft"] = UDim.new(0, 7);
+
+G2L["7"] = Instance.new("TextBox", G2L["2"]);
+G2L["7"]["ZIndex"] = 10;
+G2L["7"]["BorderSizePixel"] = 0;
+G2L["7"]["TextSize"] = 14;
+G2L["7"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["7"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["7"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+G2L["7"]["BackgroundTransparency"] = 1;
+G2L["7"]["PlaceholderText"] = [[Enter Key]];
+G2L["7"]["Size"] = UDim2.new(0, 246, 0, 26);
+G2L["7"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+G2L["7"]["Text"] = [[]];
+G2L["7"]["Position"] = UDim2.new(0.03396226465702057, 0, 0.8194056749343872, 0);
+G2L["7"]["Name"] = [[EnterBox]];
+
+G2L["8"] = Instance.new("UIStroke", G2L["7"]);
+G2L["8"]["Color"] = Color3.fromRGB(72, 72, 72);
+G2L["8"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+
+G2L["9"] = Instance.new("Frame", G2L["2"]);
+G2L["9"]["BorderSizePixel"] = 0;
+G2L["9"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["9"]["BackgroundTransparency"] = 0.9900000095367432;
+G2L["9"]["Size"] = UDim2.new(0, 245, 0, 129);
+G2L["9"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+G2L["9"]["Position"] = UDim2.new(0.03773584961891174, 0, 0.15873005986213684, 0);
+G2L["9"]["Name"] = [[Group]];
+
+G2L["a"] = Instance.new("UIStroke", G2L["9"]);
+G2L["a"]["Color"] = Color3.fromRGB(72, 72, 72);
+G2L["a"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+
+G2L["b"] = Instance.new("TextLabel", G2L["9"]);
+G2L["b"]["BorderSizePixel"] = 0;
+G2L["b"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["b"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+G2L["b"]["FontFace"] = Font.new([[rbxasset://fonts/families/ComicNeueAngular.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+G2L["b"]["TextSize"] = 14;
+G2L["b"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["b"]["Size"] = UDim2.new(0, 233, 0, 14);
+G2L["b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+G2L["b"]["Text"] = [[welcome, nixusplayer1]];
+G2L["b"]["Name"] = [[name]];
+G2L["b"]["BackgroundTransparency"] = 1;
+G2L["b"]["Position"] = UDim2.new(0.02448979578912258, 0, 0, 0);
+
+G2L["c"] = Instance.new("TextLabel", G2L["9"]);
+G2L["c"]["BorderSizePixel"] = 0;
+G2L["c"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["c"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+G2L["c"]["FontFace"] = Font.new([[rbxasset://fonts/families/ComicNeueAngular.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+G2L["c"]["TextSize"] = 14;
+G2L["c"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["c"]["Size"] = UDim2.new(0, 140, 0, 13);
+G2L["c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+G2L["c"]["Text"] = [[server has 13 players]];
+G2L["c"]["Name"] = [[buyercounter]];
+G2L["c"]["BackgroundTransparency"] = 1;
+G2L["c"]["Position"] = UDim2.new(0.02448979578912258, 0, 0.10852713137865067, 0);
+
+G2L["d"] = Instance.new("TextLabel", G2L["9"]);
+G2L["d"]["BorderSizePixel"] = 0;
+G2L["d"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["d"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+G2L["d"]["FontFace"] = Font.new([[rbxasset://fonts/families/ComicNeueAngular.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+G2L["d"]["TextSize"] = 14;
+G2L["d"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["d"]["Size"] = UDim2.new(0, 233, 0, 14);
+G2L["d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+G2L["d"]["Text"] = [[discord server: discord.gg/UKeKwX46AR]];
+G2L["d"]["Name"] = [[discord]];
+G2L["d"]["BackgroundTransparency"] = 1;
+G2L["d"]["Position"] = UDim2.new(0.02448979578912258, 0, 0.20930232107639313, 0);
+
+G2L["e"] = Instance.new("TextLabel", G2L["9"]);
+G2L["e"]["TextWrapped"] = true;
+G2L["e"]["BorderSizePixel"] = 0;
+G2L["e"]["RichText"] = true;
+G2L["e"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["e"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+G2L["e"]["FontFace"] = Font.new([[rbxasset://fonts/families/ComicNeueAngular.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+G2L["e"]["TextSize"] = 14;
+G2L["e"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["e"]["Size"] = UDim2.new(0, 227, 0, 57);
+G2L["e"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+G2L["e"]["Text"] = [[if you don't want to ban, play legit, if you find any errors, send a dm to @skatemain or open tickets on the server.]];
+G2L["e"]["Name"] = [[paragraph]];
+G2L["e"]["BackgroundTransparency"] = 1;
+G2L["e"]["Position"] = UDim2.new(0.02448979578912258, 0, 0.5038759708404541, 0);
+
+G2L["f"] = Instance.new("TextLabel", G2L["9"]);
+G2L["f"]["BorderSizePixel"] = 0;
+G2L["f"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["f"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+G2L["f"]["FontFace"] = Font.new([[rbxasset://fonts/families/ComicNeueAngular.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+G2L["f"]["TextSize"] = 14;
+G2L["f"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["f"]["Size"] = UDim2.new(0, 227, 0, 13);
+G2L["f"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+G2L["f"]["Text"] = [[last update: 11.06.2024 17:38]];
+G2L["f"]["Name"] = [[lastupdate]];
+G2L["f"]["BackgroundTransparency"] = 1;
+G2L["f"]["Position"] = UDim2.new(0.02448979578912258, 0, 0.3178294599056244, 0);
+
+G2L["10"] = Instance.new("Frame", G2L["2"]);
+G2L["10"]["BorderSizePixel"] = 0;
+G2L["10"]["BackgroundColor3"] = Color3.fromRGB(72, 72, 72);
+G2L["10"]["Size"] = UDim2.new(0, 265, 0, 1);
+G2L["10"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+G2L["10"]["Position"] = UDim2.new(0, 0, 0.12311270833015442, 0);
+G2L["10"]["Name"] = [[Line]];
+
+G2L["11"] = Instance.new("UIStroke", G2L["2"]);
+G2L["11"]["Color"] = Color3.fromRGB(72, 72, 72);
+G2L["11"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+
+local function C_4()
+local script = G2L["4"];
+	local UserInputService = game:GetService("UserInputService")
+	
+	local gui = script.Parent
+	
+	local dragging
+	local dragInput
+	local dragStart
+	local startPos
+	
+	local function update(input)
+		local delta = input.Position - dragStart
+		gui:TweenPosition(UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y), Enum.EasingDirection.InOut, Enum.EasingStyle.Sine, 0.04, true) -- This is what I changed
+	end
+	
+	gui.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = gui.Position
+	
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+	
+	gui.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+	
+	UserInputService.InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			update(input)
+		end
+	end)
+end;
+task.spawn(C_4);
+
+local maingui = G2L["2"]
+G2L["7"].FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        maingui:Destroy()
+        local key = G2L["7"].Text
+        getgenv().ETH = {Key = key}
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Edaruph/My-Scripts/main/Trident/MoreFPS"))()
     end
 end)
+
+return G2L["1"], require;
