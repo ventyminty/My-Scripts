@@ -38,3 +38,53 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
         transparencydv()
     end
 end)
+
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "CrosshairGui"
+gui.Parent = game.Players.LocalPlayer.PlayerGui
+
+-- Create a Frame for the crosshair
+local crosshair = Instance.new("Frame")
+crosshair.Name = "Crosshair"
+crosshair.Size = UDim2.new(0, 20, 0, 20) -- Size of the crosshair
+crosshair.BackgroundTransparency = 1 -- Make the background transparent
+crosshair.BorderSizePixel = 0
+crosshair.Position = UDim2.new(0.5, -10, 0.5, -10) -- Center the crosshair
+crosshair.Parent = gui
+
+-- Create the horizontal bar of the cross
+local horizontalBar = Instance.new("Frame")
+horizontalBar.Size = UDim2.new(1, 0, 0, 2) -- Width and height of the horizontal bar
+horizontalBar.Position = UDim2.new(0, 0, 0.5, -1) -- Position it in the middle of the crosshair vertically
+horizontalBar.BackgroundColor3 = Color3.new(0, 0, 0) -- Black color
+horizontalBar.BorderSizePixel = 0
+horizontalBar.Parent = crosshair
+
+-- Create the vertical bar of the cross
+local verticalBar = Instance.new("Frame")
+verticalBar.Size = UDim2.new(0, 2, 1, 0) -- Width and height of the vertical bar
+verticalBar.Position = UDim2.new(0.5, -1, 0, 0) -- Position it in the middle of the crosshair horizontally
+verticalBar.BackgroundColor3 = Color3.new(0, 0, 0) -- Black color
+verticalBar.BorderSizePixel = 0
+verticalBar.Parent = crosshair
+
+-- Function to update the rotation and color of the crosshair
+local function updateCrosshair()
+    local hue = 0 -- Starting hue
+    while true do
+        -- Update color
+        hue = (hue + 1) % 360 -- Increment hue
+        local color = Color3.fromHSV(hue / 360, 1, 1) -- Convert hue to RGB
+        horizontalBar.BackgroundColor3 = color
+        verticalBar.BackgroundColor3 = color
+
+        -- Update rotation
+        crosshair.Rotation = crosshair.Rotation + 1 -- Increase rotation by 1 degree per frame
+
+        wait(0.0   ) -- Adjust rotation speed as needed
+    end
+end
+
+-- Start the function in a coroutine
+coroutine.wrap(updateCrosshair)()
