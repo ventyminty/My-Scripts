@@ -1,30 +1,53 @@
-local RunService = game:GetService("RunService")
-local Lighting = game:GetService("Lighting")
-local game = game
-local localDaytime = true
-local localTimeOfDay = 12
-game.Lighting.ClockTime = tostring(localTimeOfDay)
-local function updateLighting()
-	if localDaytime then
-		game.Lighting.ClockTime = tostring(localTimeOfDay)
-	else
-		game.Lighting.ClockTime = "0"
-	end
+
+getgenv().ETH = {
+    Key = "ethernalitybest22",
+    Others = {
+        XRay = {
+            Enabled = true,
+            Transparency = 0.8,
+            Keybind = Enum.KeyCode.T
+        },
+    },
+}
+
+
+
+local UserInputService = game:GetService("UserInputService")
+
+
+local rayenabled = ETH.Others.XRay.Enabled
+local raytransparency = ETH.Others.XRay.Transparency
+local raykeybind = ETH.Others.XRay.Keybind
+
+
+local XRayEnabled = false
+function transparencydv()
+if XRayEnabled then
+for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
+  if v:FindFirstChild("Hitbox") then
+    v.Hitbox.Transparency = raytransparency
+  end
+end
+else
+for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
+  if v:FindFirstChild("Hitbox") then
+    v.Hitbox.Transparency = 0
+  end
+end
+end
 end
 
-RunService.RenderStepped:Connect(function()
-	updateLighting()
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if input.KeyCode == raykeybind and not gameProcessed then
+        if XRayEnabled == false then
+            XRayEnabled = true
+            transparencydv()
+        elseif XRayEnabled == true then
+            XRayEnabled = false
+            transparencydv()
+        end
+    end
 end)
-
-Lighting.FogStart = math.huge
-GlobalShadows = false
-Lighting.GlobalShadows = false
-
-local descendants = workspace:GetDescendants()
-for _, obj in ipairs(descendants) do
-	if (obj:IsA("BasePart") and ((obj.Name == "Fir3_Leaves") or (obj.Name == "Palm1_Leaves") or (obj.Name == "Birch1_Leaves") or (obj.Name == "Elm1_Leaves"))) then
-		obj:Destroy()
-	end
 end
-
 
