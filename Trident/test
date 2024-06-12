@@ -1,6 +1,7 @@
 
+local UserInputService = game:GetService("UserInputService")
+
 getgenv().ETH = {
-    Key = "ethernalitybest22",
     Others = {
         XRay = {
             Enabled = true,
@@ -11,8 +12,6 @@ getgenv().ETH = {
 }
 
 
-
-local UserInputService = game:GetService("UserInputService")
 
 
 local rayenabled = ETH.Others.XRay.Enabled
