@@ -1,7 +1,6 @@
-
 local UserInputService = game:GetService("UserInputService")
 
-getgenv().ETH = {
+local ETH = {
     Others = {
         XRay = {
             Enabled = true,
@@ -11,42 +10,31 @@ getgenv().ETH = {
     },
 }
 
-
-
-
 local rayenabled = ETH.Others.XRay.Enabled
 local raytransparency = ETH.Others.XRay.Transparency
 local raykeybind = ETH.Others.XRay.Keybind
 
-
 local XRayEnabled = false
-function transparencydv()
-if XRayEnabled then
-for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
-  if v:FindFirstChild("Hitbox") then
-    v.Hitbox.Transparency = raytransparency
-  end
-end
-else
-for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
-  if v:FindFirstChild("Hitbox") then
-    v.Hitbox.Transparency = 0
-  end
-end
-end
-end
 
+function transparencydv()
+    if XRayEnabled then
+        for _,v in pairs(game:GetService("Workspace"):GetChildren()) do
+            if v:FindFirstChild("Hitbox") then
+                v.Hitbox.Transparency = raytransparency
+            end
+        end
+    else
+        for _,v in pairs(game:GetService("Workspace"):GetChildren()) do
+            if v:FindFirstChild("Hitbox") then
+                v.Hitbox.Transparency = 0
+            end
+        end
+    end
+end
 
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if input.KeyCode == raykeybind and not gameProcessed then
-        if XRayEnabled == false then
-            XRayEnabled = true
-            transparencydv()
-        elseif XRayEnabled == true then
-            XRayEnabled = false
-            transparencydv()
-        end
+        XRayEnabled = not XRayEnabled
+        transparencydv()
     end
 end)
-end
-
