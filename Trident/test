@@ -3,7 +3,7 @@ local default_fov = 70
 local slider_fov = 60
 local field_of_view = {enabled = true, amount = 120, zoomed = false, zoom_amount = 120}
 
-camera.FieldOfView = field_of_view.zoom_amount
+camera.FieldOfView = field_of_view.amount
 
 camera:GetPropertyChangedSignal("FieldOfView"):Connect(function()
     if field_of_view.enabled then
