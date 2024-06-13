@@ -1,7 +1,7 @@
 local camera = game.Workspace.CurrentCamera
 local default_fov = 70
 local slider_fov = 60
-local field_of_view = {enabled = true, amount = default_fov, zoomed = false, zoom_amount = 120}
+local field_of_view = {enabled = true, amount = default_fov, zoomed = false, zoom_amount = 30}
 
 camera.FieldOfView = field_of_view.amount
 
