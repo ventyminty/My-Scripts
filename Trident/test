@@ -1,14 +1,28 @@
-local camera = game.Workspace.CurrentCamera
-local default_fov = 70
-local slider_fov = 60
-local field_of_view = {enabled = true, amount = default_fov, zoomed = false, zoom_amount = 30}
-
-camera.FieldOfView = field_of_view.amount
-
-camera:GetPropertyChangedSignal("FieldOfView"):Connect(function()
-    if field_of_view.enabled then
-        if (field_of_view.ammount ~= camera.FieldOfView) then
-        camera.FieldOfView = field_of_view.ammount
-    end
-end
-end)
+local workspace = game:GetService("Workspace")
+        local fpsArms = workspace.Ignore.FPSArms
+        local material = Enum.Material.Neon
+        local color = Color3.fromRGB(202, 82, 147)
+        for _, part in pairs(fpsArms:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Material = material
+                part.Color = color
+            end
+        end
+        local replicatedStorage = game:GetService("ReplicatedStorage")
+        local handModels = replicatedStorage:WaitForChild("HandModels")
+        local material = Enum.Material.ForceField
+        local color = Color3.fromRGB(202, 82, 147)
+        for _, part in pairs(handModels:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Material = material
+                part.Color = color
+            end
+        end
+        local replicatedStorage = game:GetService("ReplicatedStorage")
+        local handModels = replicatedStorage.HandModels
+        local gone = false
+        for _, descendant in ipairs(handModels:GetDescendants()) do
+            if descendant:IsA("RopeConstraint") then
+                descendant.Visible = gone
+            end
+        end
