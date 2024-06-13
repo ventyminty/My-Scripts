@@ -1,9 +1,14 @@
-local camera = game.workspace.CurrentCamera
+local camera = game.Workspace.CurrentCamera
 local default_fov = 70
-local slider_fov = 120
+local slider_fov = 60
+local field_of_view = {enabled = true, amount = 120, zoomed = false, zoom_amount = 120}
+
+camera.FieldOfView = field_of_view.zoom_amount
 
 camera:GetPropertyChangedSignal("FieldOfView"):Connect(function()
-    if (slider_fov ~= camera.FieldOfView) then
-        camera.FieldOfView = slider_fov
+    if field_of_view.enabled then
+        if (field_of_view.ammount ~= camera.FieldOfView) then
+        camera.FieldOfView = field_of_view.ammount
     end
+end
 end)
