@@ -1,28 +1,32 @@
-local workspace = game:GetService("Workspace")
-        local fpsArms = workspace.Ignore.FPSArms
-        local material = Enum.Material.Neon
-        local color = Color3.fromRGB(202, 82, 147)
-        for _, part in pairs(fpsArms:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.Material = material
-                part.Color = color
-            end
+
+
+local Config = {
+    Higlight = {
+        Chest = true,
+        Color = Color3.fromRGB(255, 0, 255)
+    }
+}
+
+local chestenabled = Config.Higlight.Chest
+local chestcolor = Config.Higlight.Color
+
+function CreateHiglight(part)
+    if chestenabled then
+        if part:FindFirstChild("Frame") and part:FindFirstChild("Part") then
+          local chestpart = part:FindFirstChild("Part")
+          repeat wait() until chestpart
+          local ch = Instance.new("Highlight")
+          ch.Name = "Santo"
+          ch.Adornee = v
+          ch.Parent = chestpart
+          ch.OutlineColor = chestcolor
+          ch.OutlineTransparency = 0
+          ch.FillColor = chestcolor
+          ch.FillTransparency = 0.5
         end
-        local replicatedStorage = game:GetService("ReplicatedStorage")
-        local handModels = replicatedStorage:WaitForChild("HandModels")
-        local material = Enum.Material.ForceField
-        local color = Color3.fromRGB(202, 82, 147)
-        for _, part in pairs(handModels:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.Material = material
-                part.Color = color
-            end
-        end
-        local replicatedStorage = game:GetService("ReplicatedStorage")
-        local handModels = replicatedStorage.HandModels
-        local gone = false
-        for _, descendant in ipairs(handModels:GetDescendants()) do
-            if descendant:IsA("RopeConstraint") then
-                descendant.Visible = gone
-            end
-        end
+    end
+end
+
+for _, i in pairs(workspace:GetChildren()) do
+    CreateHiglight(i)
+end
