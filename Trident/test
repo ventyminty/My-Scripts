@@ -18,7 +18,8 @@ function CreateHighlight(model)
   if schestenabled then
     if model:FindFirstChild("Part") and model:FindFirstChild("Frame") then
       for _, part in pairs(model:GetDescendants()) do
-        repeat wait() until part
+        local chestpart = part:FindFirstChild("Part")
+        repeat wait() until chestpart
         local highlight = Instance.new("Highlight")
         highlight.Name = "Santo"
         highlight.Adornee = part
