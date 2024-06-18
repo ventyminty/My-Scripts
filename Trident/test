@@ -1,32 +1,37 @@
-
-
 local Config = {
-    Higlight = {
-        Chest = true,
-        Color = Color3.fromRGB(255, 0, 255)
-    }
+    Highlight = {
+        SmallChest = {
+            Enabled = true,
+            FillColor = Color3.fromRGB(255, 0, 18),
+            FillTransparency = 0.5,
+            OutlineColor = Color3.fromRGB(255, 255, 255)
+        },
+    },
 }
 
-local chestenabled = Config.Higlight.Chest
-local chestcolor = Config.Higlight.Color
+local schestenabled = Config.Highlight.SmallChest.Enabled
+local schestcolor = Config.Highlight.SmallChest.FillColor
+local schestfilltrans = Config.Highlight.SmallChest.FillTransparency
+local schestoutcolor = Config.Highlight.SmallChest.OutlineColor
 
-function CreateHiglight(part)
-    if chestenabled then
-        if part:FindFirstChild("Frame") and part:FindFirstChild("Part") then
-          local chestpart = part:FindFirstChild("Part")
-          repeat wait() until chestpart
-          local ch = Instance.new("Highlight")
-          ch.Name = "Santo"
-          ch.Adornee = v
-          ch.Parent = chestpart
-          ch.OutlineColor = chestcolor
-          ch.OutlineTransparency = 0
-          ch.FillColor = chestcolor
-          ch.FillTransparency = 0.5
-        end
+function CreateHighlight(model)
+  if schestenabled then
+    if model:FindFirstChild("Part") and model:FindFirstChild("Frame") then
+      for _, part in pairs(model:GetDescendants()) do
+        local highlight = Instance.new("Highlight")
+        highlight.Name = "Santo"
+        highlight.Adornee = part
+        highlight.Parent = part
+        highlight.OutlineColor = schestoutcolor
+        highlight.OutlineTransparency = 0
+        highlight.FillColor = schestcolor
+        highlight.FillTransparency = schestfilltrans
+      end
     end
+  end
 end
 
-for _, i in pairs(workspace:GetChildren()) do
-    CreateHiglight(i)
+
+for _, model in pairs(workspace:GetChildren()) do
+    CreateHighlight(model)
 end
